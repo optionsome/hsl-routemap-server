@@ -12,9 +12,14 @@ const STOP_RADIUS = 20;
 const RouteMap = (props) => {
     const positionedStops = props.projectedStops;
 
+    const mapStyle = {
+        width: props.mapOptions.width,
+        height: props.mapOptions.height,
+    };
+
     return (
         <div className={styles.root}>
-            <div className={styles.map}>
+            <div className={styles.map} style={mapStyle}>
                 <MapImage
                     options={props.mapOptions}
                     components={{
