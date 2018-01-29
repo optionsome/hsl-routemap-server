@@ -8,11 +8,13 @@ import { ApolloProvider } from "react-apollo";
 
 import StopPoster from "components/stopPoster/stopPosterContainer";
 import Timetable from "components/timetable/timetableContainer";
+import RouteMap from "components/routeMap/routeMapContainer";
 import renderQueue from "util/renderQueue";
 
 const components = {
     StopPoster,
     Timetable,
+    RouteMap,
 };
 
 const client = new ApolloClient({
