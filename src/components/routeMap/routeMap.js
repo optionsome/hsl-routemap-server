@@ -1,61 +1,59 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 import MapImage from "components/map/mapImageContainer";
 import ItemContainer from "components/labelPlacement/itemContainer";
 import ItemFixed from "components/labelPlacement/itemFixed";
-import ItemPositioned from "../labelPlacement/itemPositioned";
 import StopSymbol from "../map/stopSymbol";
-
 
 import styles from "./routeMap.css";
 
-const RouteMap = () => (
-    <div className={styles.root}>
-        <div className={styles.map}>
-            <MapImage
-                options={{
-                    center: [24.763964, 60.170899],
-                    zoom: 12,
-                    width: 400,
-                    height: 400,
-                    scale: 5,
-                }}
-                components={{
-                    text_fisv: { enabled: true },
-                    routes: { enabled: true },
-                    stops: { enabled: true },
-                    print: { enabled: true },
-                    municipal_borders: { enabled: true },
-                }}
-                date="2018-01-15"
-            />
+const STOP_RADIUS = 20;
+
+const RouteMap = (props) => {
+    const positionedStops = props.projectedStops;
+
+    return (
+        <div className={styles.root}>
+            <div className={styles.map}>
+                <MapImage
+                    options={props.mapOptions}
+                    components={{
+                        text_fisv: { enabled: true },
+                        routes: { enabled: true },
+                        stops: { enabled: true },
+                        print: { enabled: true },
+                        municipal_borders: { enabled: true },
+                    }}
+                    date="2018-01-15"
+                />
+            </div>
+            <div className={styles.overlays}>
+                <ItemContainer>
+                    {positionedStops.map((stop, index) => (
+                        <ItemFixed
+                            key={index}
+                            top={stop.y - STOP_RADIUS}
+                            left={stop.x - STOP_RADIUS}
+                        >
+                            <StopSymbol routes={[{ routeId: "1234", mode: "BUS" }]} size={STOP_RADIUS * 2}/>
+                        </ItemFixed>
+                    ))}
+                </ItemContainer>
+            </div>
         </div>
-        <div className={styles.overlays}>
-            <ItemContainer>
-                <ItemFixed
-                    top={200}
-                    left={200}
-                >
-                    <StopSymbol routes={[{ routeId: "1234", mode: "BUS" }]} size={10 * 2}/>
-                </ItemFixed>
-                <ItemPositioned
-                    key="1234"
-                    x={300}
-                    y={300}
-                    distance={25}
-                    angle={0}
-                >
-                    <StopSymbol routes={[{ routeId: "1234", mode: "BUS" }]} size={10 * 2}/>
-                </ItemPositioned>
-            </ItemContainer>
-        </div>
-    </div>
-);
+    );
+};
 
 RouteMap.defaultProps = {
 };
 
+const StopType = PropTypes.shape({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+});
+
 RouteMap.propTypes = {
+    projectedStops: PropTypes.arrayOf(StopType).isRequired,
 };
 
 export default RouteMap;
