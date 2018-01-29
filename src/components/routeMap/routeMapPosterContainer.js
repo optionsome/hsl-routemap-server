@@ -1,4 +1,6 @@
 import compose from "recompose/compose";
+import PropTypes from "prop-types";
+
 // import PropTypes from "prop-types";
 
 import RouteMap from "./routeMap";
@@ -11,6 +13,7 @@ RouteMapContainer.defaultProps = {
 };
 
 RouteMapContainer.propTypes = {
+    date: PropTypes.string.isRequired,
 };
 
 export default RouteMapContainer;

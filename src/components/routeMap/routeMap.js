@@ -1,29 +1,54 @@
 import React from "react";
 
 import MapImage from "components/map/mapImageContainer";
+import ItemContainer from "components/labelPlacement/itemContainer";
+import ItemFixed from "components/labelPlacement/itemFixed";
+import ItemPositioned from "../labelPlacement/itemPositioned";
+import StopSymbol from "../map/stopSymbol";
 
-// import PropTypes from "prop-types";
+
+import styles from "./routeMap.css";
 
 const RouteMap = () => (
-    <div>
-        <MapImage
-            options={{
-                center: [24.7068913, 60.1950766],
-                zoom: 12,
-                width: 1200,
-                height: 1800,
-                scale: 15,
-            }}
-            components={{
-                text_fisv: { enabled: true },
-                routes: { enabled: true },
-                citybikes: { enabled: false },
-                print: { enabled: true },
-                ticket_sales: { enabled: true },
-                municipal_borders: { enabled: true },
-            }}
-            date="2018-01-15"
-        />
+    <div className={styles.root}>
+        <div className={styles.map}>
+            <MapImage
+                options={{
+                    center: [24.763964, 60.170899],
+                    zoom: 12,
+                    width: 400,
+                    height: 400,
+                    scale: 5,
+                }}
+                components={{
+                    text_fisv: { enabled: true },
+                    routes: { enabled: true },
+                    stops: { enabled: true },
+                    print: { enabled: true },
+                    municipal_borders: { enabled: true },
+                }}
+                date="2018-01-15"
+            />
+        </div>
+        <div className={styles.overlays}>
+            <ItemContainer>
+                <ItemFixed
+                    top={200}
+                    left={200}
+                >
+                    <StopSymbol routes={[{ routeId: "1234", mode: "BUS" }]} size={10 * 2}/>
+                </ItemFixed>
+                <ItemPositioned
+                    key="1234"
+                    x={300}
+                    y={300}
+                    distance={25}
+                    angle={0}
+                >
+                    <StopSymbol routes={[{ routeId: "1234", mode: "BUS" }]} size={10 * 2}/>
+                </ItemPositioned>
+            </ItemContainer>
+        </div>
     </div>
 );
 
