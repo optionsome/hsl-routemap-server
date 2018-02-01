@@ -4,6 +4,9 @@ import { graphql } from "react-apollo";
 import mapProps from "recompose/mapProps";
 import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
+import { isNumberVariant, trimRouteId, isDropOffOnly } from "util/domain";
+import routeCompare from "util/routeCompare";
+import flatMap from "lodash/flatMap";
 
 import apolloWrapper from "util/apolloWrapper";
 
@@ -27,16 +30,42 @@ const mapPositionMapper = mapProps((props) => {
 });
 
 const nearbyTerminals = gql`
-    query nearbyTerminals($minLat: Float!, $minLon: Float!, $maxLat: Float!, $maxLon: Float!) {
-        stops: terminalsByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
-            edges {
-                node {
-                    nameFi
-                    nameSe
-                    lat
-                    lon
-                    modes {
-                        nodes
+    query nearbyTerminals($minLat: Float!, $minLon: Float!, $maxLat: Float!, $maxLon: Float!, $date: Date!) {
+        terminals: terminalsByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+            nodes {
+                nameFi
+                nameSe
+                lat
+                lon
+                modes {
+                    nodes
+                }
+            }
+        },
+        stops: stopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+            nodes {
+                stopIds
+                lat
+                lon
+                nameFi
+                nameSe
+                stops {
+                    nodes {
+                        calculatedHeading
+                        routeSegments: routeSegmentsForDate(date: $date) {
+                            nodes {
+                                routeId
+                                hasRegularDayDepartures(date: $date)
+                                pickupDropoffType
+                                route {
+                                    nodes {
+                                        destinationFi
+                                        destinationSe
+                                        mode
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -44,8 +73,29 @@ const nearbyTerminals = gql`
     },
 `;
 
-const stopsMapper = mapProps((props) => {
-    const stops = props.data.stops.edges.map(i => i.node);
+const stopsMapper = stopGroup => ({
+    ...stopGroup,
+    calculatedHeading: stopGroup.stops.nodes[0].calculatedHeading,
+    routes: flatMap(stopGroup.stops.nodes, node =>
+        node.routeSegments.nodes
+            .filter(routeSegment => routeSegment.hasRegularDayDepartures === true)
+            .filter(routeSegment => !isNumberVariant(routeSegment.routeId))
+            .filter(routeSegment => !isDropOffOnly(routeSegment))
+            .map(routeSegment => ({
+                routeId: trimRouteId(routeSegment.routeId),
+                destinationFi: routeSegment.route.nodes[0].destinationFi,
+                destinationSe: routeSegment.route.nodes[0].destinationSe,
+                mode: routeSegment.route.nodes[0].mode,
+            }))).sort(routeCompare),
+});
+
+const terminalMapper = mapProps((props) => {
+    const terminals = props.data.terminals.nodes;
+    const stops = props.data.stops.nodes
+        // Merge properties from mode-specific stops
+        .map(stopsMapper)
+        // Filter out stops with no departures
+        .filter(stop => !!stop.routes.length);
     const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({
@@ -56,7 +106,7 @@ const stopsMapper = mapProps((props) => {
         zoom: props.zoom,
     });
 
-    const projectedTerminals = stops
+    const projectedTerminals = terminals
         .filter(stop => stop.modes && stop.modes.nodes && stop.modes.nodes.length)
         .map((stop) => {
             const [x, y] = viewport.project([stop.lon, stop.lat]);
@@ -75,6 +125,17 @@ const stopsMapper = mapProps((props) => {
             };
         });
 
+    const projectedStops = stops
+        .map((stop) => {
+            const [x, y] = viewport.project([stop.lon, stop.lat]);
+
+            return {
+                ...stop,
+                x,
+                y,
+            };
+        });
+
     const mapOptions = {
         center: [props.longitude, props.latitude],
         width: props.width,
@@ -85,6 +146,7 @@ const stopsMapper = mapProps((props) => {
     return {
         mapOptions,
         projectedTerminals,
+        projectedStops,
         date: props.date,
     };
 });
@@ -92,7 +154,7 @@ const stopsMapper = mapProps((props) => {
 const hoc = compose(
     mapPositionMapper,
     graphql(nearbyTerminals),
-    apolloWrapper(stopsMapper)
+    apolloWrapper(terminalMapper)
 );
 
 const RouteMapContainer = hoc(RouteMap);
