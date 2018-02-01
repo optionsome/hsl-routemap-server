@@ -3,14 +3,14 @@ import PropTypes from "prop-types";
 import MapImage from "components/map/mapImageContainer";
 import ItemContainer from "components/labelPlacement/itemContainer";
 import ItemFixed from "components/labelPlacement/itemFixed";
-import StopSymbol from "../map/stopSymbol";
+import TerminalSymbol from "./terminalSymbol";
 
 import styles from "./routeMap.css";
 
 const STOP_RADIUS = 12;
 
 const RouteMap = (props) => {
-    const positionedStops = props.projectedStops;
+    const positionedTerminals = props.projectedTerminals;
 
     const mapStyle = {
         width: props.mapOptions.width,
@@ -33,13 +33,17 @@ const RouteMap = (props) => {
             </div>
             <div className={styles.overlays}>
                 <ItemContainer>
-                    {positionedStops.map((stop, index) => (
+                    {positionedTerminals.map((terminal, index) => (
                         <ItemFixed
                             key={index}
-                            top={stop.y - STOP_RADIUS}
-                            left={stop.x - STOP_RADIUS}
+                            top={terminal.y - STOP_RADIUS}
+                            left={terminal.x - STOP_RADIUS}
                         >
-                            <StopSymbol routes={[{ routeId: "1234", mode: "BUS" }]} size={STOP_RADIUS * 2}/>
+                            <TerminalSymbol
+                                nameFi={terminal.nameFi}
+                                nameSv={terminal.nameSe}
+                                node={terminal.node}
+                            />
                         </ItemFixed>
                     ))}
                 </ItemContainer>
@@ -54,18 +58,21 @@ RouteMap.defaultProps = {
 const StopType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
+    nameFi: PropTypes.string.isRequired,
+    nameSv: PropTypes.string,
+    node: PropTypes.string.isRequired,
 });
 
 const MapOptions = PropTypes.shape({
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    center: PropTypes.array.isRequired,
+    center: PropTypes.arrayOf(PropTypes.number).isRequired,
     zoom: PropTypes.number.isRequired,
 });
 
 RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
-    projectedStops: PropTypes.arrayOf(StopType).isRequired,
+    projectedTerminals: PropTypes.arrayOf(StopType).isRequired,
     mapOptions: PropTypes.objectOf(MapOptions).isRequired,
 };
 

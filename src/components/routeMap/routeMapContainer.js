@@ -56,10 +56,24 @@ const stopsMapper = mapProps((props) => {
         zoom: props.zoom,
     });
 
-    const projectedStops = stops.map((stop) => {
-        const [x, y] = viewport.project([stop.lon, stop.lat]);
-        return { ...stop, x, y };
-    });
+    const projectedTerminals = stops
+        .filter(stop => stop.modes && stop.modes.nodes && stop.modes.nodes.length)
+        .map((stop) => {
+            const [x, y] = viewport.project([stop.lon, stop.lat]);
+
+            if (stop.modes.nodes.length > 1) {
+                // eslint-disable-next-line no-console
+                console.log(`We assume terminals to have one transportation node, however ${stop.nameFi} has several`);
+            }
+
+            return {
+                nameFi: stop.nameFi,
+                nameSe: stop.nameSe,
+                node: stop.modes.nodes[0],
+                x,
+                y,
+            };
+        });
 
     const mapOptions = {
         center: [props.longitude, props.latitude],
@@ -70,7 +84,7 @@ const stopsMapper = mapProps((props) => {
 
     return {
         mapOptions,
-        projectedStops,
+        projectedTerminals,
         date: props.date,
     };
 });
