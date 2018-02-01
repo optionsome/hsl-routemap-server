@@ -7,7 +7,7 @@ import StopSymbol from "../map/stopSymbol";
 
 import styles from "./routeMap.css";
 
-const STOP_RADIUS = 20;
+const STOP_RADIUS = 12;
 
 const RouteMap = (props) => {
     const positionedStops = props.projectedStops;
@@ -26,10 +26,9 @@ const RouteMap = (props) => {
                         text_fisv: { enabled: true },
                         routes: { enabled: true },
                         stops: { enabled: true },
-                        print: { enabled: true },
                         municipal_borders: { enabled: true },
                     }}
-                    date="2018-01-15"
+                    date={props.date}
                 />
             </div>
             <div className={styles.overlays}>
@@ -57,8 +56,17 @@ const StopType = PropTypes.shape({
     y: PropTypes.number.isRequired,
 });
 
+const MapOptions = PropTypes.shape({
+    height: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    center: PropTypes.array.isRequired,
+    zoom: PropTypes.number.isRequired,
+});
+
 RouteMap.propTypes = {
+    date: PropTypes.string.isRequired,
     projectedStops: PropTypes.arrayOf(StopType).isRequired,
+    mapOptions: PropTypes.objectOf(MapOptions).isRequired,
 };
 
 export default RouteMap;

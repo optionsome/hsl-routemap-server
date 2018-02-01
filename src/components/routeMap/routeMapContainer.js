@@ -69,9 +69,9 @@ const stopsMapper = mapProps((props) => {
     };
 
     return {
-        ...props,
-        projectedStops,
         mapOptions,
+        projectedStops,
+        date: props.date,
     };
 });
 
