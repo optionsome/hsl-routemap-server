@@ -69,6 +69,16 @@ const nearbyTerminals = gql`
                     }
                 }
             }
+        },
+        terminus: dateTerminusByDateAndBbox(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+            nodes {
+                lineId
+                stopAreaId
+                lon
+                lat
+                stopId
+                stopShortId
+            }
         }
     },
 `;
