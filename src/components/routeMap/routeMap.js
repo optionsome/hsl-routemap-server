@@ -3,9 +3,11 @@ import PropTypes from "prop-types";
 import MapImage from "components/map/mapImageContainer";
 import ItemContainer from "components/labelPlacement/itemContainer";
 import ItemFixed from "components/labelPlacement/itemFixed";
+import ItemPositioned from "components/labelPlacement/itemPositioned";
 
 import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
+import TerminusLabel from "./terminusLabel";
 import StopSymbol from "./stopSymbol";
 
 import styles from "./routeMap.css";
@@ -69,6 +71,19 @@ const RouteMap = (props) => {
                             />
                         </ItemFixed>
                     ))}
+                    {props.projectedTerminuses.map((terminus, index) => (
+                        <ItemPositioned
+                            key={index}
+                            x={terminus.x}
+                            y={terminus.y}
+                            distance={20}
+                            angle={45}
+                        >
+                            <TerminusLabel
+                                lines={terminus.lineId}
+                            />
+                        </ItemPositioned>
+                    ))}
                 </ItemContainer>
             </div>
         </div>
@@ -81,7 +96,7 @@ RouteMap.defaultProps = {
 const TerminusType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
-    line_id: PropTypes.arrayOf(PropTypes.string).isRequired,
+    lineId: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
 const TerminalType = PropTypes.shape({

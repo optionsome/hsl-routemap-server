@@ -1,0 +1,10 @@
+.label {
+  margin: 10px;
+  color: black;
+  background: white;
+  font-size: 12px;
+  line-height: 12px;
+  padding: 4px;
+  font-family: GothamRounded-Book;
+  max-width: 120px;
+}
