@@ -5,11 +5,14 @@ import ItemContainer from "components/labelPlacement/itemContainer";
 import ItemFixed from "components/labelPlacement/itemFixed";
 
 import TerminalSymbol from "./terminalSymbol";
+import TerminusSymbol from "./terminusSymbol";
 import StopSymbol from "./stopSymbol";
 
 import styles from "./routeMap.css";
 
-const STOP_RADIUS = 12;
+const STOP_DIAMETER = 5;
+const TERMINUS_SIZE = 8;
+const TERMINAL_SIZE = 14;
 
 const RouteMap = (props) => {
     const mapStyle = {
@@ -35,22 +38,34 @@ const RouteMap = (props) => {
                     {props.projectedStops.map((stop, index) => (
                         <ItemFixed
                             key={index}
-                            top={stop.y}
-                            left={stop.x}
+                            top={stop.y - (STOP_DIAMETER / 2)}
+                            left={stop.x - (STOP_DIAMETER / 2)}
                         >
-                            <StopSymbol size={6}/>
+                            <StopSymbol size={STOP_DIAMETER}/>
+                        </ItemFixed>
+                    ))}
+                    {props.projectedTerminuses.map((terminus, index) => (
+                        <ItemFixed
+                            key={index}
+                            top={terminus.y - (TERMINUS_SIZE / 2)}
+                            left={terminus.x - (TERMINUS_SIZE / 2)}
+                        >
+                            <TerminusSymbol
+                                size={TERMINUS_SIZE}
+                            />
                         </ItemFixed>
                     ))}
                     {props.projectedTerminals.map((terminal, index) => (
                         <ItemFixed
                             key={index}
-                            top={terminal.y - STOP_RADIUS}
-                            left={terminal.x - STOP_RADIUS}
+                            top={terminal.y - (TERMINAL_SIZE / 2)}
+                            left={terminal.x - (TERMINAL_SIZE / 2)}
                         >
                             <TerminalSymbol
                                 nameFi={terminal.nameFi}
                                 nameSv={terminal.nameSe}
                                 node={terminal.node}
+                                size={TERMINAL_SIZE}
                             />
                         </ItemFixed>
                     ))}
@@ -62,6 +77,12 @@ const RouteMap = (props) => {
 
 RouteMap.defaultProps = {
 };
+
+const TerminusType = PropTypes.shape({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    line_id: PropTypes.arrayOf(PropTypes.string).isRequired,
+});
 
 const TerminalType = PropTypes.shape({
     x: PropTypes.number.isRequired,
@@ -87,6 +108,7 @@ RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
     projectedTerminals: PropTypes.arrayOf(TerminalType).isRequired,
     projectedStops: PropTypes.arrayOf(StopType).isRequired,
+    projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     mapOptions: PropTypes.objectOf(MapOptions).isRequired,
 };
 

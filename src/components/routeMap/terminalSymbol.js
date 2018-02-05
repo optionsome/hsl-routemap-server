@@ -10,8 +10,6 @@ import RailIcon from "icons/icon_rail.svg";
 import TramIcon from "icons/icon_tram.svg";
 import TrunkIcon from "icons/icon_trunk.svg";
 
-import styles from "./terminalSymbol.css";
-
 function getIcon(node) {
     switch (node) {
     case "SUBWAY":
@@ -34,13 +32,26 @@ function getIcon(node) {
 const TerminalSymbol = (props) => {
     const icon = getIcon(props.node);
 
+    const divStyle = {
+        width: props.size,
+        height: props.size,
+        fontSize: "12px",
+    };
+
     return (
-        icon && <InlineSVG src={icon} className={styles.root}/>
+        icon &&
+        <InlineSVG
+            src={icon}
+            style={divStyle}
+            width={props.size}
+            height={props.size}
+        />
     );
 };
 
 TerminalSymbol.propTypes = {
     nodes: PropTypes.string.isRequired,
+    size: PropTypes.number.isRequired,
 };
 
 export default TerminalSymbol;

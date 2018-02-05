@@ -70,7 +70,7 @@ const nearbyTerminals = gql`
                 }
             }
         },
-        terminus: dateTerminusByDateAndBbox(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+        terminus: terminusByDateAndBboxGrouped(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
             nodes {
                 lineId
                 stopAreaId
@@ -106,6 +106,8 @@ const terminalMapper = mapProps((props) => {
         .map(stopsMapper)
         // Filter out stops with no departures
         .filter(stop => !!stop.routes.length);
+    const terminuses = props.data.terminus.nodes;
+
     const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({
@@ -146,6 +148,17 @@ const terminalMapper = mapProps((props) => {
             };
         });
 
+    const projectedTerminuses = terminuses
+        .map((terminus) => {
+            const [x, y] = viewport.project([terminus.lon, terminus.lat]);
+
+            return {
+                ...terminus,
+                x,
+                y,
+            };
+        });
+
     const mapOptions = {
         center: [props.longitude, props.latitude],
         width: props.width,
@@ -156,6 +169,7 @@ const terminalMapper = mapProps((props) => {
     return {
         mapOptions,
         projectedTerminals,
+        projectedTerminuses,
         projectedStops,
         date: props.date,
     };
