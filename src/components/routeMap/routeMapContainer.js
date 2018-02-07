@@ -76,10 +76,15 @@ const nearbyTerminals = gql`
                 stopAreaId
                 lon
                 lat
-                stopId
-                stopShortId
             }
-        }
+        },
+        intermediates: routeSectionIntermediates(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+            nodes {
+              routes,
+              lon,
+              lat
+            }
+          }
     },
 `;
 
@@ -107,7 +112,8 @@ const terminalMapper = mapProps((props) => {
         // Filter out stops with no departures
         .filter(stop => !!stop.routes.length);
     const terminuses = props.data.terminus.nodes;
-
+    const intermediates = props.data.intermediates.nodes;
+    console.log(intermediates);
     const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({
@@ -148,6 +154,17 @@ const terminalMapper = mapProps((props) => {
             };
         });
 
+    const projectedIntermediates = intermediates
+        .map((intermediate) => {
+            const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
+
+            return {
+                ...intermediate,
+                x,
+                y,
+            };
+        });
+
     const projectedTerminuses = terminuses
         .map((terminus) => {
             const [x, y] = viewport.project([terminus.lon, terminus.lat]);
@@ -170,6 +187,7 @@ const terminalMapper = mapProps((props) => {
         mapOptions,
         projectedTerminals,
         projectedTerminuses,
+        projectedIntermediates,
         projectedStops,
         date: props.date,
     };

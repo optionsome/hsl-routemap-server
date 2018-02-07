@@ -9,13 +9,14 @@ const StopSymbol = props => (
             cx={props.size / 2}
             cy={props.size / 2}
             r={props.size / 2}
-            fill={colorsByMode.BUS}
+            fill={props.isIntermediate ? colorsByMode.TRUNK : colorsByMode.BUS}
         />
     </svg>
 );
 
 StopSymbol.propTypes = {
     size: PropTypes.number.isRequired,
+    isIntermediate: PropTypes.bool.isRequired,
 };
 
 export default StopSymbol;

@@ -19,7 +19,7 @@ Start development server:
 ```
 yarn start:hot
 ```
-http://localhost:5000/?component=RouteMap&props={%22stopId%22:%20%221284117%22,%20%22date%22:%20%222018-01-15%22}
+http://localhost:5000/?component=RouteMap&props={%22date%22:%222018-01-15%22,%22latitude%22:60.17,%22longitude%22:24.76,%22width%22:700,%22height%22:700,%22zoom%22:12}
 Open [http://localhost:5000/?component=StopPoster&props={"stopId": "1284117", "date": "2018-01-15"}](http://localhost:5000/?component=StopPoster&props={%22stopId%22:%221284117%22,%22date%22:%222018-01-15%22})
 
 ### Writing components

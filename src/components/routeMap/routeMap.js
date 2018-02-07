@@ -8,6 +8,7 @@ import ItemPositioned from "components/labelPlacement/itemPositioned";
 import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
+import IntermediateLabel from "./intermediateLabel";
 import StopSymbol from "./stopSymbol";
 
 import styles from "./routeMap.css";
@@ -71,6 +72,28 @@ const RouteMap = (props) => {
                             />
                         </ItemFixed>
                     ))}
+                    {props.projectedIntermediates.map((intermediate, index) => (
+                        <ItemFixed
+                            key={index}
+                            top={intermediate.y - (STOP_DIAMETER / 2)}
+                            left={intermediate.x - (STOP_DIAMETER / 2)}
+                        >
+                            <StopSymbol size={STOP_DIAMETER} isIntermediate/>
+                        </ItemFixed>
+                    ))}
+                    {props.projectedIntermediates.map((intermediate, index) => (
+                        <ItemPositioned
+                            key={index}
+                            x={intermediate.x}
+                            y={intermediate.y}
+                            distance={20}
+                            angle={45}
+                        >
+                            <IntermediateLabel
+                                routes={intermediate.routes}
+                            />
+                        </ItemPositioned>
+                    ))}
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemPositioned
                             key={index}
@@ -107,6 +130,12 @@ const TerminalType = PropTypes.shape({
     node: PropTypes.string.isRequired,
 });
 
+const IntermediateType = PropTypes.shape({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    routes: PropTypes.arrayOf(PropTypes.string).isRequired,
+});
+
 const StopType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
@@ -124,6 +153,7 @@ RouteMap.propTypes = {
     projectedTerminals: PropTypes.arrayOf(TerminalType).isRequired,
     projectedStops: PropTypes.arrayOf(StopType).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
+    projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
     mapOptions: PropTypes.objectOf(MapOptions).isRequired,
 };
 
