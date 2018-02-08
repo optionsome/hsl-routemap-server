@@ -2,9 +2,10 @@
   margin: 5px;
   color: black;
   background: white;
-  font-size: 6px;
-  line-height: 6px;
-  padding: 1px;
+  font-size: 7px;
+  line-height: 8px;
+  padding: 4px;
+  border-radius: 3px;
   font-family: GothamRounded-Book;
   max-width: 80px;
 }

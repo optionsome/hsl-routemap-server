@@ -94,7 +94,6 @@ const stopsMapper = stopGroup => ({
     calculatedHeading: stopGroup.stops.nodes[0].calculatedHeading,
     routes: flatMap(stopGroup.stops.nodes, node =>
         node.routeSegments.nodes
-            .filter(routeSegment => routeSegment.hasRegularDayDepartures === true)
             .filter(routeSegment => !isNumberVariant(routeSegment.routeId))
             .filter(routeSegment => !isDropOffOnly(routeSegment))
             .map(routeSegment => ({
@@ -114,7 +113,6 @@ const terminalMapper = mapProps((props) => {
         .filter(stop => !!stop.routes.length);
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
-    console.log(intermediates);
     const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({

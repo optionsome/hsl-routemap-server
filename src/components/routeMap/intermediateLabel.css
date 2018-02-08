@@ -1,0 +1,11 @@
+.label {
+  margin: 5px;
+  color: rgb(0, 0, 167);
+  font-size: 6px;
+  line-height: 6px;
+  background-color: #ffffffa8;
+  border-radius: 2px;
+  padding: 2px;
+  font-family: GothamRounded-Book;
+  max-width: 80px;
+}

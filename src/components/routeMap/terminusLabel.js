@@ -1,12 +1,15 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { trimRouteId } from "../../util/domain";
 
 import style from "./terminusLabel.css";
 
 const TerminusLabel = props => (
     <div className={style.label}>
         {
-            props.lines.join(", ")
+            props.lines
+                .map(id => trimRouteId(id))
+                .join(", ")
         }
     </div>
 );

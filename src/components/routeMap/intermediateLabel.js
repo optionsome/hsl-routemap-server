@@ -1,12 +1,17 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { trimRouteId } from "../../util/domain";
 
-import style from "./terminusLabel.css";
+import style from "./intermediateLabel.css";
 
 const IntermediateLabel = props => (
     <div className={style.label}>
         {
-            props.routes.join(", ")
+            props.routes
+                .map(id => trimRouteId(id))
+                .filter((item, pos, self) => self.indexOf(item) === pos)
+                .sort()
+                .join(", ")
         }
     </div>
 );

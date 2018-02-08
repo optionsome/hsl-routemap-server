@@ -13,7 +13,7 @@ import StopSymbol from "./stopSymbol";
 
 import styles from "./routeMap.css";
 
-const STOP_DIAMETER = 5;
+const STOP_DIAMETER = 4;
 const TERMINUS_SIZE = 8;
 const TERMINAL_SIZE = 14;
 
@@ -90,7 +90,7 @@ const RouteMap = (props) => {
                             key={index}
                             x={terminus.x}
                             y={terminus.y}
-                            distance={20}
+                            distance={10}
                             angle={45}
                         >
                             <TerminusLabel
