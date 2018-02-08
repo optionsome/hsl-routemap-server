@@ -73,21 +73,12 @@ const RouteMap = (props) => {
                         </ItemFixed>
                     ))}
                     {props.projectedIntermediates.map((intermediate, index) => (
-                        <ItemFixed
-                            key={index}
-                            top={intermediate.y - (STOP_DIAMETER / 2)}
-                            left={intermediate.x - (STOP_DIAMETER / 2)}
-                        >
-                            <StopSymbol size={STOP_DIAMETER} isIntermediate/>
-                        </ItemFixed>
-                    ))}
-                    {props.projectedIntermediates.map((intermediate, index) => (
                         <ItemPositioned
                             key={index}
                             x={intermediate.x}
                             y={intermediate.y}
-                            distance={20}
-                            angle={45}
+                            distance={5}
+                            angle={intermediate.angle}
                         >
                             <IntermediateLabel
                                 routes={intermediate.routes}

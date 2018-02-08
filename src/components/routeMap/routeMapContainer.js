@@ -82,7 +82,8 @@ const nearbyTerminals = gql`
             nodes {
               routes,
               lon,
-              lat
+              lat,
+              angle
             }
           }
     },
