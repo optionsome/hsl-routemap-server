@@ -18,7 +18,7 @@ const components = {
 };
 
 const client = new ApolloClient({
-    link: createHttpLink({ uri: "http://kartat.hsl.fi/jore/graphql" }),
+    link: createHttpLink({ uri: "http://localhost:5000/jore/graphql" }),
     cache: new InMemoryCache(),
 });
 
