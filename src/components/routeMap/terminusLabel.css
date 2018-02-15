@@ -1,11 +1,11 @@
 .label {
-  margin: 5px;
+  margin: 2px;
   color: black;
   background: white;
   font-size: 7px;
-  line-height: 8px;
-  padding: 4px;
+  line-height: 7px;
+  padding: 2px;
   border-radius: 3px;
   font-family: GothamXNarrow-Light;
-  max-width: 80px;
+  max-width: 40px;
 }
