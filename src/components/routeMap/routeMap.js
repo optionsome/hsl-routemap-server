@@ -14,7 +14,7 @@ import StopSymbol from "./stopSymbol";
 import styles from "./routeMap.css";
 
 const STOP_DIAMETER = 4;
-const TERMINUS_SIZE = 8;
+const TERMINUS_SIZE = 6;
 const TERMINAL_SIZE = 14;
 
 const RouteMap = (props) => {

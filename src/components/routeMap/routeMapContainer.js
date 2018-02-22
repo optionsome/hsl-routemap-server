@@ -96,6 +96,7 @@ const stopsMapper = stopGroup => ({
         node.routeSegments.nodes
             .filter(routeSegment => !isNumberVariant(routeSegment.routeId))
             .filter(routeSegment => !isDropOffOnly(routeSegment))
+            .filter(routeSegment => routeSegment.route.nodes.length > 0)
             .map(routeSegment => ({
                 routeId: trimRouteId(routeSegment.routeId),
                 destinationFi: routeSegment.route.nodes[0].destinationFi,
