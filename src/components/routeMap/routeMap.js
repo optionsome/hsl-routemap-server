@@ -13,8 +13,8 @@ import StopSymbol from "./stopSymbol";
 
 import styles from "./routeMap.css";
 
-const STOP_DIAMETER = 4;
-const TERMINUS_SIZE = 6;
+const STOP_DIAMETER = 2;
+const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
 
 const RouteMap = (props) => {
@@ -95,6 +95,8 @@ const RouteMap = (props) => {
                         >
                             <TerminusLabel
                                 lines={terminus.lines}
+                                nameFi={terminus.nameFi}
+                                nameSe={terminus.nameSe}
                             />
                         </ItemPositioned>
                     ))}
@@ -111,12 +113,14 @@ const TerminusType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     lines: PropTypes.arrayOf(PropTypes.string).isRequired,
+    nameFi: PropTypes.string.isRequired,
+    nameSe: PropTypes.string,
 });
 
 const TerminalType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
-    nameFi: PropTypes.string.isRequired,
+    nameFi: PropTypes.string,
     nameSv: PropTypes.string,
     node: PropTypes.string.isRequired,
 });

@@ -76,6 +76,9 @@ const nearbyTerminals = gql`
                 stopAreaId
                 lon
                 lat
+                terminalId
+                nameFi
+                nameSe
             }
         },
         intermediates: routeSectionIntermediates(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
