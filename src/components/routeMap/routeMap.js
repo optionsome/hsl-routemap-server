@@ -77,7 +77,7 @@ const RouteMap = (props) => {
                             key={index}
                             x={intermediate.x}
                             y={intermediate.y}
-                            distance={5}
+                            distance={2}
                             angle={intermediate.angle}
                         >
                             <IntermediateLabel
