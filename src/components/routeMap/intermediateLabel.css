@@ -4,8 +4,9 @@
   font-size: 6px;
   line-height: 6px;
   background-color: #ffffffa8;
-  border-radius: 2px;
+  border-radius: 1px;
   padding: 1px;
   font-family: GothamXNarrow-Light;
   max-width: 30px;
+  text-align: center;
 }
