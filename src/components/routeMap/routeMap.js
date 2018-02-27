@@ -72,7 +72,7 @@ const RouteMap = (props) => {
                             />
                         </ItemFixed>
                     ))}
-                    {props.projectedIntermediates.map((intermediate, index) => (
+                    { props.projectedIntermediates.map((intermediate, index) => (
                         <ItemPositioned
                             key={index}
                             x={intermediate.x}
@@ -81,7 +81,7 @@ const RouteMap = (props) => {
                             angle={intermediate.angle}
                         >
                             <IntermediateLabel
-                                routes={intermediate.routes}
+                                label={intermediate.label}
                             />
                         </ItemPositioned>
                     ))}
@@ -94,7 +94,7 @@ const RouteMap = (props) => {
                             angle={45}
                         >
                             <TerminusLabel
-                                lines={terminus.lineId}
+                                lines={terminus.lines}
                             />
                         </ItemPositioned>
                     ))}
@@ -110,7 +110,7 @@ RouteMap.defaultProps = {
 const TerminusType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
-    lineId: PropTypes.arrayOf(PropTypes.string).isRequired,
+    lines: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
 const TerminalType = PropTypes.shape({
@@ -124,7 +124,7 @@ const TerminalType = PropTypes.shape({
 const IntermediateType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
-    routes: PropTypes.arrayOf(PropTypes.string).isRequired,
+    label: PropTypes.string.isRequired,
 });
 
 const StopType = PropTypes.shape({

@@ -4,12 +4,12 @@ import { graphql } from "react-apollo";
 import mapProps from "recompose/mapProps";
 import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
-import { isNumberVariant, trimRouteId, isDropOffOnly } from "util/domain";
+import { isNumberVariant, trimRouteId, isDropOffOnly, isSubwayRoute, isRailRoute } from "util/domain";
 import routeCompare from "util/routeCompare";
 import flatMap from "lodash/flatMap";
-
 import apolloWrapper from "util/apolloWrapper";
 
+import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
 
 const mapPositionMapper = mapProps((props) => {
@@ -72,7 +72,7 @@ const nearbyTerminals = gql`
         },
         terminus: terminusByDateAndBboxGrouped(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
             nodes {
-                lineId
+                lines
                 stopAreaId
                 lon
                 lat
@@ -155,6 +155,15 @@ const terminalMapper = mapProps((props) => {
         });
 
     const projectedIntermediates = intermediates
+        .map(intermediate => ({
+            ...intermediate,
+            routes: intermediate.routes.filter(id => !isRailRoute(id) && !isSubwayRoute(id)),
+        }))
+        .map(intermediate => ({
+            ...intermediate,
+            label: routeGeneralizer(intermediate.routes.map(id => trimRouteId(id))),
+        }))
+        .filter(intermediate => intermediate.label.length < 40 && intermediate.label.length > 0)
         .map((intermediate) => {
             const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
 
@@ -171,10 +180,12 @@ const terminalMapper = mapProps((props) => {
 
             return {
                 ...terminus,
+                lines: terminus.lines.filter(id => !isRailRoute(id) && !isSubwayRoute(id)),
                 x,
                 y,
             };
-        });
+        })
+        .filter(terminus => terminus.lines.length > 0);
 
     const mapOptions = {
         center: [props.longitude, props.latitude],
