@@ -86,7 +86,8 @@ const nearbyTerminals = gql`
               routes,
               lon,
               lat,
-              angle
+              angle,
+              length
             }
           }
     },
@@ -160,16 +161,19 @@ const terminalMapper = mapProps((props) => {
     const projectedIntermediates = intermediates
         .map(intermediate => ({
             ...intermediate,
-            routes: intermediate.routes.filter(id => !isRailRoute(id) && !isSubwayRoute(id)),
+            routes: intermediate.routes
+                .filter(id => !isRailRoute(id) && !isSubwayRoute(id) && id !== null),
         }))
         .map(intermediate => ({
             ...intermediate,
             label: routeGeneralizer(intermediate.routes.map(id => trimRouteId(id))),
         }))
-        .filter(intermediate => intermediate.label.length < 40 && intermediate.label.length > 0)
+        .filter(intermediate =>
+            (intermediate.length > 200 && intermediate.label.length < 40)
+            || (intermediate.length > 2000 && intermediate.label.length < 80)
+            || intermediate.length > 10000)
         .map((intermediate) => {
             const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
-
             return {
                 ...intermediate,
                 x,
