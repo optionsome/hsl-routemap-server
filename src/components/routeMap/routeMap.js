@@ -113,7 +113,7 @@ const TerminusType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     lines: PropTypes.arrayOf(PropTypes.string).isRequired,
-    nameFi: PropTypes.string.isRequired,
+    nameFi: PropTypes.string,
     nameSe: PropTypes.string,
 });
 

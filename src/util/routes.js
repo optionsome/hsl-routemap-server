@@ -104,6 +104,4 @@ function routesToTree(routes, shortId) {
     return root;
 }
 
-export {
-    routesToTree, // eslint-disable-line import/prefer-default-export
-};
+export { routesToTree }; // eslint-disable-line import/prefer-default-export

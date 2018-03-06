@@ -35,6 +35,4 @@ function calculateStopsViewport(options) {
     return { projectedStops, viewport };
 }
 
-export {
-    calculateStopsViewport, // eslint-disable-line import/prefer-default-export
-};
+export { calculateStopsViewport }; // eslint-disable-line import/prefer-default-export
