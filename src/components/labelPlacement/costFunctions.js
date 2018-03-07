@@ -6,7 +6,7 @@ const OVERFLOW_COST = 500000;
 const INTERSECTION_COST = 5000;
 const INTERSECTION_WITH_FIXED_COST = 25;
 const DISTANCE_COST = 5;
-const ANGLE_COST = 0;
+const ANGLE_COST = 3;
 
 function hasOverflow(position, boundingBox) {
     return position.left < 0 || position.top < 0 ||
