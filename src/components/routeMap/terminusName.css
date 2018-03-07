@@ -1,0 +1,15 @@
+.metro {
+  margin: 2px;
+  color: #ff661f;
+  font-size: 10px;
+  font-family: GothamXNarrow-Book;
+  text-shadow: #FFFFFF 0px 0px 1px;
+}
+
+.rail {
+  margin: 2px;
+  color: #8c4899;
+  font-size: 10px;
+  font-family: GothamXNarrow-Book;
+  text-shadow: #FFFFFF 0px 0px 1px;
+}

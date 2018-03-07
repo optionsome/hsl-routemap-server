@@ -59,7 +59,16 @@ const nearbyTerminals = gql`
               angle,
               length
             }
-          }
+        },
+        terminalNames: getTerminalnames(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+            nodes {
+              lon,
+              lat,
+              nameFi,
+              nameSe,
+              type
+            }
+        },
     },
 `;
 
@@ -67,6 +76,7 @@ const terminalMapper = mapProps((props) => {
     const terminals = props.data.terminals.nodes;
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
+    const terminalNames = props.data.terminalNames.nodes;
     const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({
@@ -91,6 +101,16 @@ const terminalMapper = mapProps((props) => {
                 nameFi: stop.nameFi,
                 nameSe: stop.nameSe,
                 node: stop.modes.nodes[0],
+                x,
+                y,
+            };
+        });
+
+    const projectedTerminalNames = terminalNames
+        .map((terminalName) => {
+            const [x, y] = viewport.project([terminalName.lon, terminalName.lat]);
+            return {
+                ...terminalName,
                 x,
                 y,
             };
@@ -142,6 +162,7 @@ const terminalMapper = mapProps((props) => {
     return {
         mapOptions,
         projectedTerminals,
+        projectedTerminalNames,
         projectedTerminuses,
         projectedIntermediates,
         date: props.date,

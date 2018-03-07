@@ -9,6 +9,7 @@ import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
 import IntermediateLabel from "./intermediateLabel";
+import TerminusNameLabel from "./terminusName";
 
 import styles from "./routeMap.css";
 
@@ -90,6 +91,20 @@ const RouteMap = (props) => {
                             />
                         </ItemPositioned>
                     ))}
+                    {props.projectedTerminalNames.map((name, index) => (
+                        <ItemPositioned
+                            key={index}
+                            x={name.x}
+                            y={name.y}
+                            distance={10}
+                            angle={45}
+                        >
+                            <TerminusNameLabel
+                                nameFi={name.nameFi}
+                                type={name.type}
+                            />
+                        </ItemPositioned>
+                    ))}
                 </ItemContainer>
             </div>
         </div>
@@ -128,9 +143,17 @@ const MapOptions = PropTypes.shape({
     zoom: PropTypes.number.isRequired,
 });
 
+const terminalName = PropTypes.shape({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    type: PropTypes.string.isRequired,
+    nameFi: PropTypes.string,
+});
+
 RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
     projectedTerminals: PropTypes.arrayOf(TerminalType).isRequired,
+    projectedTerminalNames: PropTypes.arrayOf(terminalName).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
     mapOptions: PropTypes.objectOf(MapOptions).isRequired,
