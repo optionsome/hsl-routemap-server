@@ -9,11 +9,9 @@ import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
 import IntermediateLabel from "./intermediateLabel";
-import StopSymbol from "./stopSymbol";
 
 import styles from "./routeMap.css";
 
-const STOP_DIAMETER = 2;
 const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
 
@@ -38,15 +36,6 @@ const RouteMap = (props) => {
             </div>
             <div className={styles.overlays}>
                 <ItemContainer>
-                    {props.projectedStops.map((stop, index) => (
-                        <ItemFixed
-                            key={index}
-                            top={stop.y - (STOP_DIAMETER / 2)}
-                            left={stop.x - (STOP_DIAMETER / 2)}
-                        >
-                            <StopSymbol size={STOP_DIAMETER}/>
-                        </ItemFixed>
-                    ))}
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemFixed
                             key={index}
@@ -131,11 +120,6 @@ const IntermediateType = PropTypes.shape({
     label: PropTypes.string.isRequired,
 });
 
-const StopType = PropTypes.shape({
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-});
-
 const MapOptions = PropTypes.shape({
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
@@ -146,7 +130,6 @@ const MapOptions = PropTypes.shape({
 RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
     projectedTerminals: PropTypes.arrayOf(TerminalType).isRequired,
-    projectedStops: PropTypes.arrayOf(StopType).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
     mapOptions: PropTypes.objectOf(MapOptions).isRequired,

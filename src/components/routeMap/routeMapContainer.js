@@ -4,9 +4,7 @@ import { graphql } from "react-apollo";
 import mapProps from "recompose/mapProps";
 import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
-import { isNumberVariant, trimRouteId, isDropOffOnly, isSubwayRoute, isRailRoute } from "util/domain";
-import routeCompare from "util/routeCompare";
-import flatMap from "lodash/flatMap";
+import { trimRouteId, isSubwayRoute, isRailRoute } from "util/domain";
 import apolloWrapper from "util/apolloWrapper";
 
 import routeGeneralizer from "../../util/routeGeneralizer";
@@ -42,34 +40,6 @@ const nearbyTerminals = gql`
                 }
             }
         },
-        stops: stopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
-            nodes {
-                stopIds
-                lat
-                lon
-                nameFi
-                nameSe
-                stops {
-                    nodes {
-                        calculatedHeading
-                        routeSegments: routeSegmentsForDate(date: $date) {
-                            nodes {
-                                routeId
-                                hasRegularDayDepartures(date: $date)
-                                pickupDropoffType
-                                route {
-                                    nodes {
-                                        destinationFi
-                                        destinationSe
-                                        mode
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         terminus: terminusByDateAndBboxGrouped(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
             nodes {
                 lines
@@ -93,29 +63,8 @@ const nearbyTerminals = gql`
     },
 `;
 
-const stopsMapper = stopGroup => ({
-    ...stopGroup,
-    calculatedHeading: stopGroup.stops.nodes[0].calculatedHeading,
-    routes: flatMap(stopGroup.stops.nodes, node =>
-        node.routeSegments.nodes
-            .filter(routeSegment => !isNumberVariant(routeSegment.routeId))
-            .filter(routeSegment => !isDropOffOnly(routeSegment))
-            .filter(routeSegment => routeSegment.route.nodes.length > 0)
-            .map(routeSegment => ({
-                routeId: trimRouteId(routeSegment.routeId),
-                destinationFi: routeSegment.route.nodes[0].destinationFi,
-                destinationSe: routeSegment.route.nodes[0].destinationSe,
-                mode: routeSegment.route.nodes[0].mode,
-            }))).sort(routeCompare),
-});
-
 const terminalMapper = mapProps((props) => {
     const terminals = props.data.terminals.nodes;
-    const stops = props.data.stops.nodes
-        // Merge properties from mode-specific stops
-        .map(stopsMapper)
-        // Filter out stops with no departures
-        .filter(stop => !!stop.routes.length);
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
     const { latitude, longitude } = props;
@@ -142,17 +91,6 @@ const terminalMapper = mapProps((props) => {
                 nameFi: stop.nameFi,
                 nameSe: stop.nameSe,
                 node: stop.modes.nodes[0],
-                x,
-                y,
-            };
-        });
-
-    const projectedStops = stops
-        .map((stop) => {
-            const [x, y] = viewport.project([stop.lon, stop.lat]);
-
-            return {
-                ...stop,
                 x,
                 y,
             };
@@ -206,7 +144,6 @@ const terminalMapper = mapProps((props) => {
         projectedTerminals,
         projectedTerminuses,
         projectedIntermediates,
-        projectedStops,
         date: props.date,
     };
 });
