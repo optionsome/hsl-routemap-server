@@ -12,7 +12,7 @@ import {
 } from "./costFunctions";
 
 
-const timeout = 3 * 60 * 1000;
+const timeout = 60 * 60 * 1000;
 const iterationsPerFactor = 10;
 
 const angles = [-32, -16, -8, -4, -1, 0, 1, 4, 8, 16, 32];
