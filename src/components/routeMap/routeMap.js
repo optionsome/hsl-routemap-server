@@ -28,7 +28,8 @@ const RouteMap = (props) => {
                     options={props.mapOptions}
                     components={{
                         text_fisv: { enabled: true },
-                        routes: { enabled: true },
+                        regular_routes: { enabled: true },
+                        regular_stops: { enabled: true },
                         municipal_borders: { enabled: true },
                     }}
                     date={props.date}
