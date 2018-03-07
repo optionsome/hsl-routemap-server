@@ -7,7 +7,7 @@ const Line = props => (
     <path
         d={`M${props.x} ${props.y} L${props.x + props.cx} ${props.y + props.cy}`}
         fill="none"
-        stroke="#333333"
+        stroke="#007ac9"
         strokeWidth="0.5"
         clipPath={`url(#label-mask-${props.index})`}
     />
