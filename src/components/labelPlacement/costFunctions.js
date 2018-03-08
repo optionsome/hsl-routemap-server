@@ -5,8 +5,8 @@ const OVERLAP_COST_FIXED = 5;
 const OVERFLOW_COST = 500000;
 const INTERSECTION_COST = 5000;
 const INTERSECTION_WITH_FIXED_COST = 25;
-const DISTANCE_COST = 5;
-const ANGLE_COST = 3;
+const DISTANCE_COST = 2.5;
+const ANGLE_COST = 1;
 
 function hasOverflow(position, boundingBox) {
     return position.left < 0 || position.top < 0 ||
@@ -140,8 +140,8 @@ function getDistanceCost(positions, indexes) {
  */
 function getAngleCost(positions, indexes) {
     return ANGLE_COST * indexes.reduce((prev, index) => {
-        const phi = Math.abs(positions[index].angle - positions[index].initialAngle) % 360;
-        return prev + ((phi > 180) ? 360 - phi : phi);
+        const phi = Math.abs(positions[index].angle - positions[index].initialAngle) % 180;
+        return prev + ((phi > 90) ? 180 - phi : phi);
     }, 0);
 }
 
