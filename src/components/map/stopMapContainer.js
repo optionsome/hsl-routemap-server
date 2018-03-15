@@ -22,7 +22,7 @@ const MINI_MAP_ZOOM = 9;
 
 const nearbyStopsQuery = gql`
     query nearbyStopsQuery($minLat: Float!, $minLon: Float!, $maxLat: Float!, $maxLon: Float!, $date: Date!) {
-        stopGroups: stopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+        stopGroups: regularStopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
             nodes {
                 stopIds
                 shortId
