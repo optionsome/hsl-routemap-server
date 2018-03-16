@@ -27,12 +27,7 @@ const RouteMap = (props) => {
             <div className={styles.map} style={mapStyle}>
                 <MapImage
                     options={props.mapOptions}
-                    components={{
-                        text_fisv: { enabled: true },
-                        regular_routes: { enabled: true },
-                        regular_stops: { enabled: true },
-                        municipal_borders: { enabled: true },
-                    }}
+                    components={props.mapComponents}
                     date={props.date}
                 />
             </div>
@@ -157,6 +152,7 @@ RouteMap.propTypes = {
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
     mapOptions: PropTypes.objectOf(MapOptions).isRequired,
+    mapComponents: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default RouteMap;
