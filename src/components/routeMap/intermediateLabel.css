@@ -1,12 +1,12 @@
 .label {
   margin: 2px;
   color: rgb(0, 0, 167);
-  font-size: 6px;
-  line-height: 6px;
+  font-size: 10px;
+  line-height: 10px;
   background-color: #ffffffa8;
   border-radius: 1px;
   padding: 1px;
   font-family: GothamXNarrow-Light;
-  max-width: 30px;
+  max-width: 50px;
   text-align: center;
 }

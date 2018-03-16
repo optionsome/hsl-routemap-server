@@ -1,22 +1,22 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import style from "./terminusName.css";
+import style from "./stationName.css";
 
 
-const TerminusName = props => (
+const StationName = props => (
     <div className={props.type === "06" ? style.metro : style.rail}>
         {props.nameFi}
     </div>
 );
 
-TerminusName.defaultProps = {
+StationName.defaultProps = {
     nameFi: null,
 };
 
-TerminusName.propTypes = {
+StationName.propTypes = {
     nameFi: PropTypes.string,
     type: PropTypes.string.isRequired,
 };
 
-export default TerminusName;
+export default StationName;

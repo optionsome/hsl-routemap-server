@@ -9,7 +9,7 @@ import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
 import IntermediateLabel from "./intermediateLabel";
-import TerminusNameLabel from "./terminusName";
+import StationName from "./stationName";
 
 import styles from "./routeMap.css";
 
@@ -99,7 +99,7 @@ const RouteMap = (props) => {
                             distance={10}
                             angle={45}
                         >
-                            <TerminusNameLabel
+                            <StationName
                                 nameFi={name.nameFi}
                                 type={name.type}
                             />
