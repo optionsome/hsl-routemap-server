@@ -1,12 +1,15 @@
 import segseg from "segseg";
 
-const OVERLAP_COST = 1;
+const OVERLAP_COST = 5;
 const OVERLAP_COST_FIXED = 5;
 const OVERFLOW_COST = 500000;
 const INTERSECTION_COST = 5000;
 const INTERSECTION_WITH_FIXED_COST = 25;
 const DISTANCE_COST = 2.5;
 const ANGLE_COST = 1;
+const ALPHA_COST = 1000;
+
+const ALPHA_STEP = 5;
 
 function hasOverflow(position, boundingBox) {
     return position.left < 0 || position.top < 0 ||
@@ -17,6 +20,21 @@ function hasOverflow(position, boundingBox) {
 function getOverflowCost(positions, indexes, boundingBox) {
     return OVERFLOW_COST * indexes.reduce((prev, index) =>
         (hasOverflow(positions[index], boundingBox) ? (prev + 1) : prev), 0);
+}
+
+function getAlphaOverflowCost(positions, indexes, isOccupied) {
+    return positions.map((position) => {
+        let overlapCounter = 0;
+        for (let { left } = position; left < (position.left + position.width); left += ALPHA_STEP) {
+            for (
+                let { top } = position;
+                top < (position.top + position.height);
+                top += ALPHA_STEP) {
+                if (isOccupied(left, top)) overlapCounter++;
+            }
+        }
+        return overlapCounter;
+    }).reduce((a, b) => a + b) * ALPHA_COST;
 }
 
 /**
@@ -155,4 +173,5 @@ export {
     getFixedIntersectionCost,
     getDistanceCost,
     getAngleCost,
+    getAlphaOverflowCost,
 };

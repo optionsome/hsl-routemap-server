@@ -1,4 +1,5 @@
 import updatePosition from "./updatePosition";
+import { getIfOccupied } from "../../util/MapAlphaChannelMatrix";
 
 import {
     hasOverflow,
@@ -9,6 +10,7 @@ import {
     getIntersectionCost,
     getFixedIntersectionCost,
     getAngleCost,
+    getAlphaOverflowCost,
 } from "./costFunctions";
 
 
@@ -26,7 +28,7 @@ const diffsArray = factors.map(factor => (
     ]), [])
 ));
 
-function getCost(placement, bbox) {
+function getCost(placement, bbox, alphaByteArray) {
     const { positions, indexes } = placement;
     const overflow = getOverflowCost(positions, indexes, bbox);
     const overlap = getOverlapCost(positions, indexes);
@@ -34,7 +36,14 @@ function getCost(placement, bbox) {
     const angle = getAngleCost(positions, indexes);
     const intersection = getIntersectionCost(positions, indexes);
     const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
-    return overflow + overlap + distance + angle + intersection + intersectionWithFixed;
+    const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
+    return overflow
+        + overlap
+        + distance
+        + angle
+        + intersection
+        + intersectionWithFixed
+        + alphaOverlap;
 }
 
 function getOverlappingItem(placement, indexToOverlap) {
@@ -63,15 +72,14 @@ function getPlacements(placement, index, diffs, bbox) {
         .map(updatedPositions => ({ positions: updatedPositions, indexes: [...indexes, index] }));
 }
 
-function comparePlacements(placement, other, bbox) {
+function comparePlacements(placement, other, bbox, alphaByteArray) {
     const indexes = [...new Set([...placement.indexes, ...other.indexes])];
-    const cost = getCost({ ...placement, indexes }, bbox);
-    const costOther = getCost({ ...other, indexes }, bbox);
-
+    const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray);
+    const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray);
     return costOther < cost ? other : placement;
 }
 
-function getNextPlacement(initialPlacement, index, diffs, bbox) {
+function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray) {
     // Get potential positions for item at index
     const placements = getPlacements({ ...initialPlacement, indexes: [] }, index, diffs, bbox);
 
@@ -86,12 +94,12 @@ function getNextPlacement(initialPlacement, index, diffs, bbox) {
         initialPlacement,
         ...placements,
         ...placementsOverlapping,
-    ].reduce((prev, cur) => comparePlacements(prev, cur, bbox));
+    ].reduce((prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray));
 
     return nextPlacement;
 }
 
-function optimizePositions(initialPositions, bbox) {
+function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions) {
     const start = Date.now();
 
     let placement = {
@@ -99,15 +107,23 @@ function optimizePositions(initialPositions, bbox) {
         indexes: [],
     };
 
+    const isOccupied = getIfOccupied(alphaByteArray, mapOptions);
+
+    const iter = factors.length * iterationsPerFactor * placement.positions.length;
+    let counter = 0;
+
     for (let factor = 0; factor < factors.length; factor++) {
         const diffs = diffsArray[factor];
         for (let iteration = 0; iteration < iterationsPerFactor; iteration++) {
+            console.log(`${counter}/${iter}`); // eslint-disable-line
             const previous = placement;
             for (let index = 0; index < placement.positions.length; index++) {
+                counter++;
                 if (!placement.positions[index].isFixed) {
-                    placement = getNextPlacement(placement, index, diffs, bbox);
+                    placement = getNextPlacement(placement, index, diffs, bbox, isOccupied);
                 }
                 if ((Date.now() - start) > timeout) {
+                    console.log("Timeout"); // eslint-disable-line
                     return placement.positions;
                 }
             }
@@ -116,7 +132,6 @@ function optimizePositions(initialPositions, bbox) {
             }
         }
     }
-
     return placement.positions;
 }
 

@@ -32,7 +32,7 @@ const RouteMap = (props) => {
                 />
             </div>
             <div className={styles.overlays}>
-                <ItemContainer>
+                <ItemContainer mapOptions={props.mapOptions} mapComponents={props.mapComponents}>
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemFixed
                             key={index}

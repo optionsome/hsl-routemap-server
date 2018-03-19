@@ -3,7 +3,11 @@
 import optimizePositions from "./optimizePositions";
 
 self.addEventListener("message", (event) => {
-    const { positions, boundingBox } = event.data;
-    const optimizedPositions = optimizePositions(positions, boundingBox);
+    const {
+        positions, boundingBox, alphaByteArray, mapOptions,
+    } = event.data;
+    const optimizedPositions =
+        optimizePositions(positions, boundingBox, alphaByteArray, mapOptions);
+
     self.postMessage(optimizedPositions);
 });

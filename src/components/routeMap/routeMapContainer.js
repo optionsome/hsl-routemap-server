@@ -6,7 +6,6 @@ import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
 import { trimRouteId, isSubwayRoute, isRailRoute } from "util/domain";
 import apolloWrapper from "util/apolloWrapper";
-import MapAlphaChannelMatrix from "../../util/MapAlphaChannelMatrix";
 
 import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
@@ -128,9 +127,9 @@ const terminalMapper = mapProps((props) => {
             label: routeGeneralizer(intermediate.routes.map(id => trimRouteId(id))),
         }))
         .filter(intermediate =>
-            (intermediate.length > 200 && intermediate.label.length < 80)
-            || (intermediate.length > 1000 && intermediate.label.length < 130)
-            || intermediate.length > 10000)
+            (intermediate.length > 200 && intermediate.label.length < 160)
+            || (intermediate.length > 1000 && intermediate.label.length < 200)
+            || intermediate.length > 5000)
         .map((intermediate) => {
             const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
             return {
@@ -166,11 +165,6 @@ const terminalMapper = mapProps((props) => {
         regular_stops: { enabled: true },
         municipal_borders: { enabled: true },
     };
-
-    const matrix = new MapAlphaChannelMatrix(mapOptions, mapComponents);
-    matrix.initialize(() => {
-        console.log(matrix.isOccupied(135, 0));
-    });
 
     return {
         mapOptions,

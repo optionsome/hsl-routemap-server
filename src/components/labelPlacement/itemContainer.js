@@ -4,6 +4,7 @@ import renderQueue from "util/renderQueue";
 
 import ItemOverlay from "./itemOverlay";
 import OptimizePositionsWorker from "./optimizePositions.worker";
+import { Matrix } from "../../util/MapAlphaChannelMatrix";
 
 import styles from "./itemContainer.css";
 
@@ -62,7 +63,15 @@ class ItemContainer extends Component {
             renderQueue.remove(this, { error: new Error(event.message) });
         });
 
-        this.worker.postMessage({ positions: initialPositions, boundingBox });
+        const alphaChannelMatrix = new Matrix(this.props.mapOptions, this.props.mapComponents);
+        alphaChannelMatrix.initialize((alphaChannelByteArray) => {
+            this.worker.postMessage({
+                positions: initialPositions,
+                boundingBox,
+                alphaByteArray: alphaChannelByteArray,
+                mapOptions: this.props.mapOptions,
+            });
+        });
     }
 
     render() {
@@ -84,8 +93,17 @@ class ItemContainer extends Component {
     }
 }
 
+const MapOptions = PropTypes.shape({
+    height: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    center: PropTypes.arrayOf(PropTypes.number).isRequired,
+    zoom: PropTypes.number.isRequired,
+});
+
 ItemContainer.propTypes = {
     children: PropTypes.node.isRequired, // ItemFixed or ItemPositioned components
+    mapOptions: PropTypes.objectOf(MapOptions).isRequired,
+    mapComponents: PropTypes.object.isRequired, // eslint-disable-line
 };
 
 export default ItemContainer;
