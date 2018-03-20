@@ -1,13 +1,13 @@
 import segseg from "segseg";
 
 const OVERLAP_COST = 5;
-const OVERLAP_COST_FIXED = 5;
+const OVERLAP_COST_FIXED = 6;
 const OVERFLOW_COST = 500000;
 const INTERSECTION_COST = 5000;
 const INTERSECTION_WITH_FIXED_COST = 25;
 const DISTANCE_COST = 2.5;
 const ANGLE_COST = 1;
-const ALPHA_COST = 1000;
+const ALPHA_COST = 1500;
 
 const ALPHA_STEP = 5;
 
@@ -22,19 +22,22 @@ function getOverflowCost(positions, indexes, boundingBox) {
         (hasOverflow(positions[index], boundingBox) ? (prev + 1) : prev), 0);
 }
 
-function getAlphaOverflowCost(positions, indexes, isOccupied) {
-    return positions.map((position) => {
-        let overlapCounter = 0;
-        for (let { left } = position; left < (position.left + position.width); left += ALPHA_STEP) {
-            for (
-                let { top } = position;
-                top < (position.top + position.height);
-                top += ALPHA_STEP) {
-                if (isOccupied(left, top)) overlapCounter++;
-            }
+function getPositionAlphaOverflowCost(position, isOccupied) {
+    let overlapCounter = 0;
+    for (let { left } = position; left < (position.left + position.width); left += ALPHA_STEP) {
+        for (
+            let { top } = position;
+            top < (position.top + position.height);
+            top += ALPHA_STEP) {
+            if (isOccupied(left, top)) overlapCounter++;
         }
-        return overlapCounter;
-    }).reduce((a, b) => a + b) * ALPHA_COST;
+    }
+    return overlapCounter * position.priority;
+}
+
+function getAlphaOverflowCost(positions, indexes, isOccupied) {
+    return positions.map(position => getPositionAlphaOverflowCost(position, isOccupied))
+        .reduce((a, b) => a + b) * ALPHA_COST;
 }
 
 /**
@@ -49,6 +52,17 @@ function getOverlapArea(a, b) {
     return Math.max(0, width) * Math.max(0, height);
 }
 
+function getPositionOverlapCost(positions, indexes, i, runAll) {
+    let overlap = 0;
+    indexes.forEach((j) => {
+        if (j >= i && indexes.includes(i) && !runAll) return;
+        const area = getOverlapArea(positions[i], positions[j]);
+        const isFixed = positions[i].isFixed || positions[j].isFixed;
+        overlap += area * (isFixed ? OVERLAP_COST_FIXED : OVERLAP_COST);
+    });
+    return overlap;
+}
+
 /**
  * Returns cost for overlapping non-fixed items
  * @param {Object[]} positions - Positions
@@ -58,12 +72,7 @@ function getOverlapArea(a, b) {
 function getOverlapCost(positions, indexes) {
     let overlap = 0;
     positions.forEach((position, i) => {
-        indexes.forEach((j) => {
-            if (j >= i && indexes.includes(i)) return;
-            const area = getOverlapArea(positions[i], positions[j]);
-            const isFixed = positions[i].isFixed || positions[j].isFixed;
-            overlap += area * (isFixed ? OVERLAP_COST_FIXED : OVERLAP_COST);
-        });
+        overlap += getPositionOverlapCost(positions, indexes, i);
     });
     return overlap;
 }
@@ -97,6 +106,41 @@ function getIntersectionCost(positions, indexes) {
     return sum * INTERSECTION_COST;
 }
 
+function getPositionFixedIntersectionCost(positions, indexes, index) {
+    let sum = 0;
+    const position = positions[index];
+    indexes.forEach((j) => {
+        if (j >= index && indexes.includes(index)) return;
+        // If both are dynamic or fixed, return
+        if (position.isFixed === positions[j].isFixed) return;
+        const a = !position.isFixed ? position : positions[j];
+        const b = position.isFixed ? position : positions[j];
+
+        const a0 = [a.x, a.y];
+        const a1 = [a.x + a.cx, a.y + a.cy];
+
+        const tl = [b.left, b.top];
+        const tr = [b.left + b.width, b.top];
+        const bl = [b.left, b.top + b.height];
+        const br = [b.left + b.width, b.top + b.height];
+
+        const p1 = segseg(a0, a1, tl, tr);
+        const p2 = segseg(a0, a1, tl, bl);
+        const p3 = segseg(a0, a1, bl, br);
+        const p4 = segseg(a0, a1, tr, br);
+
+        const intersections = ([p1, p2, p3, p4]).filter(p => Array.isArray(p));
+
+        if (intersections.length === 2) {
+            const dx = intersections[0][0] - intersections[1][0];
+            const dy = intersections[0][1] - intersections[1][1];
+
+            sum += Math.sqrt((dx ** 2) + (dy ** 2));
+        }
+    });
+    return sum;
+}
+
 /**
  * Returns cost for intersected areas with fixed items
  * @param {Object[]} positions - Positions
@@ -106,35 +150,7 @@ function getIntersectionCost(positions, indexes) {
 function getFixedIntersectionCost(positions, indexes) {
     let sum = 0;
     positions.forEach((position, i) => {
-        indexes.forEach((j) => {
-            if (j >= i && indexes.includes(i)) return;
-            // If both are dynamic or fixed, return
-            if (position.isFixed === positions[j].isFixed) return;
-            const a = !position.isFixed ? position : positions[j];
-            const b = position.isFixed ? position : positions[j];
-
-            const a0 = [a.x, a.y];
-            const a1 = [a.x + a.cx, a.y + a.cy];
-
-            const tl = [b.left, b.top];
-            const tr = [b.left + b.width, b.top];
-            const bl = [b.left, b.top + b.height];
-            const br = [b.left + b.width, b.top + b.height];
-
-            const p1 = segseg(a0, a1, tl, tr);
-            const p2 = segseg(a0, a1, tl, bl);
-            const p3 = segseg(a0, a1, bl, br);
-            const p4 = segseg(a0, a1, tr, br);
-
-            const intersections = ([p1, p2, p3, p4]).filter(p => Array.isArray(p));
-
-            if (intersections.length === 2) {
-                const dx = intersections[0][0] - intersections[1][0];
-                const dy = intersections[0][1] - intersections[1][1];
-
-                sum += Math.sqrt((dx ** 2) + (dy ** 2));
-            }
-        });
+        sum += getPositionFixedIntersectionCost(positions, indexes, i);
     });
     return sum * INTERSECTION_WITH_FIXED_COST;
 }
@@ -147,7 +163,11 @@ function getFixedIntersectionCost(positions, indexes) {
  */
 function getDistanceCost(positions, indexes) {
     return DISTANCE_COST * indexes.reduce((prev, index) =>
-        prev + (positions[index].distance - positions[index].initialDistance), 0);
+        prev
+        + (
+            (positions[index].distance - positions[index].initialDistance)
+            * positions[index].priority
+        ), 0);
 }
 
 /**
@@ -174,4 +194,7 @@ export {
     getDistanceCost,
     getAngleCost,
     getAlphaOverflowCost,
+    getPositionAlphaOverflowCost,
+    getPositionOverlapCost,
+    getPositionFixedIntersectionCost,
 };

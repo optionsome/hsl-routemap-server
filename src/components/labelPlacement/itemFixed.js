@@ -5,10 +5,15 @@ class ItemFixed extends Component {
     constructor(props) {
         super(props);
         this.state = { top: props.top, left: props.left };
+        this.visible = true;
     }
 
     setPosition(top, left) {
         this.setState({ top, left });
+    }
+
+    getVisible() {
+        return this.visible;
     }
 
     getPosition() {
@@ -18,6 +23,8 @@ class ItemFixed extends Component {
             width: this.root.offsetWidth,
             height: this.root.offsetHeight,
             isFixed: true,
+            visible: this.visible,
+            priority: 1,
         };
     }
 

@@ -64,6 +64,7 @@ const RouteMap = (props) => {
                             x={intermediate.x}
                             y={intermediate.y}
                             distance={4}
+                            allowHidden
                             angle={intermediate.angle}
                         >
                             <IntermediateLabel
@@ -78,6 +79,7 @@ const RouteMap = (props) => {
                             y={terminus.y}
                             distance={10}
                             angle={45}
+                            priority={2}
                         >
                             <TerminusLabel
                                 lines={terminus.lines}
@@ -93,6 +95,7 @@ const RouteMap = (props) => {
                             y={name.y}
                             distance={10}
                             angle={45}
+                            priority={3}
                         >
                             <StationName
                                 nameFi={name.nameFi}

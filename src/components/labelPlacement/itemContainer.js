@@ -52,9 +52,15 @@ class ItemContainer extends Component {
 
         this.worker.addEventListener("message", (event) => {
             const positions = event.data;
-            refs.forEach((ref, index) => (
-                ref.setPosition(positions[index].top, positions[index].left)
-            ));
+            refs.forEach((ref, index) => {
+                ref.setPosition(
+                    positions[index].top,
+                    positions[index].left,
+                    positions[index].visible
+                );
+                positions[index].visible = ref.getVisible();
+            });
+
             this.setState({ items: positions.filter(({ isFixed }) => !isFixed) });
             renderQueue.remove(this);
         });
@@ -85,7 +91,7 @@ class ItemContainer extends Component {
                 {this.state.items && <ItemOverlay
                     width={this.root.offsetWidth}
                     height={this.root.offsetHeight}
-                    items={this.state.items}
+                    items={this.state.items.filter(({ visible }) => visible)}
                 />}
                 {children}
             </div>

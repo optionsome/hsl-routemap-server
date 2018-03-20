@@ -127,9 +127,9 @@ const terminalMapper = mapProps((props) => {
             label: routeGeneralizer(intermediate.routes.map(id => trimRouteId(id))),
         }))
         .filter(intermediate =>
-            (intermediate.length > 200 && intermediate.label.length < 160)
-            || (intermediate.length > 1000 && intermediate.label.length < 200)
-            || intermediate.length > 5000)
+            intermediate.label.length < 50
+            || (intermediate.length > 250 && intermediate.label.length < 100)
+            || intermediate.length > 500)
         .map((intermediate) => {
             const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
             return {
