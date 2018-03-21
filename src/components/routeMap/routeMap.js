@@ -88,21 +88,23 @@ const RouteMap = (props) => {
                             />
                         </ItemPositioned>
                     ))}
-                    {props.projectedTerminalNames.map((name, index) => (
-                        <ItemPositioned
-                            key={index}
-                            x={name.x}
-                            y={name.y}
-                            distance={10}
-                            angle={45}
-                            priority={3}
-                        >
-                            <StationName
-                                nameFi={name.nameFi}
-                                type={name.type}
-                            />
-                        </ItemPositioned>
-                    ))}
+                    {
+                        props.projectedTerminalNames.map((name, index) => (
+                            <ItemPositioned
+                                key={index}
+                                x={name.x}
+                                y={name.y}
+                                distance={10}
+                                angle={45}
+                                priority={3}
+                            >
+                                <StationName
+                                    nameFi={name.nameFi}
+                                    nameSe={name.nameSe}
+                                    type={name.type}
+                                />
+                            </ItemPositioned>
+                        ))}
                 </ItemContainer>
             </div>
         </div>

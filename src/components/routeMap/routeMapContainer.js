@@ -1,4 +1,6 @@
 import compose from "recompose/compose";
+import withStateHandlers from "recompose/withStateHandlers";
+import lifecycle from "recompose/lifecycle";
 import PropTypes from "prop-types";
 import { graphql } from "react-apollo";
 import mapProps from "recompose/mapProps";
@@ -6,6 +8,7 @@ import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
 import { trimRouteId, isSubwayRoute, isRailRoute } from "util/domain";
 import apolloWrapper from "util/apolloWrapper";
+import fetchStations from "../../util/overpassAPI";
 
 import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
@@ -20,8 +23,8 @@ const mapPositionMapper = mapProps((props) => {
         zoom: props.zoom,
     });
 
-    const [minLon, minLat] = viewport.unproject([0, 0]);
-    const [maxLon, maxLat] = viewport.unproject([props.width, props.height]);
+    const [minLon, minLat] = viewport.unproject([0, 0], { topLeft: true });
+    const [maxLon, maxLat] = viewport.unproject([props.width, props.height], { topLeft: true });
     return {
         ...props, minLat, minLon, maxLat, maxLon,
     };
@@ -60,23 +63,37 @@ const nearbyTerminals = gql`
               length
             }
         },
-        terminalNames: getTerminalnames(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
-            nodes {
-              lon,
-              lat,
-              nameFi,
-              nameSe,
-              type
-            }
-        },
     },
 `;
+
+const mapOverpassData = (data, props) => {
+    const { latitude, longitude } = props;
+    const viewport = new PerspectiveMercatorViewport({
+        longitude,
+        latitude,
+        width: props.width,
+        height: props.height,
+        zoom: props.zoom,
+    });
+
+    return data.elements.map((el) => {
+        const [x, y] = viewport.project([el.lon, el.lat]);
+        return {
+            lat: el.lat,
+            lon: el.lon,
+            nameFi: el.tags["name:fi"],
+            nameSe: el.tags["name:sv"],
+            x,
+            y,
+            type: el.tags.station,
+        };
+    });
+};
 
 const terminalMapper = mapProps((props) => {
     const terminals = props.data.terminals.nodes;
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
-    const terminalNames = props.data.terminalNames.nodes;
     const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({
@@ -101,16 +118,6 @@ const terminalMapper = mapProps((props) => {
                 nameFi: stop.nameFi,
                 nameSe: stop.nameSe,
                 node: stop.modes.nodes[0],
-                x,
-                y,
-            };
-        });
-
-    const projectedTerminalNames = terminalNames
-        .map((terminalName) => {
-            const [x, y] = viewport.project([terminalName.lon, terminalName.lat]);
-            return {
-                ...terminalName,
                 x,
                 y,
             };
@@ -167,10 +174,10 @@ const terminalMapper = mapProps((props) => {
     };
 
     return {
+        projectedTerminalNames: props.projectedTerminalNames,
         mapOptions,
         mapComponents,
         projectedTerminals,
-        projectedTerminalNames,
         projectedTerminuses,
         projectedIntermediates,
         date: props.date,
@@ -179,6 +186,26 @@ const terminalMapper = mapProps((props) => {
 
 const hoc = compose(
     mapPositionMapper,
+    withStateHandlers(props => ({
+        ...props,
+        projectedTerminalNames: [],
+    }), {
+        onData: props => data => ({
+            ...props,
+            projectedTerminalNames: mapOverpassData(data, props),
+        }),
+    }),
+    lifecycle({
+        componentDidMount() {
+            fetchStations(
+                this.props.minLat,
+                this.props.minLon,
+                this.props.maxLat,
+                this.props.maxLon
+            )
+                .then(data => this.props.onData(data));
+        },
+    }),
     graphql(nearbyTerminals),
     apolloWrapper(terminalMapper)
 );
