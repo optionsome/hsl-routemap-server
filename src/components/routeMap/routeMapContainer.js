@@ -81,7 +81,7 @@ const mapOverpassData = (data, props) => {
         return {
             lat: el.lat,
             lon: el.lon,
-            nameFi: el.tags["name:fi"],
+            nameFi: el.tags.name,
             nameSe: el.tags["name:sv"],
             x,
             y,
