@@ -9,15 +9,15 @@ import {
     getDistanceCost,
     getIntersectionCost,
     getFixedIntersectionCost,
-    getAngleCost,
+    // getAngleCost,
     getAlphaOverflowCost,
     getPositionAlphaOverflowCost,
-    getPositionOverlapCost,
-    getPositionFixedIntersectionCost,
+    // getPositionOverlapCost,
+    // getPositionFixedIntersectionCost,
 } from "./costFunctions";
 
 
-const timeout = 60 * 60 * 1000;
+const timeout = 600 * 60 * 1000;
 const iterationsPerFactor = 10;
 
 const angles = [-32, -16, -8, -4, -1, 0, 1, 4, 8, 16, 32];
@@ -36,14 +36,14 @@ function getCost(placement, bbox, alphaByteArray) {
     const overflow = getOverflowCost(positions, indexes, bbox);
     const overlap = getOverlapCost(positions, indexes);
     const distance = getDistanceCost(positions, indexes);
-    const angle = getAngleCost(positions, indexes);
+    // const angle = getAngleCost(positions, indexes);
     const intersection = getIntersectionCost(positions, indexes);
     const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
     const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
     return overflow
         + overlap
         + distance
-        + angle
+        // + angle
         + intersection
         + intersectionWithFixed
         + alphaOverlap;
@@ -141,21 +141,21 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions) {
     const positions = findMostSuitablePosition(placement, bbox, isOccupied);
 
     const newPlacements = [];
-    positions.forEach((position, index) => {
+    positions.forEach((position, index) => { // eslint-disable-line 
         const score = getPositionAlphaOverflowCost(position, isOccupied);
         const distance = position.distance - position.initialDistance;
 
-        const indexes = (new Int8Array(positions.length))
+        /* const indexes = (new Int8Array(positions.length))
             .map((_, i) => i)
             .filter(i => i !== index);
         const overlap =
             getPositionOverlapCost(positions, indexes, index, true);
         const fixedOverlap =
-            getPositionFixedIntersectionCost(positions, indexes, index);
+            getPositionFixedIntersectionCost(positions, indexes, index); */
 
         newPlacements.push({
             ...position,
-            visible: score < 10 && distance < 200 && overlap === 0 && fixedOverlap === 0,
+            visible: score < 10 && distance < 200, // && overlap === 0 && fixedOverlap === 0,
         });
     });
     return newPlacements;
