@@ -2,11 +2,11 @@
   margin: 2px;
   color: #333;
   background: white;
-  font-size: 11px;
-  line-height: 11px;
+  font-size: 14px;
+  line-height: 14px;
   padding: 2px;
   font-family: GothamXNarrow-Light;
-  max-width: 70px;
+  max-width: 100px;
   text-align: center;
   box-shadow: black 0px 0px 0.1px;
 }
