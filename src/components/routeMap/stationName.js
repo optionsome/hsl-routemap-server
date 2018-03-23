@@ -5,7 +5,7 @@ import style from "./stationName.css";
 
 
 const StationName = props => (
-    <div className={props.type === "subway" ? style.metro : style.rail}>
+    <div className={props.type === "06" ? style.metro : style.rail}>
         {props.nameFi}
         <br/>
         {props.nameSe}
