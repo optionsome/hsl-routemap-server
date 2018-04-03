@@ -9,7 +9,7 @@ import {
     getDistanceCost,
     getIntersectionCost,
     getFixedIntersectionCost,
-    // getAngleCost,
+    getAngleCost,
     getAlphaOverflowCost,
     getPositionAlphaOverflowCost,
     // getPositionOverlapCost,
@@ -18,11 +18,11 @@ import {
 
 
 const timeout = 600 * 60 * 1000;
-const iterationsPerFactor = 10;
+const iterationsPerFactor = 15;
 
-const angles = [-32, -16, -8, -4, -1, 0, 1, 4, 8, 16, 32];
-const distances = [-25, -10, -1, 0, 1, 10, 25];
-const factors = [5, 3, 2, 1];
+const angles = [-6, -4, -2, -1, 0, 1, 2, 4, 6];
+const distances = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
+const factors = [30, 15, 8, 4, 2, 1];
 
 const diffsArray = factors.map(factor => (
     angles.reduce((prev, angle) => ([
@@ -36,14 +36,14 @@ function getCost(placement, bbox, alphaByteArray) {
     const overflow = getOverflowCost(positions, indexes, bbox);
     const overlap = getOverlapCost(positions, indexes);
     const distance = getDistanceCost(positions, indexes);
-    // const angle = getAngleCost(positions, indexes);
+    const angle = getAngleCost(positions, indexes);
     const intersection = getIntersectionCost(positions, indexes);
     const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
     const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
     return overflow
         + overlap
         + distance
-        // + angle
+        + angle
         + intersection
         + intersectionWithFixed
         + alphaOverlap;
