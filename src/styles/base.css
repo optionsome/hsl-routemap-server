@@ -29,6 +29,11 @@
   src: local("Gotham XNarrow Bold"), local("GothamXNarrow-Bold");
 }
 
+@font-face {
+  font-family: GothamXNarrow-Light;
+  src: local("Gotham XNarrow Light"), local("GothamXNarrow-Light");
+}
+
 body {
     margin: 0;
 }
