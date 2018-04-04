@@ -76,7 +76,11 @@ class App extends Component {
         let rootStyle = {};
 
         if (!props.printTimetablesAsA4) {
-            rootStyle = { display: "inline-block" };
+            rootStyle = {
+                display: "inline-block",
+                width: props.width,
+                height: props.height,
+            };
         }
 
         return (

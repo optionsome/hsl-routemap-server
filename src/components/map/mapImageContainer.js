@@ -54,7 +54,7 @@ MapImageContainer.defaultProps = {
 };
 
 MapImageContainer.optionsShape = {
-    center: PropTypes.arrayOf(PropTypes.number).isRequired,
+    center: PropTypes.array.isRequired,
     zoom: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,

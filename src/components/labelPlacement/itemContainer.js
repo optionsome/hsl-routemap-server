@@ -99,16 +99,16 @@ class ItemContainer extends Component {
     }
 }
 
-const MapOptions = PropTypes.shape({
+const MapOptions = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    center: PropTypes.arrayOf(PropTypes.number).isRequired,
+    center: PropTypes.array.isRequired,
     zoom: PropTypes.number.isRequired,
-});
+};
 
 ItemContainer.propTypes = {
     children: PropTypes.node.isRequired, // ItemFixed or ItemPositioned components
-    mapOptions: PropTypes.objectOf(MapOptions).isRequired,
+    mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
 };
 

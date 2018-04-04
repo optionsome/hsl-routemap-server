@@ -111,9 +111,6 @@ const RouteMap = (props) => {
     );
 };
 
-RouteMap.defaultProps = {
-};
-
 const TerminusType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
@@ -136,12 +133,12 @@ const IntermediateType = PropTypes.shape({
     label: PropTypes.string.isRequired,
 });
 
-const MapOptions = PropTypes.shape({
+const MapOptions = {
     height: PropTypes.number.isRequired,
     width: PropTypes.number.isRequired,
-    center: PropTypes.arrayOf(PropTypes.number).isRequired,
     zoom: PropTypes.number.isRequired,
-});
+    center: PropTypes.arrayOf(PropTypes.number).isRequired,
+};
 
 const terminalName = PropTypes.shape({
     x: PropTypes.number.isRequired,
@@ -156,7 +153,7 @@ RouteMap.propTypes = {
     projectedTerminalNames: PropTypes.arrayOf(terminalName).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
-    mapOptions: PropTypes.objectOf(MapOptions).isRequired,
+    mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
 };
 

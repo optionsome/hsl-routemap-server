@@ -50,7 +50,6 @@ const TerminalSymbol = (props) => {
 };
 
 TerminalSymbol.propTypes = {
-    nodes: PropTypes.string.isRequired,
     size: PropTypes.number.isRequired,
 };
 
