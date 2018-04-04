@@ -9,8 +9,15 @@ const TerminusLabel = props => (
     <div className={style.label}>
         { (props.nameFi || props.nameSe) &&
             <div className={style.header}>
-                {props.nameFi && [props.nameFi, <br/>]}
-                {(props.nameSe && props.nameSe !== props.nameFi) && [props.nameSe, <br/>]}
+                {props.nameFi && [
+                    <span key="nameFi">{props.nameFi}</span>,
+                    <br key="B1"/>,
+                ]}
+                {(props.nameSe && props.nameSe !== props.nameFi)
+                    && [
+                        <span key="nameSe">{props.nameSe}</span>,
+                        <br key="B2"/>,
+                    ]}
             </div>
         }
         {

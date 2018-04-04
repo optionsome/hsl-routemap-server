@@ -6,8 +6,11 @@ import style from "./stationName.css";
 
 const StationName = props => (
     <div className={props.type === "06" ? style.metro : style.rail}>
-        {props.nameFi && [props.nameFi]}
-        {(props.nameSe && props.nameSe !== props.nameFi) && [<br/>, props.nameSe]}
+        {props.nameFi}
+        {(props.nameSe && props.nameSe !== props.nameFi) && [
+            <br key="B"/>,
+            <span key="nameSe">{props.nameSe}</span>,
+        ]}
     </div>
 );
 
