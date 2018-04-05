@@ -17,12 +17,12 @@ import {
 } from "./costFunctions";
 
 
-const timeout = 5 * 60 * 60 * 1000;
-const iterationsPerFactor = 15;
+const timeout = 10 * 60 * 60 * 1000;
+const iterationsPerFactor = 10;
 
 const angles = [-6, -4, -2, -1, 0, 1, 2, 4, 6];
-const distances = [-4, -3, -2, -1, 0, 1, 2, 3, 4];
-const factors = [30, 15, 8, 4, 2, 1];
+const distances = [-4, -2, -1, 0, 1, 2, 4];
+const factors = [30, 20, 10, 5, 2];
 
 const diffsArray = factors.map(factor => (
     angles.reduce((prev, angle) => ([
