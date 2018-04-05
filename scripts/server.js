@@ -57,8 +57,9 @@ async function main() {
         ctx.body = stops;
     });
 
-    router.get("/builds", async (ctx) => {
-        const builds = await getBuilds();
+    router.get("/builds/:type", async (ctx) => {
+        const { type } = ctx.params;
+        const builds = await getBuilds({ type });
         ctx.body = builds;
     });
 
@@ -69,8 +70,8 @@ async function main() {
     });
 
     router.post("/builds", async (ctx) => {
-        const { title } = ctx.request.body;
-        const build = await addBuild({ title });
+        const { title, type } = ctx.request.body;
+        const build = await addBuild({ title, type });
         ctx.body = build;
     });
 

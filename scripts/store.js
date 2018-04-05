@@ -12,11 +12,13 @@ function convertKeys(object, converter) {
     return obj;
 }
 
+const GENERATOR_TYPES = ["POSTER", "ROUTEMAP"];
+
 async function migrate() {
     await knex.migrate.latest();
 }
 
-async function getBuilds() {
+async function getBuilds({ type }) {
     const rows = await knex.select(
         "build.*",
         knex.raw("count(case when poster.status = 'PENDING' then 1 end)::integer as pending"),
@@ -24,6 +26,7 @@ async function getBuilds() {
         knex.raw("count(case when poster.status = 'READY' then 1 end)::integer as ready")
     ).from("build")
         .whereNot("build.status", "REMOVED")
+        .where("build.type", type)
         .leftJoin("poster", "build.id", "poster.build_id")
         .orderBy("build.created_at", "desc")
         .groupBy("build.id");
@@ -71,10 +74,15 @@ async function getBuild({ id }) {
     return Object.assign({}, build, { posters });
 }
 
-async function addBuild({ title }) {
-    const id = uuidv1();
-    await knex("build").insert({ id, title });
-    return { id };
+async function addBuild({ title, type }) {
+    if (GENERATOR_TYPES.some(t => t === type)) {
+        const id = uuidv1();
+        await knex("build").insert({ id, title, type });
+        return { id };
+    }
+    const error = new Error(`Type '${type}' is not allowed`);
+    error.status = 400;
+    throw error;
 }
 
 async function updateBuild({ id, status }) {
