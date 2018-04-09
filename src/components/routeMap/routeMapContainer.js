@@ -10,20 +10,42 @@ import apolloWrapper from "util/apolloWrapper";
 import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
 
+const MAX_TILE_SIZE = 2000;
+
+
 const mapPositionMapper = mapProps((props) => {
-    const { latitude, longitude } = props;
+    const { mapOptions } = props;
+    const maxSize = Math.round(MAX_TILE_SIZE / mapOptions.scale);
+    const tileCountX = Math.ceil(mapOptions.width / maxSize);
+    const tileCountY = Math.ceil(mapOptions.height / maxSize);
+    const widthOption = Math.floor(mapOptions.width / tileCountX);
+    const heightOption = Math.floor(mapOptions.height / tileCountY);
+
+    const viewportWidth = widthOption * tileCountX;
+    const viewportHeight = heightOption * tileCountY;
     const viewport = new PerspectiveMercatorViewport({
-        longitude,
-        latitude,
-        width: props.width,
-        height: props.height,
-        zoom: props.zoom,
+        longitude: mapOptions.center[0],
+        latitude: mapOptions.center[1],
+        zoom: mapOptions.zoom,
+        width: viewportWidth,
+        height: viewportHeight,
     });
+    const longitude = mapOptions.center[0];
+    const latitude = mapOptions.center[1];
 
     const [minLon, minLat] = viewport.unproject([0, 0], { topLeft: true });
-    const [maxLon, maxLat] = viewport.unproject([props.width, props.height], { topLeft: true });
+    const [maxLon, maxLat] = viewport.unproject([viewportWidth, viewportHeight], { topLeft: true });
+
     return {
-        ...props, minLat, minLon, maxLat, maxLon,
+        ...props,
+        minLat,
+        minLon,
+        maxLat,
+        maxLon,
+        width: viewportWidth,
+        height: viewportHeight,
+        longitude,
+        latitude,
     };
 });
 
@@ -78,14 +100,13 @@ const terminalMapper = mapProps((props) => {
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
     const terminalNames = props.data.terminalNames.nodes;
-    const { latitude, longitude } = props;
 
     const viewport = new PerspectiveMercatorViewport({
-        longitude,
-        latitude,
+        longitude: props.mapOptions.center[0],
+        latitude: props.mapOptions.center[1],
+        zoom: props.mapOptions.zoom,
         width: props.width,
         height: props.height,
-        zoom: props.zoom,
     });
 
     const projectedTerminals = terminals
@@ -157,7 +178,7 @@ const terminalMapper = mapProps((props) => {
         center: [props.longitude, props.latitude],
         width: props.width,
         height: props.height,
-        zoom: props.zoom,
+        zoom: props.mapOptions.zoom,
     };
 
     const mapComponents = {
@@ -189,8 +210,13 @@ const RouteMapContainer = hoc(RouteMap);
 RouteMapContainer.defaultProps = {
 };
 
+const MapOptionsProps = {
+    bearing: PropTypes.number.isRequired,
+};
+
 RouteMapContainer.propTypes = {
     date: PropTypes.string.isRequired,
+    mapOptions: PropTypes.arrayOf(PropTypes.shape(MapOptionsProps).isRequired).isRequired,
 };
 
 export default RouteMapContainer;
