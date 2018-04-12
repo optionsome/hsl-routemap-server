@@ -63,7 +63,7 @@ async function main() {
         ctx.body = builds;
     });
 
-    router.get("/builds/:id", async (ctx) => {
+    router.get("/builds/:type/:id", async (ctx) => {
         const { id } = ctx.params;
         const builds = await getBuild({ id });
         ctx.body = builds;
