@@ -58,10 +58,13 @@ class App extends Component {
     render() {
         let ComponentToRender;
         let props;
+        let componentName;
 
         try {
             const params = new URLSearchParams(window.location.search.substring(1));
-            ComponentToRender = components[params.get("component")];
+            componentName = params.get("component");
+            ComponentToRender = components[componentName];
+
             props = JSON.parse(params.get("props"));
         } catch (error) {
             App.handleError(new Error("Failed to parse url fragment"));
@@ -75,7 +78,13 @@ class App extends Component {
 
         let rootStyle = {};
 
-        if (!props.printTimetablesAsA4) {
+        if (componentName === "RouteMap") {
+            rootStyle = {
+                display: "inline-block",
+                width: props.mapOptions.width,
+                height: props.mapOptions.height,
+            };
+        } else if (!props.printTimetablesAsA4) {
             rootStyle = {
                 display: "inline-block",
                 width: props.width,
