@@ -3,9 +3,9 @@ import segseg from "segseg";
 const OVERLAP_COST = 5;
 const OVERLAP_COST_FIXED = 6;
 const OVERFLOW_COST = 500000;
-const INTERSECTION_COST = 10;
+const INTERSECTION_COST = 1000;
 const INTERSECTION_WITH_FIXED_COST = 25;
-const DISTANCE_COST = 2.5;
+const DISTANCE_COST = 15;
 const ANGLE_COST = 1;
 const ALPHA_COST = 1500;
 
@@ -150,7 +150,8 @@ function getPositionFixedIntersectionCost(positions, indexes, index) {
 function getFixedIntersectionCost(positions, indexes) {
     let sum = 0;
     positions.forEach((position, i) => {
-        sum += getPositionFixedIntersectionCost(positions, indexes, i);
+        sum +=
+            getPositionFixedIntersectionCost(positions, indexes, i) / (position.priority ? 4 : 1);
     });
     return sum * INTERSECTION_WITH_FIXED_COST;
 }

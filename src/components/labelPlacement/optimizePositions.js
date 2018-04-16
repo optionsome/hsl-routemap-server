@@ -142,20 +142,16 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions) {
 
     const newPlacements = [];
     positions.forEach((position, index) => { // eslint-disable-line 
-        const score = getPositionAlphaOverflowCost(position, isOccupied);
-        const distance = position.distance - position.initialDistance;
-
         /* const indexes = (new Int8Array(positions.length))
             .map((_, i) => i)
-            .filter(i => i !== index);
-        const overlap =
-            getPositionOverlapCost(positions, indexes, index, true);
-        const fixedOverlap =
-            getPositionFixedIntersectionCost(positions, indexes, index); */
+            .filter(i => i !== index); */
+        const score = getPositionAlphaOverflowCost(position, isOccupied);
+        // const intersectingLines = getIntersectionCost(positions, [index]);
+        const distance = position.distance - position.initialDistance;
 
         newPlacements.push({
             ...position,
-            visible: score < 10 && distance < 200, // && overlap === 0 && fixedOverlap === 0,
+            visible: score < 10 && distance < 85, // && overlap === 0 && fixedOverlap === 0,
         });
     });
     return newPlacements;
