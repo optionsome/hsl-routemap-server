@@ -5,6 +5,7 @@ import mapProps from "recompose/mapProps";
 import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
 import { trimRouteId, isSubwayRoute, isRailRoute } from "util/domain";
+import { getMostCommonAngle, getOneDirectionalAngle } from "util/routeAngles";
 import apolloWrapper from "util/apolloWrapper";
 
 import routeGeneralizer from "../../util/routeGeneralizer";
@@ -78,7 +79,7 @@ const nearbyTerminals = gql`
               routes,
               lon,
               lat,
-              angle,
+              angles,
               length
             }
         },
@@ -152,6 +153,11 @@ const terminalMapper = mapProps((props) => {
             intermediate.label.length < 50
             || (intermediate.length > 250 && intermediate.label.length < 100)
             || intermediate.length > 500)
+        .map(intermediate => ({
+            ...intermediate,
+            angle: getMostCommonAngle(intermediate.angles),
+            oneDirectionalAngle: getOneDirectionalAngle(intermediate.angles),
+        }))
         .map((intermediate) => {
             const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
             return {

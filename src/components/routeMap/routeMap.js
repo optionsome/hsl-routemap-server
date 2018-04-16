@@ -10,6 +10,7 @@ import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
 import IntermediateLabel from "./intermediateLabel";
 import StationName from "./stationName";
+import DirectionArrow from "./directionArrow";
 
 import styles from "./routeMap.css";
 
@@ -72,6 +73,19 @@ const RouteMap = (props) => {
                             />
                         </ItemPositioned>
                     ))}
+                    {
+                        props.projectedIntermediates
+                            .filter(intermediate => !!intermediate.oneDirectionalAngle)
+                            .map((intermediate, index) => (
+                                <ItemFixed
+                                    key={index}
+                                    top={intermediate.y}
+                                    left={intermediate.x}
+                                >
+                                    <DirectionArrow rotation={intermediate.oneDirectionalAngle}/>
+                                </ItemFixed>
+                            ))
+                    }
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemPositioned
                             key={index}
