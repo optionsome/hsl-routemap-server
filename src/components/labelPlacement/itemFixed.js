@@ -24,7 +24,10 @@ class ItemFixed extends Component {
             height: this.root.offsetHeight,
             isFixed: true,
             visible: this.visible,
-            priority: 1,
+            anglePriority: 1,
+            distancePriority: 1,
+            lineOverlapPriority: 1,
+            alphaOverlapPriority: 1,
         };
     }
 

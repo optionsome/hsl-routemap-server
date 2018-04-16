@@ -7,9 +7,7 @@ const DirectionArrow = (props) => {
         "-webkit-transform": `rotate(${props.rotation}deg)`,
     };
     return (
-        <div className={style.arrowContainer}>
-            <div className={style.arrow} style={directionStyle}>&uarr;</div>
-        </div>
+        <div className={style.arrow} style={directionStyle}>&uarr;</div>
     );
 };
 

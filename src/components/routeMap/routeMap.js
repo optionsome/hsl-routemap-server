@@ -64,9 +64,10 @@ const RouteMap = (props) => {
                             key={index}
                             x={intermediate.x}
                             y={intermediate.y}
-                            distance={4}
+                            distance={0}
                             allowHidden
                             angle={intermediate.angle}
+                            maxDistance={60}
                         >
                             <IntermediateLabel
                                 label={intermediate.label}
@@ -77,13 +78,19 @@ const RouteMap = (props) => {
                         props.projectedIntermediates
                             .filter(intermediate => !!intermediate.oneDirectionalAngle)
                             .map((intermediate, index) => (
-                                <ItemFixed
+                                <ItemPositioned
                                     key={index}
-                                    top={intermediate.y}
-                                    left={intermediate.x}
+                                    y={intermediate.y}
+                                    x={intermediate.x}
+                                    distance={1}
+                                    anglePriority={1000}
+                                    distancePriority={1000}
+                                    maxDistance={5}
+                                    showBoxAndAnker={false}
+                                    angle={intermediate.oneDirectionalAngle}
                                 >
                                     <DirectionArrow rotation={intermediate.oneDirectionalAngle}/>
-                                </ItemFixed>
+                                </ItemPositioned>
                             ))
                     }
                     {props.projectedTerminuses.map((terminus, index) => (
@@ -93,7 +100,6 @@ const RouteMap = (props) => {
                             y={terminus.y}
                             distance={10}
                             angle={45}
-                            priority={2}
                         >
                             <TerminusLabel
                                 lines={terminus.lines}
@@ -110,7 +116,8 @@ const RouteMap = (props) => {
                                 y={name.y}
                                 distance={10}
                                 angle={45}
-                                priority={3}
+                                distancePriority={3}
+                                alphaOverlapPriority={0.5}
                             >
                                 <StationName
                                     nameFi={name.nameFi}

@@ -33,7 +33,12 @@ class ItemPositioned extends Component {
             initialDistance: this.props.distance,
             initialAngle: this.props.angle,
             visible: this.state.visible,
-            priority: this.props.priority,
+            anglePriority: this.props.anglePriority,
+            distancePriority: this.props.distancePriority,
+            showBoxAndAnker: this.props.showBoxAndAnker,
+            lineOverlapPriority: this.props.lineOverlapPriority,
+            alphaOverlapPriority: this.props.alphaOverlapPriority,
+            maxDistance: this.props.maxDistance,
         };
     }
 
@@ -54,7 +59,12 @@ ItemPositioned.defaultProps = {
     angle: 0,
     visible: true,
     allowHidden: false,
-    priority: 1,
+    anglePriority: 1,
+    distancePriority: 1,
+    lineOverlapPriority: 1,
+    showBoxAndAnker: true,
+    alphaOverlapPriority: 1,
+    maxDistance: null,
 };
 
 ItemPositioned.propTypes = {
@@ -65,7 +75,12 @@ ItemPositioned.propTypes = {
     children: PropTypes.element.isRequired,
     visible: PropTypes.bool,
     allowHidden: PropTypes.bool,
-    priority: PropTypes.number,
+    anglePriority: PropTypes.number,
+    distancePriority: PropTypes.number,
+    lineOverlapPriority: PropTypes.number,
+    showBoxAndAnker: PropTypes.bool,
+    alphaOverlapPriority: PropTypes.number,
+    maxDistance: PropTypes.number,
 };
 
 export default ItemPositioned;

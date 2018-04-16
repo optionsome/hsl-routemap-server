@@ -26,6 +26,7 @@ function meanAngleDeg(list) {
 
 function getOneDirectionalAngle(angles) {
     let biggestDiff = 0;
+    if (!angles) return null;
     angles.forEach((angle1) => {
         angles.forEach((angle2) => {
             if (angle1 !== angle2) {

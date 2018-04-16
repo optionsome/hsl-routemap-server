@@ -1,6 +1,6 @@
 import segseg from "segseg";
 
-const OVERLAP_COST = 5;
+const OVERLAP_COST = 20;
 const OVERLAP_COST_FIXED = 6;
 const OVERFLOW_COST = 500000;
 const INTERSECTION_COST = 1000;
@@ -32,7 +32,7 @@ function getPositionAlphaOverflowCost(position, isOccupied) {
             if (isOccupied(left, top)) overlapCounter++;
         }
     }
-    return overlapCounter * position.priority;
+    return overlapCounter * position.alphaOverlapPriority;
 }
 
 function getAlphaOverflowCost(positions, indexes, isOccupied) {
@@ -151,7 +151,8 @@ function getFixedIntersectionCost(positions, indexes) {
     let sum = 0;
     positions.forEach((position, i) => {
         sum +=
-            getPositionFixedIntersectionCost(positions, indexes, i) / (position.priority ? 4 : 1);
+            getPositionFixedIntersectionCost(positions, indexes, i)
+            * (position.lineOverlapPriority);
     });
     return sum * INTERSECTION_WITH_FIXED_COST;
 }
@@ -167,7 +168,7 @@ function getDistanceCost(positions, indexes) {
         prev
         + (
             (positions[index].distance - positions[index].initialDistance)
-            * positions[index].priority
+            * positions[index].distancePriority
         ), 0);
 }
 
@@ -180,7 +181,7 @@ function getDistanceCost(positions, indexes) {
 function getAngleCost(positions, indexes) {
     return ANGLE_COST * indexes.reduce((prev, index) => {
         const phi = Math.abs(positions[index].angle - positions[index].initialAngle) % 180;
-        return prev + ((phi > 90) ? 180 - phi : phi);
+        return prev + (((phi > 90) ? 180 - phi : phi) * positions[index].anglePriority);
     }, 0);
 }
 
