@@ -128,7 +128,7 @@ const RouteMap = (props) => {
                             </ItemPositioned>
                         ))}
                 </ItemContainer>
-                <Legend/>
+                <Legend meterPerPxRatio={props.meterPerPxRatio}/>
             </div>
         </div>
     );
@@ -178,6 +178,7 @@ RouteMap.propTypes = {
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
     mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
+    meterPerPxRatio: PropTypes.number.isRequired,
 };
 
 export default RouteMap;

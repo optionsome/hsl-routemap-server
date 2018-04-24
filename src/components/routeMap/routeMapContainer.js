@@ -11,31 +11,22 @@ import apolloWrapper from "util/apolloWrapper";
 import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
 
-const MAX_TILE_SIZE = 2000;
-
-
 const mapPositionMapper = mapProps((props) => {
     const { mapOptions } = props;
-    const maxSize = Math.round(MAX_TILE_SIZE / mapOptions.scale);
-    const tileCountX = Math.ceil(mapOptions.width / maxSize);
-    const tileCountY = Math.ceil(mapOptions.height / maxSize);
-    const widthOption = Math.floor(mapOptions.width / tileCountX);
-    const heightOption = Math.floor(mapOptions.height / tileCountY);
 
-    const viewportWidth = widthOption * tileCountX;
-    const viewportHeight = heightOption * tileCountY;
     const viewport = new PerspectiveMercatorViewport({
         longitude: mapOptions.center[0],
         latitude: mapOptions.center[1],
         zoom: mapOptions.zoom,
-        width: viewportWidth,
-        height: viewportHeight,
+        width: mapOptions.width,
+        height: mapOptions.height,
     });
     const longitude = mapOptions.center[0];
     const latitude = mapOptions.center[1];
 
     const [minLon, minLat] = viewport.unproject([0, 0], { topLeft: true });
-    const [maxLon, maxLat] = viewport.unproject([viewportWidth, viewportHeight], { topLeft: true });
+    const [maxLon, maxLat]
+        = viewport.unproject([mapOptions.width, mapOptions.height], { topLeft: true });
 
     return {
         ...props,
@@ -43,10 +34,11 @@ const mapPositionMapper = mapProps((props) => {
         minLon,
         maxLat,
         maxLon,
-        width: viewportWidth,
-        height: viewportHeight,
+        width: mapOptions.width,
+        height: mapOptions.height,
         longitude,
         latitude,
+        meterPerPxRatio: mapOptions.meterPerPxRatio,
     };
 });
 
@@ -196,6 +188,7 @@ const terminalMapper = mapProps((props) => {
 
     return {
         mapOptions,
+        meterPerPxRatio: props.meterPerPxRatio,
         mapComponents,
         projectedTerminals,
         projectedTerminalNames,
