@@ -1,0 +1,25 @@
+.container {
+  height: 20px;
+  width: 80px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.distance {
+  text-align: -webkit-right;
+  margin-right: 4px;
+  font-size: 14px;
+  font-family: GothamXNarrow-Book;
+  color: #606060;
+}
+
+.meter {
+  border-left: 1px solid #606060;
+  border-right: 1px solid #606060;
+  border-bottom: 2px solid #606060;
+  position: absolute;
+  top: 50%;
+  bottom: 0;
+  width: 100%;
+}

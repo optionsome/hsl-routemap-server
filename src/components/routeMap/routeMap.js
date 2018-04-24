@@ -13,6 +13,7 @@ import StationName from "./stationName";
 import DirectionArrow from "./directionArrow";
 
 import styles from "./routeMap.css";
+import Legend from "./legend";
 
 const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
@@ -127,6 +128,7 @@ const RouteMap = (props) => {
                             </ItemPositioned>
                         ))}
                 </ItemContainer>
+                <Legend/>
             </div>
         </div>
     );
