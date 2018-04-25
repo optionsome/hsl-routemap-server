@@ -4,25 +4,38 @@ import PropTypes from "prop-types";
 import style from "./stationName.css";
 
 
-const StationName = props => (
-    <div className={props.type === "06" ? style.metro : style.rail}>
-        {props.nameFi}
-        {(props.nameSe && props.nameSe !== props.nameFi) && [
-            <br key="B"/>,
-            <span key="nameSe">{props.nameSe}</span>,
-        ]}
-    </div>
-);
+const StationName = ({
+    type, nameSe, nameFi, configuration,
+}) => {
+    const stationStyle = {
+        fontSize: `${configuration.stationFontSize}px`,
+    };
+
+    return (
+        <div className={type === "06" ? style.metro : style.rail} style={stationStyle}>
+            {nameFi}
+            {(nameSe && nameSe !== nameFi) && [
+                <br key="B"/>,
+                <span key="nameSe">{nameSe}</span>,
+            ]}
+        </div>
+    );
+};
 
 StationName.defaultProps = {
     nameFi: null,
     nameSe: null,
 };
 
+const StationConfiguration = PropTypes.shape({
+    stationFontSize: PropTypes.number.isRequired,
+});
+
 StationName.propTypes = {
     nameFi: PropTypes.string,
     nameSe: PropTypes.string,
     type: PropTypes.string.isRequired,
+    configuration: PropTypes.shape(StationConfiguration).isRequired,
 };
 
 export default StationName;

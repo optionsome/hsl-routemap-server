@@ -72,6 +72,7 @@ const RouteMap = (props) => {
                         >
                             <IntermediateLabel
                                 label={intermediate.label}
+                                configuration={props.configuration}
                             />
                         </ItemPositioned>
                     ))}
@@ -106,6 +107,7 @@ const RouteMap = (props) => {
                                 lines={terminus.lines}
                                 nameFi={terminus.nameFi}
                                 nameSe={terminus.nameSe}
+                                configuration={props.configuration}
                             />
                         </ItemPositioned>
                     ))}
@@ -124,6 +126,7 @@ const RouteMap = (props) => {
                                     nameFi={name.nameFi}
                                     nameSe={name.nameSe}
                                     type={name.type}
+                                    configuration={props.configuration}
                                 />
                             </ItemPositioned>
                         ))}
@@ -170,6 +173,10 @@ const terminalName = PropTypes.shape({
     nameFi: PropTypes.string,
 });
 
+const ConfigurationOptionsProps = {
+    date: PropTypes.string.isRequired,
+};
+
 RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
     projectedTerminals: PropTypes.arrayOf(TerminalType).isRequired,
@@ -179,6 +186,7 @@ RouteMap.propTypes = {
     mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
     meterPerPxRatio: PropTypes.number.isRequired,
+    configuration: PropTypes.shape(ConfigurationOptionsProps).isRequired,
 };
 
 export default RouteMap;

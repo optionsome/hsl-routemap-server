@@ -5,27 +5,42 @@ import routeGeneralizer from "../../util/routeGeneralizer";
 
 import style from "./terminusLabel.css";
 
-const TerminusLabel = props => (
-    <div className={style.label}>
-        { (props.nameFi || props.nameSe) &&
-            <div className={style.header}>
-                {props.nameFi && [
-                    <span key="nameFi">{props.nameFi}</span>,
-                    <br key="B1"/>,
-                ]}
-                {(props.nameSe && props.nameSe !== props.nameFi)
-                    && [
-                        <span key="nameSe">{props.nameSe}</span>,
-                        <br key="B2"/>,
+const TerminusLabel = ({
+    nameFi, nameSe, lines, configuration,
+}) => {
+    const terminusStyle = {
+        fontSize: `${configuration.terminusFontSize}px`,
+        lineHeight: `${configuration.terminusFontSize}px`,
+        maxWidth: `${configuration.terminusWidth}px`,
+    };
+
+    return (
+        <div className={style.label} style={terminusStyle}>
+            { (nameFi || nameSe) &&
+                <div className={style.header}>
+                    {nameFi && [
+                        <span key="nameFi">{nameFi}</span>,
+                        <br key="B1"/>,
                     ]}
-            </div>
-        }
-        {
-            routeGeneralizer(props.lines
-                .map(id => trimRouteId(id)))
-        }
-    </div>
-);
+                    {(nameSe && nameSe !== nameFi)
+                        && [
+                            <span key="nameSe">{nameSe}</span>,
+                            <br key="B2"/>,
+                        ]}
+                </div>
+            }
+            {
+                routeGeneralizer(lines
+                    .map(id => trimRouteId(id)))
+            }
+        </div>
+    );
+};
+
+const TerminusConfiguration = PropTypes.shape({
+    terminusFontSize: PropTypes.number.isRequired,
+    terminusWidth: PropTypes.number.isRequired,
+});
 
 TerminusLabel.defaultProps = {
     nameFi: null,
@@ -34,6 +49,7 @@ TerminusLabel.defaultProps = {
 
 TerminusLabel.propTypes = {
     lines: PropTypes.arrayOf(PropTypes.string).isRequired,
+    configuration: PropTypes.shape(TerminusConfiguration).isRequired,
     nameFi: PropTypes.string,
     nameSe: PropTypes.string,
 };

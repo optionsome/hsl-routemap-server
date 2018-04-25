@@ -12,7 +12,7 @@ import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
 
 const mapPositionMapper = mapProps((props) => {
-    const { mapOptions } = props;
+    const { mapOptions, configuration } = props;
 
     const viewport = new PerspectiveMercatorViewport({
         longitude: mapOptions.center[0],
@@ -38,6 +38,8 @@ const mapPositionMapper = mapProps((props) => {
         height: mapOptions.height,
         longitude,
         latitude,
+        configuration,
+        date: props.configuration.date,
         meterPerPxRatio: mapOptions.meterPerPxRatio,
     };
 });
@@ -188,6 +190,7 @@ const terminalMapper = mapProps((props) => {
 
     return {
         mapOptions,
+        configuration: props.configuration,
         meterPerPxRatio: props.meterPerPxRatio,
         mapComponents,
         projectedTerminals,
@@ -213,9 +216,13 @@ const MapOptionsProps = {
     bearing: PropTypes.number.isRequired,
 };
 
-RouteMapContainer.propTypes = {
+const ConfigurationOptionsProps = {
     date: PropTypes.string.isRequired,
-    mapOptions: PropTypes.arrayOf(PropTypes.shape(MapOptionsProps).isRequired).isRequired,
+};
+
+RouteMapContainer.propTypes = {
+    mapOptions: PropTypes.shape(MapOptionsProps).isRequired,
+    configuration: PropTypes.shape(ConfigurationOptionsProps).isRequired,
 };
 
 export default RouteMapContainer;
