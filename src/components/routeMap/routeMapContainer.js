@@ -144,9 +144,11 @@ const terminalMapper = mapProps((props) => {
             label: routeGeneralizer(intermediate.routes.map(id => trimRouteId(id))),
         }))
         .filter(intermediate =>
-            intermediate.label.length < 50
-            || (intermediate.length > 250 && intermediate.label.length < 100)
-            || intermediate.length > 500)
+            intermediate.label.length > 0 && (
+                intermediate.label.length < 50
+                || (intermediate.length > 250 && intermediate.label.length < 100)
+                || intermediate.length > 500
+            ))
         .map(intermediate => ({
             ...intermediate,
             angle: getMostCommonAngle(intermediate.angles),
