@@ -13,7 +13,7 @@ import StationName from "./stationName";
 import DirectionArrow from "./directionArrow";
 
 import styles from "./routeMap.css";
-import Legend from "./legend";
+import Scale from "./scale";
 
 const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
@@ -131,7 +131,12 @@ const RouteMap = (props) => {
                             </ItemPositioned>
                         ))}
                 </ItemContainer>
-                <Legend meterPerPxRatio={props.meterPerPxRatio}/>
+                { props.configuration.showScale &&
+                    <Scale
+                        meterPerPxRatio={props.meterPerPxRatio}
+                        scaleLength={props.configuration.scaleLength}
+                    />
+                }
             </div>
         </div>
     );
@@ -175,6 +180,8 @@ const terminalName = PropTypes.shape({
 
 const ConfigurationOptionsProps = {
     date: PropTypes.string.isRequired,
+    showScale: PropTypes.bool.isRequired,
+    scaleLength: PropTypes.bool.isRequired,
 };
 
 RouteMap.propTypes = {

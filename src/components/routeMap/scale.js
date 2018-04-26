@@ -1,10 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
-import style from "./legend.css";
+import style from "./scale.css";
 
-const Legend = (props) => {
+const Scale = (props) => {
     const pxPerMeterRatio = 1 / props.meterPerPxRatio;
-    const lengthInMeters = 1000;
+    const lengthInMeters = props.scaleLength;
 
     const lengthInDots = pxPerMeterRatio * lengthInMeters;
 
@@ -22,8 +22,9 @@ const Legend = (props) => {
     );
 };
 
-Legend.propTypes = {
+Scale.propTypes = {
     meterPerPxRatio: PropTypes.number.isRequired,
+    scaleLength: PropTypes.number.isRequired,
 };
 
-export default Legend;
+export default Scale;
