@@ -68,7 +68,7 @@ const RouteMap = (props) => {
                             distance={0}
                             allowHidden
                             angle={intermediate.angle}
-                            maxDistance={60}
+                            maxDistance={props.configuration.maxAnchorLineLength}
                         >
                             <IntermediateLabel
                                 label={intermediate.label}
@@ -182,6 +182,7 @@ const ConfigurationOptionsProps = {
     date: PropTypes.string.isRequired,
     showScale: PropTypes.bool.isRequired,
     scaleLength: PropTypes.bool.isRequired,
+    maxAnchorLineLength: PropTypes.number.isRequired,
 };
 
 RouteMap.propTypes = {
