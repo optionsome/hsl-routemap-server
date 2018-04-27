@@ -68,7 +68,7 @@ const nearbyTerminals = gql`
                 nameSe
             }
         },
-        intermediates: routeSectionIntermediates(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+        intermediates: getIntermediatePoints(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
             nodes {
               routes,
               lon,
