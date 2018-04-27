@@ -39,6 +39,7 @@ class ItemPositioned extends Component {
             lineOverlapPriority: this.props.lineOverlapPriority,
             alphaOverlapPriority: this.props.alphaOverlapPriority,
             maxDistance: this.props.maxDistance,
+            anchorWidth: this.props.anchorWidth,
         };
     }
 
@@ -65,6 +66,7 @@ ItemPositioned.defaultProps = {
     showBoxAndAnker: true,
     alphaOverlapPriority: 1,
     maxDistance: null,
+    anchorWidth: 0.5,
 };
 
 ItemPositioned.propTypes = {
@@ -81,6 +83,7 @@ ItemPositioned.propTypes = {
     showBoxAndAnker: PropTypes.bool,
     alphaOverlapPriority: PropTypes.number,
     maxDistance: PropTypes.number,
+    anchorWidth: PropTypes.number,
 };
 
 export default ItemPositioned;

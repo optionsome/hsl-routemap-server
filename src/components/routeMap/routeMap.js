@@ -101,6 +101,7 @@ const RouteMap = (props) => {
                             x={terminus.x}
                             y={terminus.y}
                             distance={10}
+                            anchorWidth={1}
                             angle={45}
                         >
                             <TerminusLabel
@@ -118,6 +119,7 @@ const RouteMap = (props) => {
                                 x={name.x}
                                 y={name.y}
                                 distance={10}
+                                anchorWidth={1}
                                 angle={45}
                                 distancePriority={3}
                                 alphaOverlapPriority={0.5}

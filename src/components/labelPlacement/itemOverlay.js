@@ -8,7 +8,7 @@ const Line = props => (
         d={`M${props.x} ${props.y} L${props.x + props.cx} ${props.y + props.cy}`}
         fill="none"
         stroke="#555"
-        strokeWidth="0.5"
+        strokeWidth={props.anchorWidth.toString()}
         clipPath={`url(#label-mask-${props.index})`}
     />
 );
@@ -18,6 +18,7 @@ const LineItemPropTypes = {
     y: PropTypes.number.isRequired,
     cx: PropTypes.number.isRequired,
     cy: PropTypes.number.isRequired,
+    anchorWidth: PropTypes.number,
 };
 
 Line.propTypes = {
