@@ -22,6 +22,12 @@ const propsMapper = mapProps(({
     if (components.stops && components.stops.enabled && date) {
         mapStyle.sources.stops.url += `?date=${date}`;
     }
+    if (components.regular_stops && components.regular_stops.enabled && date) {
+        mapStyle.sources.stops.url += `?date=${date}`;
+    }
+    if (components.regular_routes && components.regular_routes.enabled && date) {
+        mapStyle.sources.routes.url += `?date=${date}`;
+    }
 
     // Remove source containing bus routes (rail and subway routes have separate sources)
     if (components.routes && components.routes.enabled && components.routes.hideBusRoutes) {
