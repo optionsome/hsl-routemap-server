@@ -3,10 +3,11 @@
   color: rgb(0, 0, 167);
   font-size: 12px;
   line-height: 12px;
-  background-color: #ffffffa8;
+  /*background-color: #ffffffa8;*/
   border-radius: 1px;
   padding: 1px;
-  font-family: GothamXNarrow-Light;
+  font-family: GothamXNarrow-Medium;
   max-width: 75px;
   text-align: center;
+  text-shadow: -0.5px 0 white, 0 0.5px white, 0.5px 0 white, 0 -0.5px white;
 }
