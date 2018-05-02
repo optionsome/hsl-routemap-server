@@ -17,14 +17,14 @@ const TerminusLabel = ({
     return (
         <div className={style.label} style={terminusStyle}>
             { (nameFi || nameSe) &&
-                <div className={style.header}>
+                <div>
                     {nameFi && [
-                        <span key="nameFi">{nameFi}</span>,
+                        <span key="nameFi" className={style.headerFi}>{nameFi}</span>,
                         <br key="B1"/>,
                     ]}
                     {(nameSe && nameSe !== nameFi)
                         && [
-                            <span key="nameSe">{nameSe}</span>,
+                            <span key="nameSe" className={style.headerSe}>{nameSe}</span>,
                             <br key="B2"/>,
                         ]}
                 </div>

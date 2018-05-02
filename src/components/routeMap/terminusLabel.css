@@ -1,6 +1,6 @@
 .label {
   margin: 2px;
-  color: #333;
+  color: #0379c8;
   background: white;
   font-size: 14px;
   line-height: 14px;
@@ -8,10 +8,12 @@
   font-family: GothamXNarrow-Light;
   max-width: 120px;
   text-align: center;
-  box-shadow: #565656 0px 0px 1px;
 }
 
-.header {
+.headerFi {
   font-family: GothamXNarrow-Medium;
-  color: #585858;
+}
+
+.headerSe {
+  font-family: GothamXNarrow-Book;
 }
