@@ -9,11 +9,12 @@ const StationName = ({
 }) => {
     const stationStyle = {
         fontSize: `${configuration.stationFontSize}px`,
+        lineHeight: `${configuration.stationFontSize}px`,
     };
 
     return (
         <div className={type === "06" ? style.metro : style.rail} style={stationStyle}>
-            {nameFi}
+            <span>{nameFi}</span>
             {(nameSe && nameSe !== nameFi) && [
                 <br key="B"/>,
                 <span key="nameSe">{nameSe}</span>,
