@@ -40,6 +40,7 @@ class ItemPositioned extends Component {
             alphaOverlapPriority: this.props.alphaOverlapPriority,
             maxDistance: this.props.maxDistance,
             anchorWidth: this.props.anchorWidth,
+            allowHidden: this.props.allowHidden,
         };
     }
 

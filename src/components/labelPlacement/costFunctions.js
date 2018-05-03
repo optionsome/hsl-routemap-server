@@ -2,10 +2,10 @@ import segseg from "segseg";
 
 const OVERLAP_COST = 20;
 const OVERLAP_COST_FIXED = 6;
-const OVERFLOW_COST = 500000;
+const OVERFLOW_COST = 10;
 const INTERSECTION_COST = 1000;
 const INTERSECTION_WITH_FIXED_COST = 25;
-const DISTANCE_COST = 15;
+const DISTANCE_COST = 60;
 const ANGLE_COST = 1;
 const ALPHA_COST = 1500;
 
@@ -167,8 +167,8 @@ function getDistanceCost(positions, indexes) {
     return DISTANCE_COST * indexes.reduce((prev, index) =>
         prev
         + (
-            (positions[index].distance - positions[index].initialDistance)
-            * positions[index].distancePriority
+            Math.log2(Math.max((positions[index].distance - positions[index].initialDistance), 1)
+                * positions[index].distancePriority)
         ), 0);
 }
 

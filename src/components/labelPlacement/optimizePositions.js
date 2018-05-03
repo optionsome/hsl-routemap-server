@@ -68,7 +68,7 @@ function getPlacements(placement, index, diffs, bbox) {
             const updatedPosition = updatePosition(positions[index], diff);
             if (
                 !updatedPosition
-                || hasOverflow(updatedPosition, bbox)
+                || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))
                 || (
                     positions[index].maxDistance
                     && updatedPosition.distance > positions[index].maxDistance)) {
@@ -152,11 +152,12 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions) {
             .filter(i => i !== index); */
         const score = getPositionAlphaOverflowCost(position, isOccupied);
         // const intersectingLines = getIntersectionCost(positions, [index]);
-        // const distance = position.distance - position.initialDistance;
+        const distance = position.distance - position.initialDistance;
+        const overflow = hasOverflow(position, bbox);
 
         newPlacements.push({
             ...position,
-            visible: score < 10, // && distance < 85, // && overlap === 0 && fixedOverlap === 0,
+            visible: score < 10 && distance < 85 && !overflow,
         });
     });
     return newPlacements;
