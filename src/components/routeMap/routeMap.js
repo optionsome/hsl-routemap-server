@@ -34,7 +34,11 @@ const RouteMap = (props) => {
                 />
             </div>
             <div className={styles.overlays}>
-                <ItemContainer mapOptions={props.mapOptions} mapComponents={props.mapComponents}>
+                <ItemContainer
+                    mapOptions={props.mapOptions}
+                    mapComponents={props.mapComponents}
+                    configuration={props.configuration}
+                >
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemFixed
                             key={index}
@@ -68,7 +72,6 @@ const RouteMap = (props) => {
                             distance={0}
                             allowHidden
                             angle={intermediate.angle}
-                            maxDistance={parseInt(props.configuration.maxAnchorLength, 10)}
                         >
                             <IntermediateLabel
                                 label={intermediate.label}
@@ -84,10 +87,10 @@ const RouteMap = (props) => {
                                     key={index}
                                     y={intermediate.y}
                                     x={intermediate.x}
-                                    distance={1}
-                                    anglePriority={1000}
-                                    distancePriority={1000}
-                                    maxDistance={5}
+                                    distance={0}
+                                    anglePriority={10000}
+                                    distancePriority={10000}
+                                    maxDistance={3}
                                     showBoxAndAnker={false}
                                     angle={intermediate.oneDirectionalAngle}
                                 >

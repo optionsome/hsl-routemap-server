@@ -16,7 +16,7 @@ import {
     // getPositionFixedIntersectionCost,
 } from "./costFunctions";
 
-
+const maxDistance = 85;
 const timeout = 2 * 24 * 60 * 60 * 1000;
 const iterationsPerFactor = 10;
 
@@ -34,7 +34,7 @@ const diffsArray = factors.map(factor => (
 function getCost(placement, bbox, alphaByteArray) {
     const { positions, indexes } = placement;
     const overflow = getOverflowCost(positions, indexes, bbox);
-    const overlap = getOverlapCost(positions, indexes);
+    const overlap = getOverlapCost(positions, indexes, maxDistance);
     const distance = getDistanceCost(positions, indexes);
     const angle = getAngleCost(positions, indexes);
     const intersection = getIntersectionCost(positions, indexes);
@@ -71,7 +71,9 @@ function getPlacements(placement, index, diffs, bbox) {
                 || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))
                 || (
                     positions[index].maxDistance
-                    && updatedPosition.distance > positions[index].maxDistance)) {
+                    && (
+                        positions[index].distance - positions[index].initialDistance
+                    ) > positions[index].maxDistance)) {
                 return null;
             }
             return positions.map((position, i) => ((i === index) ? updatedPosition : position));
@@ -135,7 +137,7 @@ function findMostSuitablePosition(initialPlacement, bbox, isOccupied) {
     return placement.positions;
 }
 
-function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions) {
+function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions, configuration) {
     const placement = {
         positions: initialPositions.map(position => updatePosition(position)),
         indexes: [],
@@ -154,10 +156,11 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions) {
         // const intersectingLines = getIntersectionCost(positions, [index]);
         const distance = position.distance - position.initialDistance;
         const overflow = hasOverflow(position, bbox);
+        const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
 
         newPlacements.push({
             ...position,
-            visible: score < 10 && distance < 85 && !overflow,
+            visible: distance < maxAnchorLength && !overflow && score < 4,
         });
     });
     return newPlacements;

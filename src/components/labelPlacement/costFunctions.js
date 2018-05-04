@@ -7,7 +7,7 @@ const INTERSECTION_COST = 1000;
 const INTERSECTION_WITH_FIXED_COST = 25;
 const DISTANCE_COST = 60;
 const ANGLE_COST = 1;
-const ALPHA_COST = 1500;
+const ALPHA_COST = 50;
 
 const ALPHA_STEP = 5;
 
@@ -69,10 +69,18 @@ function getPositionOverlapCost(positions, indexes, i, runAll) {
  * @param {number[]} indexes - Indexes to check
  * @returns {number}
  */
-function getOverlapCost(positions, indexes) {
+function getOverlapCost(positions, indexes, maxDistance) {
     let overlap = 0;
     positions.forEach((position, i) => {
-        overlap += getPositionOverlapCost(positions, indexes, i);
+        if (
+            !(
+                positions[i].distance
+                && positions[i].distance > maxDistance
+                && positions[i].allowHidden
+            )
+        ) {
+            overlap += getPositionOverlapCost(positions, indexes, i);
+        }
     });
     return overlap;
 }

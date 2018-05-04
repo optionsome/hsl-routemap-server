@@ -76,6 +76,7 @@ class ItemContainer extends Component {
                 boundingBox,
                 alphaByteArray: alphaChannelByteArray,
                 mapOptions: this.props.mapOptions,
+                configuration: this.props.configuration,
             });
         });
     }
@@ -106,10 +107,18 @@ const MapOptions = {
     zoom: PropTypes.number.isRequired,
 };
 
+const ConfigurationOptionsProps = {
+    date: PropTypes.string.isRequired,
+    showScale: PropTypes.bool.isRequired,
+    scaleLength: PropTypes.bool.isRequired,
+    maxAnchorLength: PropTypes.string.isRequired,
+};
+
 ItemContainer.propTypes = {
     children: PropTypes.node.isRequired, // ItemFixed or ItemPositioned components
     mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
+    configuration: PropTypes.shape(ConfigurationOptionsProps).isRequired,
 };
 
 export default ItemContainer;
