@@ -149,18 +149,14 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions, c
 
     const newPlacements = [];
     positions.forEach((position, index) => { // eslint-disable-line 
-        /* const indexes = (new Int8Array(positions.length))
-            .map((_, i) => i)
-            .filter(i => i !== index); */
         const score = getPositionAlphaOverflowCost(position, isOccupied);
-        // const intersectingLines = getIntersectionCost(positions, [index]);
         const distance = position.distance - position.initialDistance;
         const overflow = hasOverflow(position, bbox);
         const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
 
         newPlacements.push({
             ...position,
-            visible: distance < maxAnchorLength && !overflow && score < 4,
+            visible: distance < maxAnchorLength && !overflow && score < 6,
         });
     });
     return newPlacements;
