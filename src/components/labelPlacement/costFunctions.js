@@ -1,14 +1,16 @@
 import segseg from "segseg";
 
-const OVERLAP_COST = 20;
+const OVERLAP_COST = 3000;
 const OVERLAP_COST_FIXED = 6;
-const OVERFLOW_COST = 10;
-const INTERSECTION_COST = 1000;
+const OVERFLOW_COST = 100;
+const INTERSECTION_COST = 500;
 const INTERSECTION_WITH_FIXED_COST = 25;
-const DISTANCE_COST = 60;
-const ANGLE_COST = 1;
-const ALPHA_COST = 50;
+const DISTANCE_COST = 120;
+const ANGLE_COST = 0;
+const ALPHA_COST = 60;
+const REMOVED_COST = 100;
 
+const MAX_ALPHA_OVERLAPS = 5;
 const ALPHA_STEP = 5;
 
 function hasOverflow(position, boundingBox) {
@@ -36,8 +38,33 @@ function getPositionAlphaOverflowCost(position, isOccupied) {
 }
 
 function getAlphaOverflowCost(positions, indexes, isOccupied) {
-    return positions.map(position => getPositionAlphaOverflowCost(position, isOccupied))
-        .reduce((a, b) => a + b) * ALPHA_COST;
+    return ALPHA_COST * indexes.reduce((prev, index) =>
+        prev
+        + getPositionAlphaOverflowCost(positions[index], isOccupied), 0);
+}
+
+function nulls() {
+
+}
+
+function shouldBeVisible(position, isOccupied, bbox, configuration) {
+    const alphaCost = getPositionAlphaOverflowCost(position, isOccupied);
+    const distance = position.distance - position.initialDistance;
+    const overflow = hasOverflow(position, bbox);
+    const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
+    nulls(alphaCost, distance, overflow, maxAnchorLength);
+    // return true;
+    return distance < maxAnchorLength && !overflow && alphaCost < (MAX_ALPHA_OVERLAPS * ALPHA_COST);
+}
+
+function removedCost(positions, indexes, isOccupied, bbox, configuration) {
+    return indexes.reduce((prev, index) =>
+        prev
+        + (
+            positions[index].allowHidden
+            && !shouldBeVisible(positions[index], isOccupied, bbox, configuration)
+                ? REMOVED_COST : 0
+        ), 0);
 }
 
 /**
@@ -69,15 +96,12 @@ function getPositionOverlapCost(positions, indexes, i, runAll) {
  * @param {number[]} indexes - Indexes to check
  * @returns {number}
  */
-function getOverlapCost(positions, indexes, maxDistance) {
+function getOverlapCost(positions, indexes, shouldItemBeVisible) {
     let overlap = 0;
     positions.forEach((position, i) => {
         if (
-            !(
-                positions[i].distance
-                && positions[i].distance > maxDistance
-                && positions[i].allowHidden
-            )
+            shouldItemBeVisible(position)
+            || !positions[i].allowHidden
         ) {
             overlap += getPositionOverlapCost(positions, indexes, i);
         }
@@ -207,4 +231,6 @@ export {
     getPositionAlphaOverflowCost,
     getPositionOverlapCost,
     getPositionFixedIntersectionCost,
+    shouldBeVisible,
+    removedCost,
 };

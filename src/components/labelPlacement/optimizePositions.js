@@ -11,12 +11,12 @@ import {
     getFixedIntersectionCost,
     getAngleCost,
     getAlphaOverflowCost,
-    getPositionAlphaOverflowCost,
+    shouldBeVisible,
+    removedCost,
     // getPositionOverlapCost,
     // getPositionFixedIntersectionCost,
 } from "./costFunctions";
 
-const maxDistance = 85;
 const timeout = 2 * 24 * 60 * 60 * 1000;
 const iterationsPerFactor = 10;
 
@@ -31,22 +31,28 @@ const diffsArray = factors.map(factor => (
     ]), [])
 ));
 
-function getCost(placement, bbox, alphaByteArray) {
+function getCost(placement, bbox, alphaByteArray, configuration) {
     const { positions, indexes } = placement;
+
+    const shouldItemBeVisible = position =>
+        shouldBeVisible(position, alphaByteArray, bbox, configuration);
+
     const overflow = getOverflowCost(positions, indexes, bbox);
-    const overlap = getOverlapCost(positions, indexes, maxDistance);
+    const overlap = getOverlapCost(positions, indexes, shouldItemBeVisible);
     const distance = getDistanceCost(positions, indexes);
     const angle = getAngleCost(positions, indexes);
     const intersection = getIntersectionCost(positions, indexes);
     const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
     const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
+    const removed = removedCost(positions, indexes, alphaByteArray, bbox, configuration);
     return overflow
         + overlap
         + distance
         + angle
         + intersection
         + intersectionWithFixed
-        + alphaOverlap;
+        + alphaOverlap
+        + removed;
 }
 
 function getOverlappingItem(placement, indexToOverlap) {
@@ -82,14 +88,14 @@ function getPlacements(placement, index, diffs, bbox) {
         .map(updatedPositions => ({ positions: updatedPositions, indexes: [...indexes, index] }));
 }
 
-function comparePlacements(placement, other, bbox, alphaByteArray) {
+function comparePlacements(placement, other, bbox, alphaByteArray, configuration) {
     const indexes = [...new Set([...placement.indexes, ...other.indexes])];
-    const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray);
-    const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray);
+    const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray, configuration);
+    const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray, configuration);
     return costOther < cost ? other : placement;
 }
 
-function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray) {
+function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, configuration) {
     // Get potential positions for item at index
     const placements = getPlacements({ ...initialPlacement, indexes: [] }, index, diffs, bbox);
 
@@ -104,12 +110,12 @@ function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray) 
         initialPlacement,
         ...placements,
         ...placementsOverlapping,
-    ].reduce((prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray));
+    ].reduce((prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray, configuration));
 
     return nextPlacement;
 }
 
-function findMostSuitablePosition(initialPlacement, bbox, isOccupied) {
+function findMostSuitablePosition(initialPlacement, bbox, isOccupied, configuration) {
     const start = Date.now();
     let placement = initialPlacement;
     const iter = factors.length * iterationsPerFactor * placement.positions.length;
@@ -122,7 +128,8 @@ function findMostSuitablePosition(initialPlacement, bbox, isOccupied) {
             for (let index = 0; index < placement.positions.length; index++) {
                 counter++;
                 if (!placement.positions[index].isFixed) {
-                    placement = getNextPlacement(placement, index, diffs, bbox, isOccupied);
+                    placement =
+                        getNextPlacement(placement, index, diffs, bbox, isOccupied, configuration);
                 }
                 if ((Date.now() - start) > timeout) {
                     console.log("Timeout"); // eslint-disable-line
@@ -145,18 +152,13 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions, c
 
     const isOccupied = getIfOccupied(alphaByteArray, mapOptions);
 
-    const positions = findMostSuitablePosition(placement, bbox, isOccupied);
+    const positions = findMostSuitablePosition(placement, bbox, isOccupied, configuration);
 
     const newPlacements = [];
     positions.forEach((position, index) => { // eslint-disable-line 
-        const score = getPositionAlphaOverflowCost(position, isOccupied);
-        const distance = position.distance - position.initialDistance;
-        const overflow = hasOverflow(position, bbox);
-        const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
-
         newPlacements.push({
             ...position,
-            visible: distance < maxAnchorLength && !overflow && score < 6,
+            visible: shouldBeVisible(position, isOccupied, bbox, configuration),
         });
     });
     return newPlacements;

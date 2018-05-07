@@ -1,11 +1,11 @@
 .label {
-  margin: 2px;
+  margin: 0px;
   color: rgb(0, 0, 167);
   font-size: 12px;
   line-height: 12px;
   /*background-color: #ffffffa8;*/
   border-radius: 1px;
-  padding: 1px;
+  padding: 5px;
   font-family: GothamXNarrow-Medium;
   max-width: 75px;
   text-align: center;
