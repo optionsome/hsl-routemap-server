@@ -109,11 +109,6 @@ const terminalMapper = mapProps((props) => {
         .map((stop) => {
             const [x, y] = viewport.project([stop.lon, stop.lat]);
 
-            if (stop.modes.nodes.length > 1) {
-                // eslint-disable-next-line no-console
-                console.log(`We assume terminals to have one transportation node, however ${stop.nameFi} has several`);
-            }
-
             return {
                 nameFi: stop.nameFi,
                 nameSe: stop.nameSe,

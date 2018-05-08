@@ -5,6 +5,7 @@ import ItemContainer from "components/labelPlacement/itemContainer";
 import ItemFixed from "components/labelPlacement/itemFixed";
 import ItemPositioned from "components/labelPlacement/itemPositioned";
 
+import { preventFromOverlap } from "../../util/terminals";
 import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
@@ -23,6 +24,8 @@ const RouteMap = (props) => {
         width: props.mapOptions.width,
         height: props.mapOptions.height,
     };
+
+    const nonOverlappingTerminals = preventFromOverlap(props.projectedTerminals, TERMINAL_SIZE);
 
     return (
         <div className={styles.root}>
@@ -50,20 +53,22 @@ const RouteMap = (props) => {
                             />
                         </ItemFixed>
                     ))}
-                    {props.projectedTerminals.map((terminal, index) => (
-                        <ItemFixed
-                            key={index}
-                            top={terminal.y - (TERMINAL_SIZE / 2)}
-                            left={terminal.x - (TERMINAL_SIZE / 2)}
-                        >
-                            <TerminalSymbol
-                                nameFi={terminal.nameFi}
-                                nameSv={terminal.nameSe}
-                                node={terminal.node}
-                                size={TERMINAL_SIZE}
-                            />
-                        </ItemFixed>
-                    ))}
+                    {
+                        nonOverlappingTerminals.map((terminal, index) => (
+                            <ItemFixed
+                                key={index}
+                                top={terminal.y - (TERMINAL_SIZE / 2)}
+                                left={terminal.x - (TERMINAL_SIZE / 2)}
+                            >
+                                <TerminalSymbol
+                                    nameFi={terminal.nameFi}
+                                    nameSv={terminal.nameSe}
+                                    node={terminal.node}
+                                    size={TERMINAL_SIZE}
+                                />
+                            </ItemFixed>
+                        ))
+                    }
                     { props.projectedIntermediates.map((intermediate, index) => (
                         <ItemPositioned
                             key={index}
