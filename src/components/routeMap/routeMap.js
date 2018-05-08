@@ -92,14 +92,15 @@ const RouteMap = (props) => {
                                     key={index}
                                     y={intermediate.y}
                                     x={intermediate.x}
-                                    distance={0}
-                                    anglePriority={10000}
-                                    distancePriority={10000}
-                                    maxDistance={3}
+                                    distance={2}
+                                    anglePriority={1000}
+                                    distancePriority={1000}
+                                    maxDistance={4}
                                     showBoxAndAnker={false}
                                     angle={intermediate.oneDirectionalAngle}
+                                    transform={intermediate.oneDirectionalAngle}
                                 >
-                                    <DirectionArrow rotation={intermediate.oneDirectionalAngle}/>
+                                    <DirectionArrow size={12}/>
                                 </ItemPositioned>
                             ))
                     }

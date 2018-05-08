@@ -1,18 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import style from "./directionArrow.css";
+import styles from "./directionArrow.css";
 
 const DirectionArrow = (props) => {
-    const directionStyle = {
-        "-webkit-transform": `rotate(${props.rotation}deg)`,
+    const style = {
+        fontSize: `${props.size}px`,
     };
     return (
-        <div className={style.arrow} style={directionStyle}>&uarr;</div>
+        <div className={styles.arrow} style={style}>&uarr;</div>
     );
 };
 
 DirectionArrow.propTypes = {
-    rotation: PropTypes.number.isRequired,
+    size: PropTypes.number.isRequired,
 };
 
 export default DirectionArrow;

@@ -45,7 +45,15 @@ class ItemPositioned extends Component {
     }
 
     render() {
-        const style = { ...this.state, position: "absolute" };
+        const style = {
+            ...this.state,
+            position: "absolute",
+        };
+
+        if (this.props.transform !== 0) {
+            style.transform = `rotate(${this.props.transform}deg)`;
+        }
+
         if (this.state.visible) {
             return (
                 <div ref={(ref) => { this.root = ref; }} style={style}>
@@ -68,6 +76,7 @@ ItemPositioned.defaultProps = {
     alphaOverlapPriority: 1,
     maxDistance: null,
     anchorWidth: 0.5,
+    transform: 0,
 };
 
 ItemPositioned.propTypes = {
@@ -85,6 +94,7 @@ ItemPositioned.propTypes = {
     alphaOverlapPriority: PropTypes.number,
     maxDistance: PropTypes.number,
     anchorWidth: PropTypes.number,
+    transform: PropTypes.number,
 };
 
 export default ItemPositioned;
