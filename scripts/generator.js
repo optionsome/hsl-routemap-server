@@ -7,7 +7,7 @@ const { spawn } = require("child_process");
 const writeFileAsync = promisify(fs.writeFile);
 
 const CLIENT_URL = "http://localhost:5000";
-const RENDER_TIMEOUT = 2 * 24 * 60 * 60 * 1000;
+const RENDER_TIMEOUT = 4 * 24 * 60 * 60 * 1000;
 const MAX_RENDER_ATTEMPTS = 1;
 const SCALE = 96 / 72;
 
