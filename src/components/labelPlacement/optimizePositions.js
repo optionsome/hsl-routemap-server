@@ -20,9 +20,9 @@ import {
 const timeout = 4 * 24 * 60 * 60 * 1000;
 const iterationsPerFactor = 10;
 
-const angles = [-6, -4, -2, -1, 0, 1, 2, 4, 6];
+const angles = [-6, -3, -1, 0, 1, 3, 6];
 const distances = [-4, -2, -1, 0, 1, 2, 4];
-const factors = [30, 20, 10, 5, 2];
+const factors = [30, 15, 7, 3];
 
 const diffsArray = factors.map(factor => (
     angles.reduce((prev, angle) => ([
