@@ -6,6 +6,7 @@ import ItemFixed from "components/labelPlacement/itemFixed";
 import ItemPositioned from "components/labelPlacement/itemPositioned";
 
 import { preventFromOverlap } from "../../util/terminals";
+import { getTransformedCoord } from "../../util/arrows";
 import TerminalSymbol from "./terminalSymbol";
 import TerminusSymbol from "./terminusSymbol";
 import TerminusLabel from "./terminusLabel";
@@ -18,6 +19,8 @@ import Scale from "./scale";
 
 const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
+const ARROW_SIZE = 12;
+const ARROW_DISTANCE_FROM_ROAD = 10;
 
 const RouteMap = (props) => {
     const mapStyle = {
@@ -87,22 +90,29 @@ const RouteMap = (props) => {
                     {
                         props.projectedIntermediates
                             .filter(intermediate => !!intermediate.oneDirectionalAngle)
-                            .map((intermediate, index) => (
-                                <ItemPositioned
-                                    key={index}
-                                    y={intermediate.y}
-                                    x={intermediate.x}
-                                    distance={2}
-                                    anglePriority={1000}
-                                    distancePriority={1000}
-                                    maxDistance={4}
-                                    showBoxAndAnker={false}
-                                    angle={intermediate.oneDirectionalAngle}
-                                    transform={intermediate.oneDirectionalAngle}
-                                >
-                                    <DirectionArrow size={12}/>
-                                </ItemPositioned>
-                            ))
+                            .map((intermediate, index) => {
+                                const { transformedX, transformedY }
+                                    = getTransformedCoord(
+                                        intermediate.x,
+                                        intermediate.y,
+                                        intermediate.oneDirectionalAngle + 90,
+                                        ARROW_DISTANCE_FROM_ROAD
+                                    );
+
+                                return (
+                                    <ItemFixed
+                                        key={index}
+                                        top={transformedY - ((ARROW_SIZE + 2) / 2)}
+                                        left={transformedX - ((ARROW_SIZE + 2) / 2)}
+                                        transform={intermediate.oneDirectionalAngle}
+                                        fixedSize={ARROW_SIZE + 2}
+                                    >
+                                        <DirectionArrow
+                                            size={ARROW_SIZE}
+                                        />
+                                    </ItemFixed>
+                                );
+                            })
                     }
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemPositioned

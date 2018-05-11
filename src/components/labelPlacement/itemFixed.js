@@ -33,6 +33,15 @@ class ItemFixed extends Component {
 
     render() {
         const style = { ...this.state, position: "absolute" };
+
+        if (this.props.transform !== 0) {
+            style.transform = `rotate(${this.props.transform}deg)`;
+        }
+        if (this.props.fixedSize) {
+            style.width = `${this.props.fixedSize}px`;
+            style.height = `${this.props.fixedSize}px`;
+        }
+
         return (
             <div ref={(ref) => { this.root = ref; }} style={style}>
                 {this.props.children}
@@ -41,10 +50,16 @@ class ItemFixed extends Component {
     }
 }
 
+ItemFixed.defaultProps = {
+    fixedSize: null,
+};
+
 ItemFixed.propTypes = {
     top: PropTypes.number.isRequired,
     left: PropTypes.number.isRequired,
     children: PropTypes.element.isRequired,
+    transform: PropTypes.number.isRequired,
+    fixedSize: PropTypes.number,
 };
 
 export default ItemFixed;
