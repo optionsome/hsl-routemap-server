@@ -4,7 +4,7 @@ import { graphql } from "react-apollo";
 import mapProps from "recompose/mapProps";
 import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
-import { trimRouteId, isSubwayRoute, isRailRoute, isNumberVariant, isDropOffOnly } from "util/domain";
+import { trimRouteId, isSubwayRoute, isRailRoute, isNumberVariant, isDropOffOnly, getRouteType } from "util/domain";
 import { getMostCommonAngle, getOneDirectionalAngle } from "util/routeAngles";
 import apolloWrapper from "util/apolloWrapper";
 import flatMap from "lodash/flatMap";
@@ -63,6 +63,7 @@ const nearbyTerminals = gql`
             nodes {
                 lines
                 stopAreaId
+                type
                 lon
                 lat
                 terminalId
@@ -218,6 +219,7 @@ const terminalMapper = mapProps((props) => {
             return {
                 ...terminus,
                 lines: terminus.lines.filter(id => !isRailRoute(id) && !isSubwayRoute(id)),
+                type: getRouteType(terminus.type),
                 x,
                 y,
             };

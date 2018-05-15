@@ -11,6 +11,12 @@ const TRUNK_ROUTES = ["550", "560"];
 const RAIL_ROUTE_ID_REGEXP = /^300[12]/;
 const SUBWAY_ROUTE_ID_REGEXP = /^31/;
 
+const routeTypes = {
+    TRAM: "TRAM",
+    BUS: "BUS",
+    OTHER: "OTHER",
+};
+
 /**
  * Returns whether a route id is a so called number variant
  * @param {String} routeId - Route id
@@ -68,6 +74,17 @@ function trimRouteId(routeId) {
         return routeId.substring(1, 5).replace(/^[0]+/g, "");
     }
     return routeId.substring(1).replace(/^[0]+/g, "");
+}
+
+function getRouteType(type) {
+    switch (type) {
+    case "01":
+        return routeTypes.BUS;
+    case "02":
+        return routeTypes.TRAM;
+    default:
+        return routeTypes.OTHER;
+    }
 }
 
 /**
@@ -137,4 +154,6 @@ export {
     iconsByMode,
     getColor,
     getIcon,
+    getRouteType,
+    routeTypes,
 };

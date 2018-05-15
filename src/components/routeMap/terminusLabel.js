@@ -1,17 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { trimRouteId } from "../../util/domain";
+import { trimRouteId, routeTypes } from "../../util/domain";
 import routeGeneralizer from "../../util/routeGeneralizer";
 
 import style from "./terminusLabel.css";
 
 const TerminusLabel = ({
-    nameFi, nameSe, lines, configuration,
+    nameFi, nameSe, lines, configuration, type,
 }) => {
     const terminusStyle = {
         fontSize: `${configuration.terminusFontSize}px`,
         lineHeight: `${configuration.terminusFontSize}px`,
         maxWidth: `${configuration.terminusWidth}px`,
+        color: type === routeTypes.TRAM ? "#387f53" : "#0379c8",
     };
 
     return (
@@ -52,6 +53,7 @@ TerminusLabel.propTypes = {
     configuration: PropTypes.shape(TerminusConfiguration).isRequired,
     nameFi: PropTypes.string,
     nameSe: PropTypes.string,
+    type: PropTypes.string.isRequired,
 };
 
 export default TerminusLabel;

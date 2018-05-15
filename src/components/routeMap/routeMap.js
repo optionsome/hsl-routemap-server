@@ -141,6 +141,7 @@ const RouteMap = (props) => {
                                 lines={terminus.lines}
                                 nameFi={terminus.nameFi}
                                 nameSe={terminus.nameSe}
+                                type={terminus.type}
                                 configuration={props.configuration}
                             />
                         </ItemPositioned>
