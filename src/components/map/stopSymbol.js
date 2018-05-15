@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 import { isTrunkRoute, colorsByMode } from "util/domain";
 
-const strokeWidth = 5;
+const strokeWidth = 1;
 
 const StopSymbol = (props) => {
     const modes = [...new Set(props.routes.map(({ mode }) => mode))];

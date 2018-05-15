@@ -4,9 +4,11 @@ import { graphql } from "react-apollo";
 import mapProps from "recompose/mapProps";
 import gql from "graphql-tag";
 import { PerspectiveMercatorViewport } from "viewport-mercator-project";
-import { trimRouteId, isSubwayRoute, isRailRoute } from "util/domain";
+import { trimRouteId, isSubwayRoute, isRailRoute, isNumberVariant, isDropOffOnly } from "util/domain";
 import { getMostCommonAngle, getOneDirectionalAngle } from "util/routeAngles";
 import apolloWrapper from "util/apolloWrapper";
+import flatMap from "lodash/flatMap";
+import routeCompare from "util/routeCompare";
 
 import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
@@ -87,6 +89,35 @@ const nearbyTerminals = gql`
               terminalId
             }
         },
+        stopGroups: regularStopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+            nodes {
+                stopIds
+                shortId
+                lat
+                lon
+                nameFi
+                nameSe
+                stops {
+                    nodes {
+                        calculatedHeading
+                        routeSegments: routeSegmentsForDate(date: $date) {
+                            nodes {
+                                routeId
+                                hasRegularDayDepartures(date: $date)
+                                pickupDropoffType
+                                route {
+                                    nodes {
+                                        destinationFi
+                                        destinationSe
+                                        mode
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
 `;
 
@@ -95,6 +126,7 @@ const terminalMapper = mapProps((props) => {
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
     const terminalNames = props.data.terminalNames.nodes;
+    const stops = props.data.stopGroups.nodes;
 
     const viewport = new PerspectiveMercatorViewport({
         longitude: props.mapOptions.center[0],
@@ -117,6 +149,26 @@ const terminalMapper = mapProps((props) => {
                 y,
             };
         });
+
+    const projectedStops = stops
+        .map((stop) => {
+            const [x, y] = viewport.project([stop.lon, stop.lat]);
+
+            return {
+                x,
+                y,
+                routes: flatMap(stop.stops.nodes, node =>
+                    node.routeSegments.nodes
+                        .filter(routeSegment => !isNumberVariant(routeSegment.routeId))
+                        .filter(routeSegment => !isDropOffOnly(routeSegment))
+                        .map(routeSegment => ({
+                            routeId: trimRouteId(routeSegment.routeId),
+                            destinationFi: routeSegment.route.nodes[0].destinationFi,
+                            destinationSe: routeSegment.route.nodes[0].destinationSe,
+                            mode: routeSegment.route.nodes[0].mode,
+                        }))).sort(routeCompare),
+            };
+        }).filter(stop => stop.routes.length);
 
     const projectedTerminalNames = terminalNames
         .map((terminalName) => {
@@ -181,7 +233,6 @@ const terminalMapper = mapProps((props) => {
     const mapComponents = {
         text_fisv: { enabled: true },
         regular_routes: { enabled: true },
-        regular_stops: { enabled: true },
         municipal_borders: { enabled: true },
     };
 
@@ -194,6 +245,7 @@ const terminalMapper = mapProps((props) => {
         projectedTerminalNames,
         projectedTerminuses,
         projectedIntermediates,
+        projectedStops,
         date: props.date,
     };
 });

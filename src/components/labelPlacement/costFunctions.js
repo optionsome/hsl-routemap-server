@@ -14,6 +14,7 @@ const MAX_ALPHA_OVERLAPS = 5;
 const ALPHA_STEP = 5;
 
 function hasOverflow(position, boundingBox) {
+    if (position.isFixed) return false;
     return position.left < 0 || position.top < 0 ||
           (position.left + position.width) > boundingBox.width ||
           (position.top + position.height) > boundingBox.height;
@@ -25,6 +26,7 @@ function getOverflowCost(positions, indexes, boundingBox) {
 }
 
 function getPositionAlphaOverflowCost(position, isOccupied) {
+    if (position.isFixed) return 0;
     let overlapCounter = 0;
     for (let { left } = position; left < (position.left + position.width); left += ALPHA_STEP) {
         for (
@@ -43,17 +45,12 @@ function getAlphaOverflowCost(positions, indexes, isOccupied) {
         + getPositionAlphaOverflowCost(positions[index], isOccupied), 0);
 }
 
-function nulls() {
-
-}
-
 function shouldBeVisible(position, isOccupied, bbox, configuration) {
+    if (position.isFixed) return true;
     const alphaCost = getPositionAlphaOverflowCost(position, isOccupied);
     const distance = position.distance - position.initialDistance;
     const overflow = hasOverflow(position, bbox);
     const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
-    nulls(alphaCost, distance, overflow, maxAnchorLength);
-    // return true;
     return distance < maxAnchorLength && !overflow && alphaCost < (MAX_ALPHA_OVERLAPS * ALPHA_COST);
 }
 
@@ -82,7 +79,8 @@ function getOverlapArea(a, b) {
 function getPositionOverlapCost(positions, indexes, i, runAll) {
     let overlap = 0;
     indexes.forEach((j) => {
-        if (j >= i && indexes.includes(i) && !runAll) return;
+        if (positions[j].allowCollision) return;
+        else if (j >= i && indexes.includes(i) && !runAll) return;
         const area = getOverlapArea(positions[i], positions[j]);
         const isFixed = positions[i].isFixed || positions[j].isFixed;
         overlap += area * (isFixed ? OVERLAP_COST_FIXED : OVERLAP_COST);
@@ -100,8 +98,9 @@ function getOverlapCost(positions, indexes, shouldItemBeVisible) {
     let overlap = 0;
     positions.forEach((position, i) => {
         if (
-            shouldItemBeVisible(position)
-            || !positions[i].allowHidden
+            (shouldItemBeVisible(position)
+            || !positions[i].allowHidden)
+            && !position.allowCollision
         ) {
             overlap += getPositionOverlapCost(positions, indexes, i);
         }
@@ -141,7 +140,9 @@ function getIntersectionCost(positions, indexes) {
 function getPositionFixedIntersectionCost(positions, indexes, index) {
     let sum = 0;
     const position = positions[index];
+    if (position.allowCollision) return sum;
     indexes.forEach((j) => {
+        if (positions[j].allowCollision) return;
         if (j >= index && indexes.includes(index)) return;
         // If both are dynamic or fixed, return
         if (position.isFixed === positions[j].isFixed) return;
@@ -196,12 +197,15 @@ function getFixedIntersectionCost(positions, indexes) {
  * @returns {number}
  */
 function getDistanceCost(positions, indexes) {
-    return DISTANCE_COST * indexes.reduce((prev, index) =>
-        prev
-        + (
-            Math.log2(Math.max((positions[index].distance - positions[index].initialDistance), 1)
-                * positions[index].distancePriority)
-        ), 0);
+    return DISTANCE_COST * indexes
+        .filter(index => !positions[index].isFixed)
+        .reduce((prev, index) =>
+            prev
+            + (
+                Math.log2(Math.max((
+                    positions[index].distance - positions[index].initialDistance), 1)
+                    * positions[index].distancePriority)
+            ), 0);
 }
 
 /**
@@ -211,10 +215,12 @@ function getDistanceCost(positions, indexes) {
  * @returns {number}
  */
 function getAngleCost(positions, indexes) {
-    return ANGLE_COST * indexes.reduce((prev, index) => {
-        const phi = Math.abs(positions[index].angle - positions[index].initialAngle) % 180;
-        return prev + (((phi > 90) ? 180 - phi : phi) * positions[index].anglePriority);
-    }, 0);
+    return ANGLE_COST * indexes
+        .filter(index => !positions[index].isFixed)
+        .reduce((prev, index) => {
+            const phi = Math.abs(positions[index].angle - positions[index].initialAngle) % 180;
+            return prev + (((phi > 90) ? 180 - phi : phi) * positions[index].anglePriority);
+        }, 0);
 }
 
 export {

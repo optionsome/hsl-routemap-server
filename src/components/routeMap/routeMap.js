@@ -13,10 +13,13 @@ import TerminusLabel from "./terminusLabel";
 import IntermediateLabel from "./intermediateLabel";
 import StationName from "./stationName";
 import DirectionArrow from "./directionArrow";
+import StopSymbol from "../map/stopSymbol";
+
 
 import styles from "./routeMap.css";
 import Scale from "./scale";
 
+const STOP_RADIUS = 4;
 const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
 const ARROW_SIZE = 12;
@@ -54,6 +57,16 @@ const RouteMap = (props) => {
                             <TerminusSymbol
                                 size={TERMINUS_SIZE}
                             />
+                        </ItemFixed>
+                    ))}
+                    {props.projectedStops.map((stop, index) => (
+                        <ItemFixed
+                            key={index}
+                            top={stop.y - STOP_RADIUS}
+                            left={stop.x - STOP_RADIUS}
+                            allowCollision
+                        >
+                            <StopSymbol routes={stop.routes} size={STOP_RADIUS * 2}/>
                         </ItemFixed>
                     ))}
                     {
@@ -200,6 +213,12 @@ const terminalName = PropTypes.shape({
     nameFi: PropTypes.string,
 });
 
+const StopType = PropTypes.shape({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    routes: PropTypes.arrayOf(PropTypes.string).isRequired,
+});
+
 const ConfigurationOptionsProps = {
     date: PropTypes.string.isRequired,
     showScale: PropTypes.bool.isRequired,
@@ -213,6 +232,7 @@ RouteMap.propTypes = {
     projectedTerminalNames: PropTypes.arrayOf(terminalName).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
+    projectedStops: PropTypes.arrayOf(StopType).isRequired,
     mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
     meterPerPxRatio: PropTypes.number.isRequired,

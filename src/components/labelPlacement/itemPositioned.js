@@ -41,6 +41,7 @@ class ItemPositioned extends Component {
             maxDistance: this.props.maxDistance,
             anchorWidth: this.props.anchorWidth,
             allowHidden: this.props.allowHidden,
+            allowCollision: this.props.allowCollision,
         };
     }
 
@@ -77,6 +78,7 @@ ItemPositioned.defaultProps = {
     maxDistance: null,
     anchorWidth: 0.5,
     transform: 0,
+    allowCollision: false,
 };
 
 ItemPositioned.propTypes = {
@@ -95,6 +97,7 @@ ItemPositioned.propTypes = {
     maxDistance: PropTypes.number,
     anchorWidth: PropTypes.number,
     transform: PropTypes.number,
+    allowCollision: PropTypes.bool,
 };
 
 export default ItemPositioned;

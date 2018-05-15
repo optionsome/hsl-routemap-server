@@ -28,6 +28,7 @@ class ItemFixed extends Component {
             distancePriority: 1,
             lineOverlapPriority: 1,
             alphaOverlapPriority: 1,
+            allowCollision: this.props.allowCollision,
         };
     }
 
@@ -52,6 +53,7 @@ class ItemFixed extends Component {
 
 ItemFixed.defaultProps = {
     fixedSize: null,
+    allowCollision: false,
 };
 
 ItemFixed.propTypes = {
@@ -60,6 +62,7 @@ ItemFixed.propTypes = {
     children: PropTypes.element.isRequired,
     transform: PropTypes.number.isRequired,
     fixedSize: PropTypes.number,
+    allowCollision: PropTypes.bool,
 };
 
 export default ItemFixed;
