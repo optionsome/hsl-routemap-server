@@ -161,6 +161,7 @@ const terminalMapper = mapProps((props) => {
                     node.routeSegments.nodes
                         .filter(routeSegment => !isNumberVariant(routeSegment.routeId))
                         .filter(routeSegment => !isDropOffOnly(routeSegment))
+                        .filter(routeSegment => routeSegment.route.nodes.length)
                         .map(routeSegment => ({
                             routeId: trimRouteId(routeSegment.routeId),
                             destinationFi: routeSegment.route.nodes[0].destinationFi,
