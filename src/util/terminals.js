@@ -13,26 +13,31 @@ function removeOverlap(terminal1, terminal2, size) {
     const horFurther = horDiff > verDiff;
     const result = terminal1;
     if (horFurther) {
-        if (terminal1.x > terminal2.x) {
-            result.x -= (terminal2.x - terminal1.x) + size;
+        if (terminal1.x < terminal2.x) {
+            result.x -= size - (terminal2.x - terminal1.x);
         } else {
-            result.x += (terminal1.x - terminal2.x) + size;
+            result.x += size - (terminal1.x - terminal2.x);
         }
     } else if (terminal1.y > terminal2.y) {
-        result.y += (terminal2.y - terminal1.y) + size;
+        result.y += size - (terminal1.y - terminal2.y);
     } else {
-        result.y -= (terminal1.y - terminal2.y) + size;
+        result.y -= size - (terminal1.y - terminal2.y);
     }
     return result;
 }
 
 function preventFromOverlap(terminals, size) {
     const result = [];
+    const alreadyFixed = [];
     for (let i = 0; i < terminals.length; i++) {
         let terminal1 = terminals[i];
         for (let j = 0; j < terminals.length; j++) {
             const terminal2 = terminals[j];
-            if (i !== j && doesOverlap(terminal1, terminal2, size)) {
+            if (
+                i !== j
+                && doesOverlap(terminal1, terminal2, size)
+                && alreadyFixed.indexOf(terminal2) === -1) {
+                alreadyFixed.push(terminal1);
                 terminal1 = removeOverlap(terminal1, terminal2, size);
             }
         }
