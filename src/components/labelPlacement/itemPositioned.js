@@ -70,7 +70,7 @@ ItemPositioned.defaultProps = {
     angle: 0,
     visible: true,
     allowHidden: false,
-    anglePriority: 1,
+    anglePriority: 0,
     distancePriority: 1,
     lineOverlapPriority: 1,
     showBoxAndAnker: true,

@@ -92,6 +92,7 @@ const RouteMap = (props) => {
                             y={intermediate.y}
                             distance={0}
                             allowHidden
+                            anglePriority={1}
                             angle={intermediate.angle}
                         >
                             <IntermediateLabel
