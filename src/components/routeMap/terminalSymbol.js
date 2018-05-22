@@ -7,23 +7,17 @@ import SubwayIcon from "icons/icon_subway.svg";
 import BusIcon from "icons/icon_bus.svg";
 import FerryIcon from "icons/icon_ferry.svg";
 import RailIcon from "icons/icon_rail.svg";
-import TramIcon from "icons/icon_tram.svg";
-import TrunkIcon from "icons/icon_trunk.svg";
 
 function getIcon(node) {
     switch (node) {
-    case "SUBWAY":
+    case "06":
         return SubwayIcon;
-    case "BUS":
+    case "01":
         return BusIcon;
-    case "FERRY":
+    case "07":
         return FerryIcon;
-    case "RAIL":
+    case "12":
         return RailIcon;
-    case "TRAM":
-        return TramIcon;
-    case "TRUNK":
-        return TrunkIcon;
     default:
         return null;
     }

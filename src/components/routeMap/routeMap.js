@@ -31,7 +31,7 @@ const RouteMap = (props) => {
         height: props.mapOptions.height,
     };
 
-    const nonOverlappingTerminals = preventFromOverlap(props.projectedTerminals, TERMINAL_SIZE);
+    const nonOverlappingStations = preventFromOverlap(props.projectedStations, TERMINAL_SIZE);
 
     return (
         <div className={styles.root}>
@@ -70,16 +70,16 @@ const RouteMap = (props) => {
                         </ItemFixed>
                     ))}
                     {
-                        nonOverlappingTerminals.map((terminal, index) => (
+                        nonOverlappingStations.map((station, index) => (
                             <ItemFixed
                                 key={index}
-                                top={terminal.y - (TERMINAL_SIZE / 2)}
-                                left={terminal.x - (TERMINAL_SIZE / 2)}
+                                top={station.y - (TERMINAL_SIZE / 2)}
+                                left={station.x - (TERMINAL_SIZE / 2)}
                             >
                                 <TerminalSymbol
-                                    nameFi={terminal.nameFi}
-                                    nameSv={terminal.nameSe}
-                                    node={terminal.node}
+                                    nameFi={station.nameFi}
+                                    nameSv={station.nameSe}
+                                    node={station.mode}
                                     size={TERMINAL_SIZE}
                                 />
                             </ItemFixed>
@@ -148,25 +148,27 @@ const RouteMap = (props) => {
                         </ItemPositioned>
                     ))}
                     {
-                        props.projectedTerminalNames.map((name, index) => (
-                            <ItemPositioned
-                                key={index}
-                                x={name.x}
-                                y={name.y}
-                                distance={10}
-                                anchorWidth={1}
-                                angle={45}
-                                distancePriority={6}
-                                alphaOverlapPriority={0.5}
-                            >
-                                <StationName
-                                    nameFi={name.nameFi}
-                                    nameSe={name.nameSe}
-                                    type={name.type}
-                                    configuration={props.configuration}
-                                />
-                            </ItemPositioned>
-                        ))}
+                        props.projectedStations
+                            .filter(station => station.mode === "06" || station.mode === "12")
+                            .map((name, index) => (
+                                <ItemPositioned
+                                    key={index}
+                                    x={name.x}
+                                    y={name.y}
+                                    distance={10}
+                                    anchorWidth={1}
+                                    angle={45}
+                                    distancePriority={6}
+                                    alphaOverlapPriority={0.5}
+                                >
+                                    <StationName
+                                        nameFi={name.nameFi}
+                                        nameSe={name.nameSe}
+                                        type={name.mode}
+                                        configuration={props.configuration}
+                                    />
+                                </ItemPositioned>
+                            ))}
                 </ItemContainer>
                 { props.configuration.showScale &&
                     <Scale
@@ -187,12 +189,12 @@ const TerminusType = PropTypes.shape({
     nameSe: PropTypes.string,
 });
 
-const TerminalType = PropTypes.shape({
+const StationType = PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
     nameFi: PropTypes.string,
     nameSv: PropTypes.string,
-    node: PropTypes.string.isRequired,
+    mode: PropTypes.string.isRequired,
 });
 
 const IntermediateType = PropTypes.shape({
@@ -207,13 +209,6 @@ const MapOptions = {
     zoom: PropTypes.number.isRequired,
     center: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
-
-const terminalName = PropTypes.shape({
-    x: PropTypes.number.isRequired,
-    y: PropTypes.number.isRequired,
-    type: PropTypes.string.isRequired,
-    nameFi: PropTypes.string,
-});
 
 const StopType = PropTypes.shape({
     x: PropTypes.number.isRequired,
@@ -230,8 +225,7 @@ const ConfigurationOptionsProps = {
 
 RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
-    projectedTerminals: PropTypes.arrayOf(TerminalType).isRequired,
-    projectedTerminalNames: PropTypes.arrayOf(terminalName).isRequired,
+    projectedStations: PropTypes.arrayOf(StationType).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
     projectedStops: PropTypes.arrayOf(StopType).isRequired,

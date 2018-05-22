@@ -43,23 +43,22 @@ const mapPositionMapper = mapProps((props) => {
         configuration,
         date: props.configuration.date,
         meterPerPxRatio: mapOptions.meterPerPxRatio,
+        nearBuses: props.configuration.nearBuses,
     };
 });
 
 const nearbyTerminals = gql`
-    query nearbyTerminals($minLat: Float!, $minLon: Float!, $maxLat: Float!, $maxLon: Float!, $date: Date!) {
-        terminals: terminalsByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+    query nearbyTerminals($minLat: Float!, $minLon: Float!, $maxLat: Float!, $maxLon: Float!, $date: Date!, $nearBuses: Boolean) {
+        stations: getStations(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon, date: $date) {
             nodes {
                 nameFi
                 nameSe
                 lat
                 lon
-                modes {
-                    nodes
-                }
+                type
             }
         },
-        terminus: terminusByDateAndBboxGrouped(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+        terminus: getTerminusByDateAndBboxGrouped(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon, onlyNearBuses: $nearBuses) {
             nodes {
                 lines
                 stopAreaId
@@ -71,7 +70,7 @@ const nearbyTerminals = gql`
                 nameSe
             }
         },
-        intermediates: getIntermediatePoints(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+        intermediates: getSectionIntermediates(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon, onlyNearBuses: $nearBuses) {
             nodes {
               routes,
               lon,
@@ -80,17 +79,7 @@ const nearbyTerminals = gql`
               length
             }
         },
-        terminalNames: getTerminalnames(date: $date, minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
-            nodes {
-              lat,
-              lon,
-              nameFi,
-              nameSe,
-              type,
-              terminalId
-            }
-        },
-        stopGroups: regularStopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon) {
+        stopGroups: getStopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon, onlyNearBuses: $nearBuses) {
             nodes {
                 stopIds
                 shortId
@@ -123,10 +112,9 @@ const nearbyTerminals = gql`
 `;
 
 const terminalMapper = mapProps((props) => {
-    const terminals = props.data.terminals.nodes;
+    const stations = props.data.stations.nodes;
     const terminuses = props.data.terminus.nodes;
     const intermediates = props.data.intermediates.nodes;
-    const terminalNames = props.data.terminalNames.nodes;
     const stops = props.data.stopGroups.nodes;
 
     const viewport = new PerspectiveMercatorViewport({
@@ -137,19 +125,20 @@ const terminalMapper = mapProps((props) => {
         height: props.height,
     });
 
-    const projectedTerminals = terminals
-        .filter(stop => stop.modes && stop.modes.nodes && stop.modes.nodes.length)
+    const projectedStations = stations
         .map((stop) => {
             const [x, y] = viewport.project([stop.lon, stop.lat]);
 
             return {
                 nameFi: stop.nameFi,
                 nameSe: stop.nameSe,
-                node: stop.modes.nodes[0],
+                mode: stop.type,
                 x,
                 y,
             };
         });
+
+    console.log(projectedStations);
 
     const projectedStops = stops
         .map((stop) => {
@@ -171,16 +160,6 @@ const terminalMapper = mapProps((props) => {
                         }))).sort(routeCompare),
             };
         }).filter(stop => stop.routes.length);
-
-    const projectedTerminalNames = terminalNames
-        .map((terminalName) => {
-            const [x, y] = viewport.project([terminalName.lon, terminalName.lat]);
-            return {
-                ...terminalName,
-                x,
-                y,
-            };
-        });
 
     const projectedIntermediates = intermediates
         .map(intermediate => ({
@@ -235,17 +214,21 @@ const terminalMapper = mapProps((props) => {
 
     const mapComponents = {
         text_fisv: { enabled: true },
-        regular_routes: { enabled: true },
         municipal_borders: { enabled: true },
     };
+
+    if (props.configuration.nearBuses) {
+        mapComponents.near_bus_routes = { enabled: true };
+    } else {
+        mapComponents.regular_routes = { enabled: true };
+    }
 
     return {
         mapOptions,
         configuration: props.configuration,
         meterPerPxRatio: props.meterPerPxRatio,
         mapComponents,
-        projectedTerminals,
-        projectedTerminalNames,
+        projectedStations,
         projectedTerminuses,
         projectedIntermediates,
         projectedStops,
@@ -270,6 +253,7 @@ const MapOptionsProps = {
 
 const ConfigurationOptionsProps = {
     date: PropTypes.string.isRequired,
+    nearBuses: PropTypes.bool.isRequired,
 };
 
 RouteMapContainer.propTypes = {
