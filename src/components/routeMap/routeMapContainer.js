@@ -42,7 +42,6 @@ const mapPositionMapper = mapProps((props) => {
         latitude,
         configuration,
         date: props.configuration.date,
-        meterPerPxRatio: mapOptions.meterPerPxRatio,
         nearBuses: props.configuration.nearBuses,
     };
 });
@@ -138,8 +137,6 @@ const terminalMapper = mapProps((props) => {
             };
         });
 
-    console.log(projectedStations);
-
     const projectedStops = stops
         .map((stop) => {
             const [x, y] = viewport.project([stop.lon, stop.lat]);
@@ -226,7 +223,7 @@ const terminalMapper = mapProps((props) => {
     return {
         mapOptions,
         configuration: props.configuration,
-        meterPerPxRatio: props.meterPerPxRatio,
+        pxPerMeterRatio: viewport.getDistanceScales().pixelsPerMeter[0],
         mapComponents,
         projectedStations,
         projectedTerminuses,

@@ -14,10 +14,9 @@ import IntermediateLabel from "./intermediateLabel";
 import StationName from "./stationName";
 import DirectionArrow from "./directionArrow";
 import StopSymbol from "../map/stopSymbol";
-
+import Scalebar from "../map/scalebar";
 
 import styles from "./routeMap.css";
-import Scale from "./scale";
 
 const STOP_RADIUS = 4;
 const TERMINUS_SIZE = 5;
@@ -25,10 +24,24 @@ const TERMINAL_SIZE = 14;
 const ARROW_SIZE = 12;
 const ARROW_DISTANCE_FROM_ROAD = 10;
 
+// Overlays
+const INFO_MARGIN_BOTTOM = 78;
+const INFO_MARGIN_LEFT = 44;
+
 const RouteMap = (props) => {
     const mapStyle = {
         width: props.mapOptions.width,
         height: props.mapOptions.height,
+    };
+
+    const Attribution = () => (
+        <div className={styles.attribution}>
+            &copy; OpenStreetMap
+        </div>
+    );
+
+    const scaleStyle = {
+        fontSize: `${props.configuration.scaleFontSize ? props.configuration.scaleFontSize : 12}px`,
     };
 
     const nonOverlappingStations = preventFromOverlap(props.projectedStations, TERMINAL_SIZE);
@@ -169,13 +182,20 @@ const RouteMap = (props) => {
                                     />
                                 </ItemPositioned>
                             ))}
+                    <ItemFixed top={mapStyle.height - INFO_MARGIN_BOTTOM} left={INFO_MARGIN_LEFT}>
+                        <div style={scaleStyle}>
+                            <Scalebar
+                                targetWidth={
+                                    props.configuration.scalePxLength ?
+                                        props.configuration.scalePxLength
+                                        : 250
+                                }
+                                pixelsPerMeter={props.pxPerMeterRatio}
+                            />
+                            <Attribution/>
+                        </div>
+                    </ItemFixed>
                 </ItemContainer>
-                { props.configuration.showScale &&
-                    <Scale
-                        meterPerPxRatio={props.meterPerPxRatio}
-                        scaleLength={props.configuration.scaleLength}
-                    />
-                }
             </div>
         </div>
     );
@@ -218,9 +238,9 @@ const StopType = PropTypes.shape({
 
 const ConfigurationOptionsProps = {
     date: PropTypes.string.isRequired,
-    showScale: PropTypes.bool.isRequired,
-    scaleLength: PropTypes.bool.isRequired,
+    scaleFontSize: PropTypes.bool.isRequired,
     maxAnchorLength: PropTypes.string.isRequired,
+    scalePxLength: PropTypes.number.isRequired,
 };
 
 RouteMap.propTypes = {
@@ -231,7 +251,7 @@ RouteMap.propTypes = {
     projectedStops: PropTypes.arrayOf(StopType).isRequired,
     mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
-    meterPerPxRatio: PropTypes.number.isRequired,
+    pxPerMeterRatio: PropTypes.number.isRequired,
     configuration: PropTypes.shape(ConfigurationOptionsProps).isRequired,
 };
 
