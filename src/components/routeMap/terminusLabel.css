@@ -4,15 +4,15 @@
   font-size: 14px;
   line-height: 14px;
   padding: 2px;
-  font-family: GothamXNarrow-Light;
+  font-family: GothamXNarrow-Book;
   max-width: 120px;
   text-align: center;
 }
 
 .headerFi {
-  font-family: GothamXNarrow-Medium;
+  font-family: GothamRounded-Medium;
 }
 
 .headerSe {
-  font-family: GothamXNarrow-Book;
+  font-family: GothamRounded-Book;
 }
