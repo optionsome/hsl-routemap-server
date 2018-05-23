@@ -1,19 +1,30 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { trimRouteId, routeTypes } from "../../util/domain";
+import { trimRouteId } from "../../util/domain";
 import routeGeneralizer from "../../util/routeGeneralizer";
 
 import style from "./terminusLabel.css";
 
 const TerminusLabel = ({
-    nameFi, nameSe, lines, configuration, type,
+    nameFi, nameSe, lines, configuration,
 }) => {
     const terminusStyle = {
         fontSize: `${configuration.terminusFontSize}px`,
         lineHeight: `${configuration.terminusFontSize}px`,
         maxWidth: `${configuration.terminusWidth}px`,
-        color: type === routeTypes.TRAM ? "#387f53" : "#0379c8",
+        color: "#0379c8",
     };
+
+    function intersperse(arr, sep) {
+        if (arr.length === 0) {
+            return [];
+        }
+
+        return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
+    }
+
+    const routes = routeGeneralizer(lines
+        .map(id => trimRouteId(id)));
 
     return (
         <div className={style.label} style={terminusStyle}>
@@ -31,8 +42,7 @@ const TerminusLabel = ({
                 </div>
             }
             {
-                routeGeneralizer(lines
-                    .map(id => trimRouteId(id)))
+                intersperse(routes.map(item => <span className={item.type === "tram" ? style.tram : style.bus}>{item.text}</span>), ", ")
             }
         </div>
     );
@@ -53,7 +63,6 @@ TerminusLabel.propTypes = {
     configuration: PropTypes.shape(TerminusConfiguration).isRequired,
     nameFi: PropTypes.string,
     nameSe: PropTypes.string,
-    type: PropTypes.string.isRequired,
 };
 
 export default TerminusLabel;

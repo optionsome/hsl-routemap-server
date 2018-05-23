@@ -12,7 +12,13 @@ function groupOnConsecutiveInt(array) {
     let temp = [];
     let difference;
     for (let i = 0; i < array.length; i += 1) {
-        if (!Number.isNaN(parseInt(array[i], 10)) && difference !== (parseInt(array[i], 10) - i)) {
+        if (
+            !Number.isNaN(parseInt(array[i], 10))
+            && (
+                difference !== (parseInt(array[i], 10) - i)
+                // Split between trams (1-10) and buses (11-)
+                || parseInt(array[i], 10) === 11)
+        ) {
             if (difference !== undefined) {
                 result.push(temp);
                 temp = [];
@@ -90,16 +96,26 @@ function getListOfVersionsAsString(versions) {
     return letterString;
 }
 
-function labelAsString(routes) {
+function labelAsComponents(routes) {
     return routes.map((routeGroup) => {
         const letterString = getListOfVersionsAsString(routeGroup.versions);
+        const type = routeGroup.routes[0] <= 10 ? "tram" : "bus";
         if (routeGroup.routes.length === 1) {
-            return `${routeGroup.routes[0]}${letterString}`;
+            return {
+                text: `${routeGroup.routes[0]}${letterString}`,
+                type,
+            };
         } else if (routeGroup.routes.length === 2) {
-            return `${routeGroup.routes[0]}${letterString}, ${routeGroup.routes[1]}${letterString}`;
+            return {
+                text: `${routeGroup.routes[0]}${letterString}, ${routeGroup.routes[1]}${letterString}`,
+                type,
+            };
         }
-        return `${routeGroup.routes[0]}-${routeGroup.routes[routeGroup.routes.length - 1]}${letterString}`;
-    }).join(", ");
+        return {
+            text: `${routeGroup.routes[0]}-${routeGroup.routes[routeGroup.routes.length - 1]}${letterString}`,
+            type,
+        };
+    });
 }
 
 export default function generalize(routes) {
@@ -123,5 +139,5 @@ export default function generalize(routes) {
     const flatListOnConsecutiveRouteNumbers = groupOnConsecutive(listGroupedOnVersionList);
 
     // -> "102-103(T)"
-    return labelAsString(flatListOnConsecutiveRouteNumbers);
+    return labelAsComponents(flatListOnConsecutiveRouteNumbers);
 }

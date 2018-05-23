@@ -16,3 +16,11 @@
 .headerSe {
   font-family: GothamRounded-Book;
 }
+
+.bus {
+  color: #0379c8;
+}
+
+.tram {
+  color: #009a5f;
+}

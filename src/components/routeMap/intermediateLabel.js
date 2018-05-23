@@ -10,10 +10,18 @@ const IntermediateLabel = ({ label, configuration }) => {
         maxWidth: `${configuration.intermediatePointWidth}px`,
     };
 
+    function intersperse(arr, sep) {
+        if (arr.length === 0) {
+            return [];
+        }
+
+        return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
+    }
+
     return (
         <div className={style.label} style={intermediateStyle}>
             {
-                label
+                intersperse(label.map(item => <span className={item.type === "tram" ? style.tram : style.bus}>{item.text}</span>), ", ")
             }
         </div>
     );
