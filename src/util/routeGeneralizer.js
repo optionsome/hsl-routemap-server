@@ -95,6 +95,8 @@ function labelAsString(routes) {
         const letterString = getListOfVersionsAsString(routeGroup.versions);
         if (routeGroup.routes.length === 1) {
             return `${routeGroup.routes[0]}${letterString}`;
+        } else if (routeGroup.routes.length === 2) {
+            return `${routeGroup.routes[0]}${letterString}, ${routeGroup.routes[1]}${letterString}`;
         }
         return `${routeGroup.routes[0]}-${routeGroup.routes[routeGroup.routes.length - 1]}${letterString}`;
     }).join(", ");
