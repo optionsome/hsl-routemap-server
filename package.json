@@ -8,7 +8,7 @@
     "bundle": "webpack --config webpack.config.js",
     "build": "yarn run clean && yarn run bundle",
     "serve": "serve dist",
-    "start": "node server",
+    "start": "node --max-old-space-size=25000 server",
     "start:hot": "cross-env HMR=true node server",
     "server": "node scripts/server",
     "server:hot": "nodemon scripts/server"
