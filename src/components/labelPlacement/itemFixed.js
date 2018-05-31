@@ -29,6 +29,7 @@ class ItemFixed extends Component {
             lineOverlapPriority: 1,
             alphaOverlapPriority: 1,
             allowCollision: this.props.allowCollision,
+            shouldBeVisible: true,
         };
     }
 

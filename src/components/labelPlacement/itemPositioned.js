@@ -42,6 +42,7 @@ class ItemPositioned extends Component {
             anchorWidth: this.props.anchorWidth,
             allowHidden: this.props.allowHidden,
             allowCollision: this.props.allowCollision,
+            shouldBeVisible: this.props.shouldBeVisible,
         };
     }
 
@@ -79,6 +80,7 @@ ItemPositioned.defaultProps = {
     anchorWidth: 0.5,
     transform: 0,
     allowCollision: false,
+    shouldBeVisible: true,
 };
 
 ItemPositioned.propTypes = {
@@ -98,6 +100,7 @@ ItemPositioned.propTypes = {
     anchorWidth: PropTypes.number,
     transform: PropTypes.number,
     allowCollision: PropTypes.bool,
+    shouldBeVisible: PropTypes.bool,
 };
 
 export default ItemPositioned;

@@ -58,7 +58,7 @@ function getCost(placement, bbox, alphaByteArray, configuration) {
 function getOverlappingItem(placement, indexToOverlap) {
     const { positions } = placement;
     for (let i = 0; i < positions.length; i++) {
-        if (i !== indexToOverlap && !positions[i].isFixed &&
+        if (i !== indexToOverlap && !positions[i].isFixed && positions[i].shouldBeVisible &&
             getOverlapArea(positions[i], positions[indexToOverlap]) > 0) {
             return i;
         }
@@ -66,12 +66,17 @@ function getOverlappingItem(placement, indexToOverlap) {
     return null;
 }
 
-function getPlacements(placement, index, diffs, bbox) {
+function getPlacements(placement, index, diffs, bbox, alphaByteArray, configuration) {
     const { positions, indexes } = placement;
 
     return diffs
         .map((diff) => {
             const updatedPosition = updatePosition(positions[index], diff);
+
+            if (updatedPosition) {
+                updatedPosition.shouldBeVisible
+                    = shouldBeVisible(updatedPosition, alphaByteArray, bbox, configuration);
+            }
             if (
                 !updatedPosition
                 || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))) {
@@ -92,13 +97,21 @@ function comparePlacements(placement, other, bbox, alphaByteArray, configuration
 
 function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, configuration) {
     // Get potential positions for item at index
-    const placements = getPlacements({ ...initialPlacement, indexes: [] }, index, diffs, bbox);
+    const placements
+        = getPlacements(
+            { ...initialPlacement, indexes: [] },
+            index, diffs, bbox, alphaByteArray, configuration
+        );
 
     // Get positions where one overlapping item is updated as well
     const placementsOverlapping = placements.reduce((prev, placement) => {
-        const overlapIndex = getOverlappingItem(placement, index);
+        const overlapIndex
+            = getOverlappingItem(placement, index);
         if (!overlapIndex) return prev;
-        return [...prev, ...getPlacements(placement, overlapIndex, diffs, bbox)];
+        return [...prev, ...getPlacements(
+            placement,
+            overlapIndex, diffs, bbox, alphaByteArray, configuration
+        )];
     }, []);
 
     const nextPlacement = [
