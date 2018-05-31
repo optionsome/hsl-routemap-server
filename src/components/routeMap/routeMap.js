@@ -168,8 +168,9 @@ const RouteMap = (props) => {
                                     key={index}
                                     x={name.x}
                                     y={name.y}
-                                    distance={10}
+                                    distance={5}
                                     anchorWidth={1}
+                                    maxDistance={40}
                                     angle={45}
                                     distancePriority={6}
                                     alphaOverlapPriority={0.5}

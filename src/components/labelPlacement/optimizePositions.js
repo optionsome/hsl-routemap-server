@@ -74,12 +74,7 @@ function getPlacements(placement, index, diffs, bbox) {
             const updatedPosition = updatePosition(positions[index], diff);
             if (
                 !updatedPosition
-                || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))
-                || (
-                    positions[index].maxDistance
-                    && (
-                        positions[index].distance - positions[index].initialDistance
-                    ) > positions[index].maxDistance)) {
+                || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))) {
                 return null;
             }
             return positions.map((position, i) => ((i === index) ? updatedPosition : position));

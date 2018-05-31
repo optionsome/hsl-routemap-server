@@ -16,7 +16,9 @@ function updatePosition(position, diff = {}) {
     if (diff.angle) angle = (angle + diff.angle) % 360;
     if (diff.distance) distance += diff.distance;
 
-    if (distance < position.initialDistance) return null;
+    if (position.maxDistance && position.maxDistance < distance) {
+        return null;
+    } else if (distance < position.initialDistance) return null;
 
     const a = position.width / 2;
     const b = position.height / 2;
