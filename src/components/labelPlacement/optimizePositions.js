@@ -17,7 +17,7 @@ import {
     // getPositionFixedIntersectionCost,
 } from "./costFunctions";
 
-const timeout = 4 * 24 * 60 * 60 * 1000;
+const timeout = 5 * 24 * 60 * 60 * 1000;
 const iterationsPerFactor = 3;
 
 const angles = [-6, -3, -1, 0, 1, 3, 6];
