@@ -18,7 +18,7 @@ import Scalebar from "../map/scalebar";
 
 import styles from "./routeMap.css";
 
-const STOP_RADIUS = 4;
+const STOP_RADIUS = 3.5;
 const TERMINUS_SIZE = 5;
 const TERMINAL_SIZE = 14;
 const ARROW_SIZE = 12;
