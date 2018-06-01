@@ -28,6 +28,12 @@ const propsMapper = mapProps(({
     if (components.regular_routes && components.regular_routes.enabled && date) {
         mapStyle.sources.routes.url += `?date=${date}`;
     }
+    if (components.near_bus_stops && components.near_bus_stops.enabled && date) {
+        mapStyle.sources.stops.url += `?date=${date}`;
+    }
+    if (components.near_bus_routes && components.near_bus_routes.enabled && date) {
+        mapStyle.sources.routes.url += `?date=${date}`;
+    }
 
     // Remove source containing bus routes (rail and subway routes have separate sources)
     if (components.routes && components.routes.enabled && components.routes.hideBusRoutes) {
