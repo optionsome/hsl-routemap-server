@@ -58,7 +58,10 @@ function getCost(placement, bbox, alphaByteArray, configuration) {
 function getOverlappingItem(placement, indexToOverlap) {
     const { positions } = placement;
     for (let i = 0; i < positions.length; i++) {
-        if (i !== indexToOverlap && !positions[i].isFixed && positions[i].shouldBeVisible &&
+        if (i !== indexToOverlap && !positions[i].isFixed && (
+            positions[i].shouldBeVisible
+            || !positions[i].allowHidden
+        ) &&
             getOverlapArea(positions[i], positions[indexToOverlap]) > 0) {
             return i;
         }
@@ -107,7 +110,8 @@ function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, 
     const placementsOverlapping = placements.reduce((prev, placement) => {
         const overlapIndex
             = getOverlappingItem(placement, index);
-        if (!overlapIndex) return prev;
+        const position = placement.positions[index];
+        if (!overlapIndex || (!position.shouldBeVisible && position.allowHidden)) return prev;
         return [...prev, ...getPlacements(
             placement,
             overlapIndex, diffs, bbox, alphaByteArray, configuration
