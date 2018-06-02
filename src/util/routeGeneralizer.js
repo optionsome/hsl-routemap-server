@@ -119,6 +119,7 @@ function labelAsComponents(routes) {
 }
 
 export default function generalize(routes) {
+    const fixedRoutes = routes.filter(r => r !== "18V");
     // ["103", "103T", "102", "102T"]
 
     // -> [
@@ -127,7 +128,7 @@ export default function generalize(routes) {
     //      {route: "102", version: "T"},
     //      {route: "103", version: null},
     //    ]
-    const routesSplittedOnNumberAndVersion = splitRouteStrings(routes);
+    const routesSplittedOnNumberAndVersion = splitRouteStrings(fixedRoutes);
 
     // -> { 103: ["", "T"], 102: ["", "T"]}
     const dictionaryWithGroupedOnRoute = createDictionary(routesSplittedOnNumberAndVersion);
