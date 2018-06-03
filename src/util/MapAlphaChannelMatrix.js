@@ -5,6 +5,19 @@ function getIfOccupied(byteArray, mapOptions) {
     return (x, y) => byteArray[(Math.floor(x) + (mapOptions.width * Math.floor(y)))];
 }
 
+function getIsAnyNotTransparent(startX, startY, scale, ctx) {
+    const sX = startX * scale;
+    const sY = startY * scale;
+    for (let x = sX; x < sX + scale; x++) {
+        for (let y = sY; y < sY + scale; y++) {
+            if (ctx.getImageData(x, y, 1, 1).data[3]) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 class Matrix {
     constructor(mapOptions, mapComponents) {
         this.mapOptions = mapOptions;
@@ -35,7 +48,7 @@ class Matrix {
                 for (let x = 0; x < this.mapOptions.width; x++) {
                     for (let y = 0; y < this.mapOptions.height; y++) {
                         byteArray[(x + (this.mapOptions.width * y))] =
-                            !!ctx.getImageData(x * this.scale, y * this.scale, 1, 1).data[3];
+                            getIsAnyNotTransparent(x, y, this.scale, ctx);
                     }
                 }
                 callback(byteArray);

@@ -51,7 +51,7 @@ function shouldBeVisible(position, isOccupied, bbox, configuration) {
     const distance = position.distance - position.initialDistance;
     const overflow = hasOverflow(position, bbox);
     const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
-    return distance < maxAnchorLength && !overflow && alphaCost < (MAX_ALPHA_OVERLAPS * ALPHA_COST);
+    return distance < maxAnchorLength && !overflow && alphaCost < MAX_ALPHA_OVERLAPS;
 }
 
 function removedCost(positions, indexes, isOccupied, bbox, configuration) {
