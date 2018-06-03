@@ -10,7 +10,7 @@ const ANGLE_COST = 1;
 const ALPHA_COST = 100;
 const REMOVED_COST = 100;
 
-const MAX_ALPHA_OVERLAPS = 5;
+const MAX_ALPHA_OVERLAPS = 50;
 const ALPHA_STEP = 5;
 
 function hasOverflow(position, boundingBox) {
