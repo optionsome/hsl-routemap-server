@@ -130,15 +130,15 @@ function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, 
 function findMostSuitablePosition(initialPlacement, bbox, isOccupied, configuration) {
     const start = Date.now();
     let placement = initialPlacement;
-    const iter = factors.length * iterationsPerFactor * placement.positions.length;
+    const iter = factors.length * iterationsPerFactor;
     let counter = 0;
     for (let factor = 0; factor < factors.length; factor++) {
         const diffs = diffsArray[factor];
         for (let iteration = 0; iteration < iterationsPerFactor; iteration++) {
-            console.log(`${counter}/${iter}`); // eslint-disable-line
+            console.warn(`${counter}/${iter}`); // eslint-disable-line
+            counter++;
             const previous = placement;
             for (let index = 0; index < placement.positions.length; index++) {
-                counter++;
                 if (!placement.positions[index].isFixed) {
                     placement =
                         getNextPlacement(placement, index, diffs, bbox, isOccupied, configuration);
