@@ -78,7 +78,7 @@ const nearbyTerminals = gql`
               length
             }
         },
-        stopGroups: getStopGroupedByShortIdByBbox(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon, onlyNearBuses: $nearBuses) {
+        stopGroups: getStopGroupedByShortIdByBboxAndDate(minLat: $minLat, minLon: $minLon, maxLat: $maxLat, maxLon: $maxLon, onlyNearBuses: $nearBuses, date: $date) {
             nodes {
                 stopIds
                 shortId
