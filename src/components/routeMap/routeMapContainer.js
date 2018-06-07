@@ -9,7 +9,10 @@ import { getMostCommonAngle, getOneDirectionalAngle } from "util/routeAngles";
 import apolloWrapper from "util/apolloWrapper";
 import flatMap from "lodash/flatMap";
 import routeCompare from "util/routeCompare";
+import { withStateHandlers, lifecycle, branch } from "recompose";
+import renderQueue from "util/renderQueue";
 
+import { Matrix } from "../../util/MapAlphaChannelMatrix";
 import routeGeneralizer from "../../util/routeGeneralizer";
 import RouteMap from "./routeMap";
 
@@ -236,7 +239,29 @@ const terminalMapper = mapProps((props) => {
 const hoc = compose(
     mapPositionMapper,
     graphql(nearbyTerminals),
-    apolloWrapper(terminalMapper)
+    apolloWrapper(terminalMapper),
+    compose(
+        withStateHandlers(null, {
+            onData: state => data => ({ // eslint-disable-line
+                alphaChannel: data,
+            }),
+        }),
+        lifecycle({
+            componentDidMount() {
+                renderQueue.add(this);
+                const alphaChannelMatrix =
+                    new Matrix(this.props.mapOptions, this.props.mapComponents);
+                alphaChannelMatrix.initialize((alphaChannelByteArray) => {
+                    this.props.onData(alphaChannelByteArray);
+                    renderQueue.remove(this);
+                });
+            },
+        }),
+        branch(
+            props => (!props.alphaChannel),
+            () => () => null
+        )
+    )
 );
 
 const RouteMapContainer = hoc(RouteMap);

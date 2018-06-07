@@ -60,6 +60,7 @@ const RouteMap = (props) => {
                     mapOptions={props.mapOptions}
                     mapComponents={props.mapComponents}
                     configuration={props.configuration}
+                    alphaChannel={props.alphaChannel}
                 >
                     {props.projectedTerminuses.map((terminus, index) => (
                         <ItemFixed
@@ -246,6 +247,7 @@ const ConfigurationOptionsProps = {
 
 RouteMap.propTypes = {
     date: PropTypes.string.isRequired,
+    alphaChannel: PropTypes.string.isRequired,
     projectedStations: PropTypes.arrayOf(StationType).isRequired,
     projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
     projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,

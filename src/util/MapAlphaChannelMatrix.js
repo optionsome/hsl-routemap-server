@@ -5,22 +5,11 @@ function getIfOccupied(byteArray, mapOptions) {
     return (x, y) => byteArray[(Math.floor(x) + (mapOptions.width * Math.floor(y)))];
 }
 
-function getIsAnyNotTransparent(startX, startY, scale, ctx) {
-    const sX = startX * scale;
-    const sY = startY * scale;
-    for (let x = sX; x < sX + scale; x++) {
-        for (let y = sY; y < sY + scale; y++) {
-            if (ctx.getImageData(x, y, 1, 1).data[3]) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
 class Matrix {
     constructor(mapOptions, mapComponents) {
         this.mapOptions = mapOptions;
+        console.log(mapOptions);
+        this.mapOptions.scale = 1;
         this.mapComponents = mapComponents;
 
         this.mapStyle = hslMapStyle.generateStyle({
@@ -30,27 +19,43 @@ class Matrix {
             },
             glyphsUrl: "https://kartat.hsldev.com/",
         });
-
-        this.scale = 5;
     }
 
     initialize(callback) {
         const byteArray = new Int8Array(this.mapOptions.height * this.mapOptions.width);
-        fetchMap(this.mapOptions, this.mapStyle).then((res) => {
+        fetchMap(this.mapOptions, this.mapStyle, this.mapOptions.scale).then((res) => {
+            console.warn("fetched bit array map");
             const canvas = document.createElement("canvas");
-            canvas.width = this.mapOptions.width * this.scale;
-            canvas.height = this.mapOptions.height * this.scale;
+            canvas.width = this.mapOptions.width;
+            canvas.height = this.mapOptions.height;
             const ctx = canvas.getContext("2d");
             const img = new Image();
             img.src = res;
+            let counter = 0;
             img.onload = () => {
+                console.warn("loading bit array map");
                 ctx.drawImage(img, 0, 0);
+                const imageData =
+                    ctx.getImageData(
+                        0, 0,
+                        this.mapOptions.width,
+                        this.mapOptions.height
+                    );
+
                 for (let x = 0; x < this.mapOptions.width; x++) {
                     for (let y = 0; y < this.mapOptions.height; y++) {
-                        byteArray[(x + (this.mapOptions.width * y))] =
-                            getIsAnyNotTransparent(x, y, this.scale, ctx);
+                        const result =
+                            !!imageData.data[
+                                (
+                                    (
+                                        x + (this.mapOptions.width * y)
+                                    ) * 4
+                                ) + 3];
+                        byteArray[x + (this.mapOptions.width * y)] = result;
+                        if (result) counter++;
                     }
                 }
+                console.warn(`Loaded bit array: ${counter}/${this.mapOptions.width * this.mapOptions.height}`);
                 callback(byteArray);
             };
         });

@@ -4,7 +4,6 @@ import renderQueue from "util/renderQueue";
 
 import ItemOverlay from "./itemOverlay";
 import OptimizePositionsWorker from "./optimizePositions.worker";
-import { Matrix } from "../../util/MapAlphaChannelMatrix";
 
 import styles from "./itemContainer.css";
 
@@ -69,16 +68,15 @@ class ItemContainer extends Component {
             renderQueue.remove(this, { error: new Error(event.message) });
         });
 
-        const alphaChannelMatrix = new Matrix(this.props.mapOptions, this.props.mapComponents);
-        alphaChannelMatrix.initialize((alphaChannelByteArray) => {
+        if (this.props.alphaChannel) {
             this.worker.postMessage({
                 positions: initialPositions,
                 boundingBox,
-                alphaByteArray: alphaChannelByteArray,
+                alphaByteArray: this.props.alphaChannel,
                 mapOptions: this.props.mapOptions,
                 configuration: this.props.configuration,
             });
-        });
+        }
     }
 
     render() {
@@ -119,6 +117,7 @@ ItemContainer.propTypes = {
     mapOptions: PropTypes.shape(MapOptions).isRequired,
     mapComponents: PropTypes.object.isRequired, // eslint-disable-line
     configuration: PropTypes.shape(ConfigurationOptionsProps).isRequired,
+    alphaChannel: PropTypes.string.isRequired,
 };
 
 export default ItemContainer;

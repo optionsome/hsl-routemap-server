@@ -1,6 +1,6 @@
-const API_URL = "http://dev-kartat.hsldev.com";
+const API_URL = "https://kartat.hsldev.com";
 
-const scale = 5;
+const scaleDefault = 5;
 
 /**
  * Returns a map image
@@ -8,7 +8,7 @@ const scale = 5;
  * @returns {Promise} - Image as data URL
  */
 // eslint-disable-next-line import/prefer-default-export
-export function fetchMap(mapOptions, mapStyle) {
+export function fetchMap(mapOptions, mapStyle, scale = scaleDefault) {
     const options = {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -21,5 +21,6 @@ export function fetchMap(mapOptions, mapStyle) {
             const reader = new window.FileReader();
             reader.readAsDataURL(blob);
             reader.onloadend = () => resolve(reader.result);
+            console.warn("Fetched map:");
         }));
 }
