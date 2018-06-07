@@ -58,7 +58,7 @@
     "csv": "^2.0.0",
     "graphql": "^0.11.7",
     "graphql-tag": "^2.5.0",
-    "hsl-map-style": "github:hsldevcom/hsl-map-style#b611658569706c6d8043285a8431dde4362dde07",
+    "hsl-map-style": "github:hsldevcom/hsl-map-style#21a85af2c4853e2c525d687d4ad297f16eb6d9dd",
     "iconv-lite": "^0.4.19",
     "knex": "^0.14.0",
     "koa": "^2.4.1",
