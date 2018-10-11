@@ -174,7 +174,7 @@ const RouteMap = (props) => {
                                     maxDistance={40}
                                     angle={45}
                                     distancePriority={6}
-                                    alphaOverlapPriority={0.5}
+                                    alphaOverlapPriority={0.1}
                                 >
                                     <StationName
                                         nameFi={name.nameFi}

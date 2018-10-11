@@ -12,7 +12,6 @@ import {
     getAngleCost,
     getAlphaOverflowCost,
     shouldBeVisible,
-    removedCost,
     // getPositionOverlapCost,
     // getPositionFixedIntersectionCost,
 } from "./costFunctions";
@@ -31,28 +30,23 @@ const diffsArray = factors.map(factor => (
     ]), [])
 ));
 
-function getCost(placement, bbox, alphaByteArray, configuration) {
+function getCost(placement, bbox, alphaByteArray) {
     const { positions, indexes } = placement;
 
-    const shouldItemBeVisible = position =>
-        shouldBeVisible(position, alphaByteArray, bbox, configuration);
-
     const overflow = getOverflowCost(positions, indexes, bbox);
-    const overlap = getOverlapCost(positions, indexes, shouldItemBeVisible);
+    const overlap = getOverlapCost(positions, indexes);
     const distance = getDistanceCost(positions, indexes);
     const angle = getAngleCost(positions, indexes);
     const intersection = getIntersectionCost(positions, indexes);
     const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
     const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
-    const removed = removedCost(positions, indexes, alphaByteArray, bbox, configuration);
     return overflow
         + overlap
         + distance
         + angle
         + intersection
         + intersectionWithFixed
-        + alphaOverlap
-        + removed;
+        + alphaOverlap;
 }
 
 function getOverlappingItem(placement, indexToOverlap) {
@@ -82,7 +76,9 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
             }
             if (
                 !updatedPosition
-                || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))) {
+                || (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))
+                || (positions[index].allowHidden && !updatedPosition.shouldBeVisible)
+            ) {
                 return null;
             }
             return positions.map((position, i) => ((i === index) ? updatedPosition : position));
@@ -91,10 +87,10 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
         .map(updatedPositions => ({ positions: updatedPositions, indexes: [...indexes, index] }));
 }
 
-function comparePlacements(placement, other, bbox, alphaByteArray, configuration) {
+function comparePlacements(placement, other, bbox, alphaByteArray) {
     const indexes = [...new Set([...placement.indexes, ...other.indexes])];
-    const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray, configuration);
-    const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray, configuration);
+    const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray);
+    const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray);
     return costOther < cost ? other : placement;
 }
 
@@ -122,7 +118,7 @@ function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, 
         initialPlacement,
         ...placements,
         ...placementsOverlapping,
-    ].reduce((prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray, configuration));
+    ].reduce((prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray));
 
     return nextPlacement;
 }
@@ -163,14 +159,13 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions, c
     };
 
     const isOccupied = getIfOccupied(alphaByteArray, mapOptions);
-
     const positions = findMostSuitablePosition(placement, bbox, isOccupied, configuration);
 
     const newPlacements = [];
     positions.forEach((position, index) => { // eslint-disable-line 
         newPlacements.push({
             ...position,
-            visible: shouldBeVisible(position, isOccupied, bbox, configuration),
+            visible: shouldBeVisible(position, isOccupied, bbox, configuration, true),
         });
     });
     return newPlacements;

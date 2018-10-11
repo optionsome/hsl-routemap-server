@@ -8,9 +8,8 @@ const INTERSECTION_WITH_FIXED_COST = 25;
 const DISTANCE_COST = 120;
 const ANGLE_COST = 1;
 const ALPHA_COST = 100;
-const REMOVED_COST = 100;
 
-const MAX_ALPHA_OVERLAPS = 50;
+const MAX_ALPHA_OVERLAPS = 10;
 const ALPHA_STEP = 5;
 
 function hasOverflow(position, boundingBox) {
@@ -45,23 +44,17 @@ function getAlphaOverflowCost(positions, indexes, isOccupied) {
         + getPositionAlphaOverflowCost(positions[index], isOccupied), 0);
 }
 
-function shouldBeVisible(position, isOccupied, bbox, configuration) {
+function shouldBeVisible(position, isOccupied, bbox, configuration, cutIfTooLong) {
     if (position.isFixed) return true;
-    const alphaCost = getPositionAlphaOverflowCost(position, isOccupied);
-    const distance = position.distance - position.initialDistance;
+    if (cutIfTooLong) {
+        const distance = position.distance - position.initialDistance;
+        const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
+        if (Math.abs(distance) > maxAnchorLength) return false;
+    }
     const overflow = hasOverflow(position, bbox);
-    const maxAnchorLength = parseInt(configuration.maxAnchorLength, 10);
-    return distance < maxAnchorLength && !overflow && alphaCost < MAX_ALPHA_OVERLAPS;
-}
-
-function removedCost(positions, indexes, isOccupied, bbox, configuration) {
-    return indexes.reduce((prev, index) =>
-        prev
-        + (
-            positions[index].allowHidden
-            && !shouldBeVisible(positions[index], isOccupied, bbox, configuration)
-                ? REMOVED_COST : 0
-        ), 0);
+    if (overflow) return false;
+    const alphaCost = getPositionAlphaOverflowCost(position, isOccupied);
+    return alphaCost < MAX_ALPHA_OVERLAPS;
 }
 
 /**
@@ -76,11 +69,11 @@ function getOverlapArea(a, b) {
     return Math.max(0, width) * Math.max(0, height);
 }
 
-function getPositionOverlapCost(positions, indexes, i, runAll) {
+function getPositionOverlapCost(positions, indexes, i) {
     let overlap = 0;
     indexes.forEach((j) => {
         if (positions[j].allowCollision) return;
-        else if (j >= i && indexes.includes(i) && !runAll) return;
+        else if (j >= i && indexes.includes(i)) return;
         const area = getOverlapArea(positions[i], positions[j]);
         const isFixed = positions[i].isFixed || positions[j].isFixed;
         overlap += area * (isFixed ? OVERLAP_COST_FIXED : OVERLAP_COST);
@@ -94,11 +87,11 @@ function getPositionOverlapCost(positions, indexes, i, runAll) {
  * @param {number[]} indexes - Indexes to check
  * @returns {number}
  */
-function getOverlapCost(positions, indexes, shouldItemBeVisible) {
+function getOverlapCost(positions, indexes) {
     let overlap = 0;
     positions.forEach((position, i) => {
         if (
-            (shouldItemBeVisible(position)
+            (position.shouldBeVisible
             || !positions[i].allowHidden)
             && !position.allowCollision
         ) {
@@ -238,5 +231,4 @@ export {
     getPositionOverlapCost,
     getPositionFixedIntersectionCost,
     shouldBeVisible,
-    removedCost,
 };
