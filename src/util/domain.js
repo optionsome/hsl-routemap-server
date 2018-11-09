@@ -1,20 +1,20 @@
-import busIcon from "icons/icon_bus.svg";
-import tramIcon from "icons/icon_tram.svg";
-import railIcon from "icons/icon_rail.svg";
-import subwayIcon from "icons/icon_subway.svg";
-import ferryIcon from "icons/icon_ferry.svg";
-import trunkIcon from "icons/icon_trunk.svg";
+import busIcon from 'icons/icon_bus.svg';
+import tramIcon from 'icons/icon_tram.svg';
+import railIcon from 'icons/icon_rail.svg';
+import subwayIcon from 'icons/icon_subway.svg';
+import ferryIcon from 'icons/icon_ferry.svg';
+import trunkIcon from 'icons/icon_trunk.svg';
 
-import zoneByShortId from "data/zoneByShortId";
+import zoneByShortId from 'data/zoneByShortId';
 
-const TRUNK_ROUTES = ["550", "560"];
+const TRUNK_ROUTES = ['550', '560'];
 const RAIL_ROUTE_ID_REGEXP = /^300[12]/;
 const SUBWAY_ROUTE_ID_REGEXP = /^31/;
 
 const routeTypes = {
-    TRAM: "TRAM",
-    BUS: "BUS",
-    OTHER: "OTHER",
+  TRAM: 'TRAM',
+  BUS: 'BUS',
+  OTHER: 'OTHER',
 };
 
 /**
@@ -23,7 +23,7 @@ const routeTypes = {
  * @returns {boolean}
  */
 function isNumberVariant(routeId) {
-    return /.{5}[0-9]/.test(routeId);
+  return /.{5}[0-9]/.test(routeId);
 }
 
 /**
@@ -32,7 +32,7 @@ function isNumberVariant(routeId) {
  * @returns {boolean}
  */
 function isRailRoute(routeId) {
-    return RAIL_ROUTE_ID_REGEXP.test(routeId);
+  return RAIL_ROUTE_ID_REGEXP.test(routeId);
 }
 
 /**
@@ -41,7 +41,7 @@ function isRailRoute(routeId) {
  * @returns {boolean}
  */
 function isSubwayRoute(routeId) {
-    return SUBWAY_ROUTE_ID_REGEXP.test(routeId);
+  return SUBWAY_ROUTE_ID_REGEXP.test(routeId);
 }
 
 /**
@@ -50,7 +50,7 @@ function isSubwayRoute(routeId) {
  * @returns {String}
  */
 function isTrunkRoute(routeId) {
-    return TRUNK_ROUTES.includes(routeId);
+  return TRUNK_ROUTES.includes(routeId);
 }
 
 /**
@@ -59,32 +59,32 @@ function isTrunkRoute(routeId) {
  * @returns {String}
  */
 function trimRouteId(routeId) {
-    if (!routeId) {
-        return "";
-    } else if (isRailRoute(routeId) && isNumberVariant(routeId)) {
-        return routeId.substring(1, 5).replace(RAIL_ROUTE_ID_REGEXP, "");
-    } else if (isRailRoute(routeId)) {
-        return routeId.replace(RAIL_ROUTE_ID_REGEXP, "");
-    } else if (isSubwayRoute(routeId) && isNumberVariant(routeId)) {
-        return routeId.substring(1, 5).replace(SUBWAY_ROUTE_ID_REGEXP, "");
-    } else if (isSubwayRoute(routeId)) {
-        return routeId.replace(SUBWAY_ROUTE_ID_REGEXP, "");
-    } else if (isNumberVariant(routeId)) {
-        // Do not show number variants
-        return routeId.substring(1, 5).replace(/^[0]+/g, "");
-    }
-    return routeId.substring(1).replace(/^[0]+/g, "");
+  if (!routeId) {
+    return '';
+  } else if (isRailRoute(routeId) && isNumberVariant(routeId)) {
+    return routeId.substring(1, 5).replace(RAIL_ROUTE_ID_REGEXP, '');
+  } else if (isRailRoute(routeId)) {
+    return routeId.replace(RAIL_ROUTE_ID_REGEXP, '');
+  } else if (isSubwayRoute(routeId) && isNumberVariant(routeId)) {
+    return routeId.substring(1, 5).replace(SUBWAY_ROUTE_ID_REGEXP, '');
+  } else if (isSubwayRoute(routeId)) {
+    return routeId.replace(SUBWAY_ROUTE_ID_REGEXP, '');
+  } else if (isNumberVariant(routeId)) {
+    // Do not show number variants
+    return routeId.substring(1, 5).replace(/^[0]+/g, '');
+  }
+  return routeId.substring(1).replace(/^[0]+/g, '');
 }
 
 function getRouteType(type) {
-    switch (type) {
-    case "01":
-        return routeTypes.BUS;
-    case "02":
-        return routeTypes.TRAM;
+  switch (type) {
+    case '01':
+      return routeTypes.BUS;
+    case '02':
+      return routeTypes.TRAM;
     default:
-        return routeTypes.OTHER;
-    }
+      return routeTypes.OTHER;
+  }
 }
 
 /**
@@ -92,68 +92,67 @@ function getRouteType(type) {
  * @returns {boolean}
  */
 function isDropOffOnly({ pickupDropoffType }) {
-    return pickupDropoffType === null || pickupDropoffType === 2;
+  return pickupDropoffType === null || pickupDropoffType === 2;
 }
 
 function getZoneName(shortId) {
-    if (zoneByShortId[shortId]) return zoneByShortId[shortId];
-    if (shortId.startsWith("H")) return "Helsinki";
-    if (shortId.startsWith("V")) return "Vantaa";
-    if (shortId.startsWith("E")) return "Espoo-Kauniainen";
-    if (shortId.startsWith("Ka")) return "Espoo-Kauniainen";
-    if (shortId.startsWith("Ke")) return "Kerava-Sipoo-Tuusula";
-    if (shortId.startsWith("Si")) return "Kerava-Sipoo-Tuusula";
-    if (shortId.startsWith("Tu")) return "Kerava-Sipoo-Tuusula";
-    if (shortId.startsWith("Ki")) return "Kirkkonummi-Siuntio";
-    if (shortId.startsWith("So")) return "Kirkkonummi-Siuntio";
-    return null;
+  if (zoneByShortId[shortId]) return zoneByShortId[shortId];
+  if (shortId.startsWith('H')) return 'Helsinki';
+  if (shortId.startsWith('V')) return 'Vantaa';
+  if (shortId.startsWith('E')) return 'Espoo-Kauniainen';
+  if (shortId.startsWith('Ka')) return 'Espoo-Kauniainen';
+  if (shortId.startsWith('Ke')) return 'Kerava-Sipoo-Tuusula';
+  if (shortId.startsWith('Si')) return 'Kerava-Sipoo-Tuusula';
+  if (shortId.startsWith('Tu')) return 'Kerava-Sipoo-Tuusula';
+  if (shortId.startsWith('Ki')) return 'Kirkkonummi-Siuntio';
+  if (shortId.startsWith('So')) return 'Kirkkonummi-Siuntio';
+  return null;
 }
 
 const colorsByMode = {
-    TRUNK: "#ff6319",
-    TRAM: "#00985f",
-    RAIL: "#8c4799",
-    SUBWAY: "#ff6319",
-    BUS: "#007AC9",
-    FERRY: "#00B9E4",
+  TRUNK: '#ff6319',
+  TRAM: '#00985f',
+  RAIL: '#8c4799',
+  SUBWAY: '#ff6319',
+  BUS: '#007AC9',
+  FERRY: '#00B9E4',
 };
 
 const iconsByMode = {
-    BUS: busIcon,
-    TRAM: tramIcon,
-    RAIL: railIcon,
-    SUBWAY: subwayIcon,
-    FERRY: ferryIcon,
-    TRUNK: trunkIcon,
+  BUS: busIcon,
+  TRAM: tramIcon,
+  RAIL: railIcon,
+  SUBWAY: subwayIcon,
+  FERRY: ferryIcon,
+  TRUNK: trunkIcon,
 };
 
 function getColor(route) {
-    if (isTrunkRoute(route.routeId)) {
-        return colorsByMode.TRUNK;
-    }
-    return colorsByMode[route.mode];
+  if (isTrunkRoute(route.routeId)) {
+    return colorsByMode.TRUNK;
+  }
+  return colorsByMode[route.mode];
 }
 
 function getIcon(route) {
-    if (isTrunkRoute(route.routeId)) {
-        return iconsByMode.TRUNK;
-    }
-    return iconsByMode[route.mode];
+  if (isTrunkRoute(route.routeId)) {
+    return iconsByMode.TRUNK;
+  }
+  return iconsByMode[route.mode];
 }
 
-
 export {
-    isNumberVariant,
-    isRailRoute,
-    isSubwayRoute,
-    isTrunkRoute,
-    trimRouteId,
-    isDropOffOnly,
-    getZoneName,
-    colorsByMode,
-    iconsByMode,
-    getColor,
-    getIcon,
-    getRouteType,
-    routeTypes,
+  isNumberVariant,
+  isRailRoute,
+  isSubwayRoute,
+  isTrunkRoute,
+  trimRouteId,
+  isDropOffOnly,
+  getZoneName,
+  colorsByMode,
+  iconsByMode,
+  getColor,
+  getIcon,
+  getRouteType,
+  routeTypes,
 };

@@ -1,68 +1,56 @@
-import hslMapStyle from "hsl-map-style";
-import { fetchMap } from "util/map";
+import hslMapStyle from 'hsl-map-style';
+import { fetchMap } from 'util/map';
 
 function getIfOccupied(byteArray, mapOptions) {
-    return (x, y) => byteArray[(Math.floor(x) + (mapOptions.width * Math.floor(y)))];
+  return (x, y) => byteArray[Math.floor(x) + mapOptions.width * Math.floor(y)];
 }
 
 class Matrix {
-    constructor(mapOptions, mapComponents) {
-        this.mapOptions = mapOptions;
-        console.log(mapOptions);
-        this.mapOptions.scale = 1;
-        this.mapComponents = mapComponents;
+  constructor(mapOptions, mapComponents) {
+    this.mapOptions = mapOptions;
+    console.log(mapOptions);
+    this.mapOptions.scale = 1;
+    this.mapComponents = mapComponents;
 
-        this.mapStyle = hslMapStyle.generateStyle({
-            components: {
-                ...mapComponents,
-                base: { enabled: false },
-            },
-            glyphsUrl: "https://kartat.hsldev.com/",
-        });
-    }
+    this.mapStyle = hslMapStyle.generateStyle({
+      components: {
+        ...mapComponents,
+        base: { enabled: false },
+      },
+      glyphsUrl: 'https://kartat.hsldev.com/',
+    });
+  }
 
-    initialize(callback) {
-        const byteArray = new Int8Array(this.mapOptions.height * this.mapOptions.width);
-        fetchMap(this.mapOptions, this.mapStyle, this.mapOptions.scale).then((res) => {
-            console.warn("fetched bit array map");
-            const canvas = document.createElement("canvas");
-            canvas.width = this.mapOptions.width;
-            canvas.height = this.mapOptions.height;
-            const ctx = canvas.getContext("2d");
-            const img = new Image();
-            img.src = res;
-            let counter = 0;
-            img.onload = () => {
-                console.warn("loading bit array map");
-                ctx.drawImage(img, 0, 0);
-                const imageData =
-                    ctx.getImageData(
-                        0, 0,
-                        this.mapOptions.width,
-                        this.mapOptions.height
-                    );
+  initialize(callback) {
+    const byteArray = new Int8Array(this.mapOptions.height * this.mapOptions.width);
+    fetchMap(this.mapOptions, this.mapStyle, this.mapOptions.scale).then(res => {
+      console.warn('fetched bit array map');
+      const canvas = document.createElement('canvas');
+      canvas.width = this.mapOptions.width;
+      canvas.height = this.mapOptions.height;
+      const ctx = canvas.getContext('2d');
+      const img = new Image();
+      img.src = res;
+      let counter = 0;
+      img.onload = () => {
+        console.warn('loading bit array map');
+        ctx.drawImage(img, 0, 0);
+        const imageData = ctx.getImageData(0, 0, this.mapOptions.width, this.mapOptions.height);
 
-                for (let x = 0; x < this.mapOptions.width; x++) {
-                    for (let y = 0; y < this.mapOptions.height; y++) {
-                        const result =
-                            !!imageData.data[
-                                (
-                                    (
-                                        x + (this.mapOptions.width * y)
-                                    ) * 4
-                                ) + 3];
-                        byteArray[x + (this.mapOptions.width * y)] = result;
-                        if (result) counter++;
-                    }
-                }
-                console.warn(`Loaded bit array: ${counter}/${this.mapOptions.width * this.mapOptions.height}`);
-                callback(byteArray);
-            };
-        });
-    }
+        for (let x = 0; x < this.mapOptions.width; x++) {
+          for (let y = 0; y < this.mapOptions.height; y++) {
+            const result = !!imageData.data[(x + this.mapOptions.width * y) * 4 + 3];
+            byteArray[x + this.mapOptions.width * y] = result;
+            if (result) counter++;
+          }
+        }
+        console.warn(
+          `Loaded bit array: ${counter}/${this.mapOptions.width * this.mapOptions.height}`,
+        );
+        callback(byteArray);
+      };
+    });
+  }
 }
 
-export {
-    getIfOccupied,
-    Matrix,
-};
+export { getIfOccupied, Matrix };

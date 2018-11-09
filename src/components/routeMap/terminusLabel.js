@@ -1,68 +1,72 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { trimRouteId } from "../../util/domain";
-import routeGeneralizer from "../../util/routeGeneralizer";
+import React from 'react';
+import PropTypes from 'prop-types';
+import { trimRouteId } from '../../util/domain';
+import routeGeneralizer from '../../util/routeGeneralizer';
 
-import style from "./terminusLabel.css";
+import style from './terminusLabel.css';
 
-const TerminusLabel = ({
-    nameFi, nameSe, lines, configuration,
-}) => {
-    const terminusStyle = {
-        fontSize: `${configuration.terminusFontSize}px`,
-        lineHeight: `${configuration.terminusFontSize}px`,
-        maxWidth: `${configuration.terminusWidth}px`,
-        color: "#0379c8",
-    };
+const TerminusLabel = ({ nameFi, nameSe, lines, configuration }) => {
+  const terminusStyle = {
+    fontSize: `${configuration.terminusFontSize}px`,
+    lineHeight: `${configuration.terminusFontSize}px`,
+    maxWidth: `${configuration.terminusWidth}px`,
+    color: '#0379c8',
+  };
 
-    function intersperse(arr, sep) {
-        if (arr.length === 0) {
-            return [];
-        }
-
-        return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
+  function intersperse(arr, sep) {
+    if (arr.length === 0) {
+      return [];
     }
 
-    const routes = routeGeneralizer(lines
-        .map(id => trimRouteId(id)));
+    return arr.slice(1).reduce((xs, x) => xs.concat([sep, x]), [arr[0]]);
+  }
 
-    return (
-        <div className={style.label} style={terminusStyle}>
-            { (nameFi || nameSe) &&
-                <div>
-                    {nameFi && [
-                        <span key="nameFi" className={style.headerFi}>{nameFi}</span>,
-                        <br key="B1"/>,
-                    ]}
-                    {(nameSe && nameSe !== nameFi)
-                        && [
-                            <span key="nameSe" className={style.headerSe}>{nameSe}</span>,
-                            <br key="B2"/>,
-                        ]}
-                </div>
-            }
-            {
-                intersperse(routes.map(item => <span className={item.type === "tram" ? style.tram : style.bus}>{item.text}</span>), ", ")
-            }
+  const routes = routeGeneralizer(lines.map(id => trimRouteId(id)));
+
+  return (
+    <div className={style.label} style={terminusStyle}>
+      {(nameFi || nameSe) && (
+        <div>
+          {nameFi && [
+            <span key="nameFi" className={style.headerFi}>
+              {nameFi}
+            </span>,
+            <br key="B1" />,
+          ]}
+          {nameSe &&
+            nameSe !== nameFi && [
+              <span key="nameSe" className={style.headerSe}>
+                {nameSe}
+              </span>,
+              <br key="B2" />,
+            ]}
         </div>
-    );
+      )}
+      {intersperse(
+        routes.map(item => (
+          <span className={item.type === 'tram' ? style.tram : style.bus}>{item.text}</span>
+        )),
+        ', ',
+      )}
+    </div>
+  );
 };
 
 const TerminusConfiguration = PropTypes.shape({
-    terminusFontSize: PropTypes.number.isRequired,
-    terminusWidth: PropTypes.number.isRequired,
+  terminusFontSize: PropTypes.number.isRequired,
+  terminusWidth: PropTypes.number.isRequired,
 });
 
 TerminusLabel.defaultProps = {
-    nameFi: null,
-    nameSe: null,
+  nameFi: null,
+  nameSe: null,
 };
 
 TerminusLabel.propTypes = {
-    lines: PropTypes.arrayOf(PropTypes.string).isRequired,
-    configuration: PropTypes.shape(TerminusConfiguration).isRequired,
-    nameFi: PropTypes.string,
-    nameSe: PropTypes.string,
+  lines: PropTypes.arrayOf(PropTypes.string).isRequired,
+  configuration: PropTypes.shape(TerminusConfiguration).isRequired,
+  nameFi: PropTypes.string,
+  nameSe: PropTypes.string,
 };
 
 export default TerminusLabel;

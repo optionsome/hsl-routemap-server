@@ -1,42 +1,41 @@
-
 .url {
-    position: absolute;
-    font-size: 20px;
-    font-family: GothamXNarrow-Medium;
-    color: black;
+  position: absolute;
+  font-size: 20px;
+  font-family: GothamXNarrow-Medium;
+  color: black;
 }
 
 .urlInfo {
-    composes: url;
-    top: 336px;
-    left: 500px;
+  composes: url;
+  top: 336px;
+  left: 500px;
 }
 
 .urlFeedback {
-    composes: url;
-    top: 336px;
-    left: 936px;
+  composes: url;
+  top: 336px;
+  left: 936px;
 }
 
 .qrCode {
-    position: absolute;
-    width: 140px;
+  position: absolute;
+  width: 140px;
 }
 
 .qrCodeInfo {
-    composes: qrCode;
-    top: 117px;
-    left: 730px;
+  composes: qrCode;
+  top: 117px;
+  left: 730px;
 }
 
 .qrCodeTicketSales {
-    composes: qrCode;
-    top: 179px;
-    left: 729px;
+  composes: qrCode;
+  top: 179px;
+  left: 729px;
 }
 
 .qrCodeFeedback {
-    composes: qrCode;
-    top: 117px;
-    left: 1144px;
+  composes: qrCode;
+  top: 117px;
+  left: 1144px;
 }

@@ -1,4 +1,4 @@
-const API_URL = "https://kartat.hsldev.com";
+const API_URL = 'https://kartat.hsldev.com';
 
 const scaleDefault = 5;
 
@@ -9,18 +9,21 @@ const scaleDefault = 5;
  */
 // eslint-disable-next-line import/prefer-default-export
 export function fetchMap(mapOptions, mapStyle, scale = scaleDefault) {
-    const options = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ options: { ...mapOptions, scale }, style: mapStyle }),
-    };
+  const options = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ options: { ...mapOptions, scale }, style: mapStyle }),
+  };
 
-    return fetch(`${API_URL}/generateImage`, options)
-        .then(response => response.blob())
-        .then(blob => new Promise((resolve) => {
-            const reader = new window.FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => resolve(reader.result);
-            console.warn("Fetched map:");
-        }));
+  return fetch(`${API_URL}/generateImage`, options)
+    .then(response => response.blob())
+    .then(
+      blob =>
+        new Promise(resolve => {
+          const reader = new window.FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => resolve(reader.result);
+          console.warn('Fetched map:');
+        }),
+    );
 }

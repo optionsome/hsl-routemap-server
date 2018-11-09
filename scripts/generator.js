@@ -1,12 +1,12 @@
-const fs = require("fs");
-const path = require("path");
-const puppeteer = require("puppeteer");
-const { promisify } = require("util");
-const { spawn } = require("child_process");
+const fs = require('fs');
+const path = require('path');
+const puppeteer = require('puppeteer');
+const { promisify } = require('util');
+const { spawn } = require('child_process');
 
 const writeFileAsync = promisify(fs.writeFile);
 
-const CLIENT_URL = "http://localhost:5000";
+const CLIENT_URL = 'http://localhost:5000';
 const RENDER_TIMEOUT = 7 * 24 * 60 * 60 * 1000;
 const MAX_RENDER_ATTEMPTS = 1;
 const SCALE = 96 / 72;
@@ -14,11 +14,13 @@ const SCALE = 96 / 72;
 let browser = null;
 let previous = Promise.resolve();
 
-const pdfPath = id => path.join(__dirname, "..", "output", `${id}.pdf`);
+const pdfPath = id => path.join(__dirname, '..', 'output', `${id}.pdf`);
 
 async function initialize() {
-    browser = await puppeteer.launch({ args: ["--no-sandbox", "--disable-setuid-sandbox"] });
-    browser.on("disconnected", () => { browser = null; });
+  browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  browser.on('disconnected', () => {
+    browser = null;
+  });
 }
 
 /**
@@ -26,84 +28,85 @@ async function initialize() {
  * @returns {Promise}
  */
 async function renderComponent(options) {
-    const {
-        id, component, props, onInfo, onError,
-    } = options;
+  const { id, component, props, onInfo, onError } = options;
 
-    const page = await browser.newPage();
+  const page = await browser.newPage();
 
-    page.on("error", (error) => {
-        page.close();
-        browser.close();
-        onError(error);
-    });
+  page.on('error', error => {
+    page.close();
+    browser.close();
+    onError(error);
+  });
 
-    page.on("console", ({ type, text }) => {
-        if (["error", "warning", "log"].includes(type)) {
-            onInfo(`Console(${type}): ${text}`);
-        }
-    });
-
-    const encodedProps = encodeURIComponent(JSON.stringify(props));
-    await page.goto(`${CLIENT_URL}/?component=${component}&props=${encodedProps}`);
-
-    const { error, width, height } = await page.evaluate(() => (
-        new Promise((resolve) => {
-            window.callPhantom = opts => resolve(opts);
-        })
-    ));
-
-    if (error) {
-        throw new Error(error);
+  page.on('console', ({ type, text }) => {
+    if (['error', 'warning', 'log'].includes(type)) {
+      onInfo(`Console(${type}): ${text}`);
     }
+  });
 
-    await page.emulateMedia("screen");
+  const encodedProps = encodeURIComponent(JSON.stringify(props));
+  await page.goto(`${CLIENT_URL}/?component=${component}&props=${encodedProps}`);
 
-    let printOptions = {};
-    if (props.printTimetablesAsA4) {
-        printOptions = {
-            printBackground: true,
-            format: "A4",
-            margin: 0,
-        };
-    } else {
-        printOptions = {
-            printBackground: true,
-            width: width * SCALE,
-            height: height * SCALE,
-            pageRanges: "1",
-            scale: SCALE,
-        };
-    }
+  const { error, width, height } = await page.evaluate(
+    () =>
+      new Promise(resolve => {
+        window.callPhantom = opts => resolve(opts);
+      }),
+  );
 
-    const contents = await page.pdf(printOptions);
+  if (error) {
+    throw new Error(error);
+  }
 
-    await writeFileAsync(pdfPath(id), contents);
-    await page.close();
+  await page.emulateMedia('screen');
+
+  let printOptions = {};
+  if (props.printTimetablesAsA4) {
+    printOptions = {
+      printBackground: true,
+      format: 'A4',
+      margin: 0,
+    };
+  } else {
+    printOptions = {
+      printBackground: true,
+      width: width * SCALE,
+      height: height * SCALE,
+      pageRanges: '1',
+      scale: SCALE,
+    };
+  }
+
+  const contents = await page.pdf(printOptions);
+
+  await writeFileAsync(pdfPath(id), contents);
+  await page.close();
 }
 
 async function renderComponentRetry(options) {
-    const { onInfo, onError } = options;
+  const { onInfo, onError } = options;
 
-    for (let i = 0; i < MAX_RENDER_ATTEMPTS; i++) {
-        /* eslint-disable no-await-in-loop */
-        try {
-            onInfo(i > 0 ? "Retrying" : "Rendering");
-            if (!browser) {
-                onInfo("Creating new browser instance");
-                await initialize();
-            }
-            const timeout = new Promise((resolve, reject) => setTimeout(reject, RENDER_TIMEOUT, new Error("Render timeout")));
-            await Promise.race([renderComponent(options), timeout]);
-            onInfo("Rendered successfully");
-            return { success: true };
-        } catch (error) {
-            onError(error);
-        }
-        /* eslint-enable no-await-in-loop */
+  for (let i = 0; i < MAX_RENDER_ATTEMPTS; i++) {
+    /* eslint-disable no-await-in-loop */
+    try {
+      onInfo(i > 0 ? 'Retrying' : 'Rendering');
+      if (!browser) {
+        onInfo('Creating new browser instance');
+        await initialize();
+      }
+      const timeout = new Promise((resolve, reject) =>
+        setTimeout(reject, RENDER_TIMEOUT, new Error('Render timeout')),
+      );
+      await Promise.race([renderComponent(options), timeout]);
+      onInfo('Rendered successfully');
+      return { success: true };
+    } catch (error) {
+      onError(error);
     }
+    /* eslint-enable no-await-in-loop */
+  }
 
-    return { success: false };
+  return { success: false };
 }
 
 /**
@@ -117,8 +120,8 @@ async function renderComponentRetry(options) {
  * @returns {Promise} - Always resolves with { success }
  */
 function generate(options) {
-    previous = previous.then(() => renderComponentRetry(options));
-    return previous;
+  previous = previous.then(() => renderComponentRetry(options));
+  return previous;
 }
 
 /**
@@ -128,12 +131,12 @@ function generate(options) {
  * @returns {Readable} - PDF stream
  */
 function concatenate(ids) {
-    const filenames = ids.map(id => pdfPath(id));
-    const pdftk = spawn("pdftk", [...filenames, "cat", "output", "-"]);
-    pdftk.stderr.on("data", (data) => {
-        pdftk.stdout.emit("error", new Error(data.toString()));
-    });
-    return pdftk.stdout;
+  const filenames = ids.map(id => pdfPath(id));
+  const pdftk = spawn('pdftk', [...filenames, 'cat', 'output', '-']);
+  pdftk.stderr.on('data', data => {
+    pdftk.stdout.emit('error', new Error(data.toString()));
+  });
+  return pdftk.stdout;
 }
 
 module.exports = { generate, concatenate };
