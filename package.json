@@ -20,6 +20,22 @@
     "docker:rebuild": "yarn run docker:stop && yarn run docker:rm && yarn run docker:build && yarn run docker:run",
     "docker:logs": "docker logs publisher"
   },
+  "lint-staged": {
+    "*.js": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ],
+    "*.css": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/HSLdevcom/hsl-map-publisher.git"
