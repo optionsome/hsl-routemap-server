@@ -20,6 +20,8 @@ Start development server:
 ```
 yarn start:hot
 ```
+
+Test URL:
 http://localhost:5000/?props={"mapOptions":{"zoom":12.774952540009707,"pitch":0,"scale":4.166666666666667,"width":288,"center":[24.670969761337066,60.13977797444001],"height":288,"bearing":0,"meterPerPxRatio":6},"configuration":{"date":"2018-09-01","name":"test1","nearBuses":false,"scaleLength":200,"scaleFontSize":12,"terminusWidth":170,"maxAnchorLength":60,"stationFontSize":12,"terminusFontSize":13,"intermediatePointWidth":50,"clusterSamePointsDistance":1000,"intermediatePointFontSize":9,"pointMinDistanceFromTerminus":100,"clusterDifferentPointsDistance":20}}
 
 ### Writing components
@@ -56,5 +58,3 @@ docker run -d -p 4000:4000 -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --lin
 ```
 
 where `fonts` is a directory containing `Gotham Rounded` and `Gotham XNarrow` OpenType fonts.
-
-http://localhost:5000/?props={"mapOptions":{"zoom":12.774952540009707,"pitch":0,"scale":4.166666666666667,"width":288,"center":[24.670969761337066,60.13977797444001],"height":288,"bearing":0,"meterPerPxRatio":6},"configuration":{"date":"2018-09-01","name":"test1","nearBuses":false,"scaleLength":200,"scaleFontSize":12,"terminusWidth":170,"maxAnchorLength":60,"stationFontSize":12,"terminusFontSize":13,"intermediatePointWidth":50,"clusterSamePointsDistance":1000,"intermediatePointFontSize":9,"pointMinDistanceFromTerminus":100,"clusterDifferentPointsDistance":20}}
