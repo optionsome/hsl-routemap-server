@@ -12,13 +12,11 @@ function convertKeys(object, converter) {
   return obj;
 }
 
-const GENERATOR_TYPES = ['POSTER', 'ROUTEMAP'];
-
 async function migrate() {
   await knex.migrate.latest();
 }
 
-async function getBuilds({ type }) {
+async function getBuilds() {
   const rows = await knex
     .select(
       'build.*',
@@ -28,7 +26,6 @@ async function getBuilds({ type }) {
     )
     .from('build')
     .whereNot('build.status', 'REMOVED')
-    .where('build.type', type)
     .leftJoin('poster', 'build.id', 'poster.build_id')
     .orderBy('build.created_at', 'desc')
     .groupBy('build.id');
@@ -77,15 +74,10 @@ async function getBuild({ id }) {
   return Object.assign({}, build, { posters });
 }
 
-async function addBuild({ title, type }) {
-  if (GENERATOR_TYPES.some(t => t === type)) {
-    const id = uuidv1();
-    await knex('build').insert({ id, title, type });
-    return { id };
-  }
-  const error = new Error(`Type '${type}' is not allowed`);
-  error.status = 400;
-  throw error;
+async function addBuild({ title }) {
+  const id = uuidv1();
+  await knex('build').insert({ id, title });
+  return { id };
 }
 
 async function updateBuild({ id, status }) {
@@ -162,6 +154,44 @@ async function addEvent({ posterId = null, buildId = null, type, message }) {
   );
 }
 
+async function getConfig() {
+  const configs = await knex('routepath_import_config')
+    .select('*')
+    .where({ name: 'default' });
+  if (configs.length === 1) {
+    return configs[0];
+  }
+  return null;
+}
+
+async function setDateConfig(date) {
+  const oldConfig = await getConfig();
+  if (oldConfig) {
+    await knex('routepath_import_config')
+      .where({ name: 'default' })
+      .update({ target_date: date });
+  } else {
+    await knex('routepath_import_config').insert({
+      name: 'default',
+      status: 'EMPTY',
+      target_date: date,
+    });
+  }
+  return getConfig();
+}
+
+async function setStatusConfig(status) {
+  const oldConfig = await getConfig();
+  if (oldConfig) {
+    await knex('routepath_import_config')
+      .where({ name: 'default' })
+      .update({ status });
+  } else {
+    await knex('routepath_import_config').insert({ status, name: 'default' });
+  }
+  return getConfig();
+}
+
 module.exports = {
   migrate,
   getBuilds,
@@ -174,4 +204,7 @@ module.exports = {
   updatePoster,
   removePoster,
   addEvent,
+  setDateConfig,
+  setStatusConfig,
+  getConfig,
 };

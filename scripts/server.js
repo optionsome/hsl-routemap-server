@@ -3,7 +3,6 @@ const Router = require('koa-router');
 const cors = require('@koa/cors');
 const jsonBody = require('koa-json-body');
 
-const fetchStops = require('./stops');
 const generator = require('./generator');
 const {
   migrate,
@@ -17,7 +16,11 @@ const {
   addPoster,
   updatePoster,
   removePoster,
+  getConfig,
+  setDateConfig,
+  setStatusConfig,
 } = require('./store');
+const { generatePoints } = require('./joreStore');
 
 const PORT = 4000;
 
@@ -64,34 +67,30 @@ async function main() {
   const app = new Koa();
   const router = new Router();
 
-  // FIXME: Update UI to fetch from graphql and remove when data available
-  const stops = await fetchStops();
-  router.get('/stops', ctx => {
-    ctx.body = stops;
-  });
-
-  router.get('/builds/:type', async ctx => {
-    const { type } = ctx.params;
-    const builds = await getBuilds({ type });
+  router.get('/builds', async ctx => {
+    const builds = await getBuilds();
     ctx.body = builds;
   });
 
-  router.get('/builds/:type/:id', async ctx => {
+  router.get('/builds/:id', async ctx => {
     const { id } = ctx.params;
     const builds = await getBuild({ id });
     ctx.body = builds;
   });
 
   router.post('/builds', async ctx => {
-    const { title, type } = ctx.request.body;
-    const build = await addBuild({ title, type });
+    const { title } = ctx.request.body;
+    const build = await addBuild({ title });
     ctx.body = build;
   });
 
   router.put('/builds/:id', async ctx => {
     const { id } = ctx.params;
     const { status } = ctx.request.body;
-    const build = await updateBuild({ id, status });
+    const build = await updateBuild({
+      id,
+      status,
+    });
     ctx.body = build;
   });
 
@@ -108,11 +107,11 @@ async function main() {
   });
 
   router.post('/posters', async ctx => {
-    const { buildId, component, props } = ctx.request.body;
+    const { buildId, component, props, template } = ctx.request.body;
     const posters = [];
     for (let i = 0; i < props.length; i++) {
       // eslint-disable-next-line no-await-in-loop
-      posters.push(await generatePoster(buildId, component, props[i]));
+      posters.push(await generatePoster(buildId, component, template, props[i]));
     }
     ctx.body = posters;
   });
@@ -140,10 +139,34 @@ async function main() {
     ctx.body = generator.concatenate([id]);
   });
 
+  router.post('/import', async ctx => {
+    const { targetDate } = ctx.query;
+    let config = await getConfig();
+    if (config.status === 'PENDING') {
+      ctx.throw(503, `Already running for date: ${config.target_date}`);
+    }
+    if (targetDate) {
+      config = await setDateConfig(targetDate);
+    }
+    await setStatusConfig('PENDING');
+    generatePoints(config.target_date)
+      .then(async () => {
+        await setStatusConfig('READY');
+      })
+      .catch(async () => {
+        await setStatusConfig('ERROR');
+      });
+    ctx.body = config;
+  });
+
+  router.get('/config', async ctx => {
+    ctx.body = await getConfig();
+  });
+
   app
     .use(errorHandler)
     .use(cors())
-    .use(jsonBody({ fallback: true }))
+    .use(jsonBody({ fallback: true, limit: '10mb' }))
     .use(router.routes())
     .use(router.allowedMethods())
     .listen(PORT, () => console.log(`Listening at ${PORT}`)); // eslint-disable-line no-console
