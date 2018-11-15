@@ -5,16 +5,8 @@ import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ApolloProvider } from 'react-apollo';
 
-import StopPoster from 'components/stopPoster/stopPosterContainer';
-import Timetable from 'components/timetable/timetableContainer';
 import RouteMap from 'components/routeMap/routeMapContainer';
 import renderQueue from 'util/renderQueue';
-
-const components = {
-  StopPoster,
-  Timetable,
-  RouteMap,
-};
 
 const client = new ApolloClient({
   link: createHttpLink({ uri: 'http://dev-kartat.hsldev.com/jore/graphql' }),
@@ -55,14 +47,10 @@ class App extends Component {
   }
 
   render() {
-    let ComponentToRender;
     let props;
-    let componentName;
 
     try {
       const params = new URLSearchParams(window.location.search.substring(1));
-      componentName = params.get('component');
-      ComponentToRender = components[componentName];
 
       props = JSON.parse(params.get('props'));
     } catch (error) {
@@ -70,26 +58,16 @@ class App extends Component {
       return null;
     }
 
-    if (!ComponentToRender || !props) {
-      App.handleError(new Error('Invalid component or props'));
+    if (!props) {
+      App.handleError(new Error('Invalid props'));
       return null;
     }
 
-    let rootStyle = {};
-
-    if (componentName === 'RouteMap') {
-      rootStyle = {
-        display: 'inline-block',
-        width: props.mapOptions.width,
-        height: props.mapOptions.height,
-      };
-    } else if (!props.printTimetablesAsA4) {
-      rootStyle = {
-        display: 'inline-block',
-        width: props.width,
-        height: props.height,
-      };
-    }
+    const rootStyle = {
+      display: 'inline-block',
+      width: props.mapOptions.width,
+      height: props.mapOptions.height,
+    };
 
     return (
       <div
@@ -98,7 +76,7 @@ class App extends Component {
           this.root = ref;
         }}>
         <ApolloProvider client={client}>
-          <ComponentToRender {...props} />
+          <RouteMap {...props} />
         </ApolloProvider>
       </div>
     );

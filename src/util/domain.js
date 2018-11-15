@@ -5,8 +5,6 @@ import subwayIcon from 'icons/icon_subway.svg';
 import ferryIcon from 'icons/icon_ferry.svg';
 import trunkIcon from 'icons/icon_trunk.svg';
 
-import zoneByShortId from 'data/zoneByShortId';
-
 const TRUNK_ROUTES = ['550', '560'];
 const RAIL_ROUTE_ID_REGEXP = /^300[12]/;
 const SUBWAY_ROUTE_ID_REGEXP = /^31/;
@@ -95,20 +93,6 @@ function isDropOffOnly({ pickupDropoffType }) {
   return pickupDropoffType === null || pickupDropoffType === 2;
 }
 
-function getZoneName(shortId) {
-  if (zoneByShortId[shortId]) return zoneByShortId[shortId];
-  if (shortId.startsWith('H')) return 'Helsinki';
-  if (shortId.startsWith('V')) return 'Vantaa';
-  if (shortId.startsWith('E')) return 'Espoo-Kauniainen';
-  if (shortId.startsWith('Ka')) return 'Espoo-Kauniainen';
-  if (shortId.startsWith('Ke')) return 'Kerava-Sipoo-Tuusula';
-  if (shortId.startsWith('Si')) return 'Kerava-Sipoo-Tuusula';
-  if (shortId.startsWith('Tu')) return 'Kerava-Sipoo-Tuusula';
-  if (shortId.startsWith('Ki')) return 'Kirkkonummi-Siuntio';
-  if (shortId.startsWith('So')) return 'Kirkkonummi-Siuntio';
-  return null;
-}
-
 const colorsByMode = {
   TRUNK: '#ff6319',
   TRAM: '#00985f',
@@ -148,7 +132,6 @@ export {
   isTrunkRoute,
   trimRouteId,
   isDropOffOnly,
-  getZoneName,
   colorsByMode,
   iconsByMode,
   getColor,

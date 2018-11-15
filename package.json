@@ -1,24 +1,17 @@
 {
-  "name": "hsl-map-publisher",
+  "name": "hsl-routemap-server",
   "version": "0.1.0",
-  "description": "HSL Map Publisher",
+  "description": "HSL Routemap server",
   "main": "index.js",
   "scripts": {
-    "eslint-check": "eslint --print-config . | eslint-config-prettier-check",
-    "prettier": "prettier \"src/**/*.{js,css}\" \"scripts/**/*.js\" \"migrations/**/*.js\" \"seeds/**/*.js\" \"*.js\" --write",
-    "lint": "eslint \"src/**/*.js\" \"scripts/**/*.js\" --fix",
-    "build": "webpack --config webpack.prod.js",
+    "clean": "rimraf dist",
+    "bundle": "webpack --config webpack.config.js",
+    "build": "yarn run clean && yarn run bundle",
     "serve": "serve dist",
-    "start": "webpack-serve ./webpack.dev.js",
-    "server": "node scripts/server",
-    "server:hot": "forever -w -t --killSignal=SIGTERM --watchDirectory scripts scripts/server.js",
-    "knex": "PG_CONNECTION_STRING=postgres://postgres:postgres@localhost:5432/postgres knex",
-    "docker:build": "docker build -t hsl-map-publisher .",
-    "docker:run": "docker run -d -p 4000:4000 --name publisher -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --link publisher-postgres -e \"PG_CONNECTION_STRING=postgres://postgres:postgres@publisher-postgres:5432/postgres\" --shm-size=1G hsl-map-publisher",
-    "docker:stop": "docker stop publisher",
-    "docker:rm": "docker rm publisher",
-    "docker:rebuild": "yarn run docker:stop && yarn run docker:rm && yarn run docker:build && yarn run docker:run",
-    "docker:logs": "docker logs publisher"
+    "start": "node --max-old-space-size=10000 server",
+    "start:hot": "cross-env HMR=true node server",
+    "server": "node --max-old-space-size=10000 scripts/server",
+    "server:hot": "nodemon scripts/server"
   },
   "lint-staged": {
     "*.js": [
@@ -38,23 +31,27 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HSLdevcom/hsl-map-publisher.git"
+    "url": "git+https://github.com/HSLdevcom/hsl-routemap-server.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/HSLdevcom/hsl-map-publisher/issues"
+    "url": "https://github.com/HSLdevcom/hsl-routemap-server/issues"
   },
-  "homepage": "https://github.com/HSLdevcom/hsl-map-publisher#readme",
+  "homepage": "https://github.com/HSLdevcom/hsl-routemap-server#readme",
   "engines": {
     "node": ">=8.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.1.0",
     "babel-core": "^6.26.0",
+    "babel-eslint": "^10.0.1",
     "babel-loader": "^7.1.2",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react": "^6.23.0",
+    "babel-preset-stage-0": "^6.24.1",
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.7",
     "eslint": "^4.11.0",
@@ -71,6 +68,7 @@
     "husky": "^1.1.3",
     "lint-staged": "^8.0.4",
     "prettier": "^1.15.1",
+    "react-hot-loader": "^4.3.12",
     "rimraf": "^2.6.2",
     "serve": "^6.4.1",
     "style-loader": "^0.19.0",
