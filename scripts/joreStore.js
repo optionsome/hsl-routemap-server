@@ -3,7 +3,7 @@ const config = require('../knexfile_jore');
 const knex = require('knex')(config);
 const cleanup = require('./cleanup');
 
-const configI2 = require('../knexfile_jore');
+const configI2 = require('../knexfile_jore2');
 // eslint-disable-next-line import/order
 const knexI2 = require('knex')(configI2);
 

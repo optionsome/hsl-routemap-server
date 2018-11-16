@@ -2,7 +2,7 @@
 
 function noOp() {}
 
-export default function(callback) {
+function cleanup(callback) {
   // attach user callback to the process event emitter
   // if no callback, it will still exit gracefully on Ctrl-C
   callback = callback || noOp;
@@ -26,3 +26,5 @@ export default function(callback) {
     process.exit(99);
   });
 }
+
+module.exports = cleanup;
