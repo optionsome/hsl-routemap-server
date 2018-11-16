@@ -51,7 +51,6 @@ async function getBuild({ id }) {
     .select(
       'poster.id',
       'poster.status',
-      'poster.component',
       'poster.props',
       'poster.created_at',
       'poster.updated_at',
@@ -110,14 +109,13 @@ async function getPoster({ id }) {
   return convertKeys(row, camelCase);
 }
 
-async function addPoster({ buildId, component, props }) {
+async function addPoster({ buildId, props }) {
   const id = uuidv1();
   await knex('poster').insert(
     convertKeys(
       {
         id,
         buildId,
-        component,
         props,
       },
       snakeCase,

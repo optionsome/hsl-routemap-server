@@ -24,8 +24,8 @@ const { generatePoints } = require('./joreStore');
 
 const PORT = 4000;
 
-async function generatePoster(buildId, component, props) {
-  const { id } = await addPoster({ buildId, component, props });
+async function generatePoster(buildId, props) {
+  const { id } = await addPoster({ buildId, props });
 
   const onInfo = message => {
     console.log(`${id}: ${message}`); // eslint-disable-line no-console
@@ -38,7 +38,6 @@ async function generatePoster(buildId, component, props) {
 
   const options = {
     id,
-    component,
     props,
     onInfo,
     onError,
@@ -107,11 +106,11 @@ async function main() {
   });
 
   router.post('/posters', async ctx => {
-    const { buildId, component, props, template } = ctx.request.body;
+    const { buildId, props, template } = ctx.request.body;
     const posters = [];
     for (let i = 0; i < props.length; i++) {
       // eslint-disable-next-line no-await-in-loop
-      posters.push(await generatePoster(buildId, component, template, props[i]));
+      posters.push(await generatePoster(buildId, template, props[i]));
     }
     ctx.body = posters;
   });
@@ -133,9 +132,8 @@ async function main() {
 
   router.get('/downloadPoster/:id', async ctx => {
     const { id } = ctx.params;
-    const { component } = await getPoster({ id });
     ctx.type = 'application/pdf';
-    ctx.set('Content-Disposition', `attachment; filename="${component}-${id}.pdf"`);
+    ctx.set('Content-Disposition', `attachment; filename="Linjakartta-${id}.pdf"`);
     ctx.body = generator.concatenate([id]);
   });
 

@@ -28,7 +28,7 @@ async function initialize() {
  * @returns {Promise}
  */
 async function renderComponent(options) {
-  const { id, component, props, onInfo, onError } = options;
+  const { id, props, onInfo, onError } = options;
 
   const page = await browser.newPage();
 
@@ -45,7 +45,7 @@ async function renderComponent(options) {
   });
 
   const encodedProps = encodeURIComponent(JSON.stringify(props));
-  await page.goto(`${CLIENT_URL}/?component=${component}&props=${encodedProps}`);
+  await page.goto(`${CLIENT_URL}/?props=${encodedProps}`);
 
   const { error, width, height } = await page.evaluate(
     () =>
@@ -113,7 +113,6 @@ async function renderComponentRetry(options) {
  * Adds component to render queue
  * @param {Object} options
  * @param {string} options.id - Unique id
- * @param {string} options.component - React component to render
  * @param {Object} options.props - Props to pass to component
  * @param {function} options.onInfo - Callback (string)
  * @param {function} options.onError - Callback (Error)

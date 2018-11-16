@@ -22,7 +22,6 @@ exports.up = async knex => {
       .enum('status', posterStatus)
       .defaultTo('PENDING')
       .notNullable();
-    table.string('component').notNullable();
     table.jsonb('props').notNullable();
     table.timestamps(true, true);
   });
