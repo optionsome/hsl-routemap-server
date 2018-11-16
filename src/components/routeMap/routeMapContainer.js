@@ -259,6 +259,7 @@ const terminalMapper = mapProps(props => {
   const mapComponents = {
     text_fisv: { enabled: true },
     municipal_borders: { enabled: true },
+    ticket_zones: { enabled: true },
   };
 
   if (props.configuration.nearBuses) {
