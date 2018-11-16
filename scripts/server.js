@@ -106,11 +106,11 @@ async function main() {
   });
 
   router.post('/posters', async ctx => {
-    const { buildId, props, template } = ctx.request.body;
+    const { buildId, props } = ctx.request.body;
     const posters = [];
     for (let i = 0; i < props.length; i++) {
       // eslint-disable-next-line no-await-in-loop
-      posters.push(await generatePoster(buildId, template, props[i]));
+      posters.push(await generatePoster(buildId, props[i]));
     }
     ctx.body = posters;
   });
