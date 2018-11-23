@@ -54,7 +54,7 @@ docker run -d --name publisher-postgres -e POSTGRES_PASSWORD=postgres postgres
 Build and start the container:
 ```
 docker build -t hsl-routemap-server .
-docker run -d -p 4000:4000 -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --link publisher-postgres -e "PG_CONNECTION_STRING=postgres://postgres:postgres@publisher-postgres:5432/postgres" --shm-size=1G hsl-routemap-server
+docker run -d -p 4000:4000 -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --link publisher-postgres -e "PG_CONNECTION_STRING=postgres://postgres:postgres@publisher-postgres:5432/postgres" -e "PG_JORE_CONNECTION_STRING=asd"  -e "PG_JORE_CONNECTION_STRING_i2=asd" --shm-size=1G hsl-routemap-server
 ```
 
 where `fonts` is a directory containing `Gotham Rounded` and `Gotham XNarrow` OpenType fonts.

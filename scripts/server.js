@@ -140,21 +140,21 @@ async function main() {
   router.post('/import', async ctx => {
     const { targetDate } = ctx.query;
     let config = await getConfig();
-    if (config.status === 'PENDING') {
+    if (config && config.status === 'PENDING') {
       ctx.throw(503, `Already running for date: ${config.target_date}`);
-    }
-    if (targetDate) {
+    } else if (!targetDate) {
+      ctx.throw(400, 'Missing targetDate query parameter');
+    } else {
       config = await setDateConfig(targetDate);
+      generatePoints(config.target_date)
+        .then(async () => {
+          await setStatusConfig('READY');
+        })
+        .catch(async () => {
+          await setStatusConfig('ERROR');
+        });
+      ctx.body = config;
     }
-    await setStatusConfig('PENDING');
-    generatePoints(config.target_date)
-      .then(async () => {
-        await setStatusConfig('READY');
-      })
-      .catch(async () => {
-        await setStatusConfig('ERROR');
-      });
-    ctx.body = config;
   });
 
   router.get('/config', async ctx => {

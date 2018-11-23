@@ -167,11 +167,14 @@ async function setDateConfig(date) {
   if (oldConfig) {
     await knex('routepath_import_config')
       .where({ name: 'default' })
-      .update({ target_date: date });
+      .update({
+        target_date: date,
+        status: 'PENDING',
+      });
   } else {
     await knex('routepath_import_config').insert({
       name: 'default',
-      status: 'EMPTY',
+      status: 'PENDING',
       target_date: date,
     });
   }
