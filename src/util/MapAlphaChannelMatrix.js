@@ -8,7 +8,6 @@ function getIfOccupied(byteArray, mapOptions) {
 class Matrix {
   constructor(mapOptions, mapComponents) {
     this.mapOptions = mapOptions;
-    console.log(mapOptions);
     this.mapOptions.scale = 1;
     this.mapComponents = mapComponents;
 

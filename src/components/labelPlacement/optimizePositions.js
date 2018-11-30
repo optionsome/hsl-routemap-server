@@ -165,8 +165,7 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions, c
   const positions = findMostSuitablePosition(placement, bbox, isOccupied, configuration);
 
   const newPlacements = [];
-  positions.forEach((position, index) => {
-    // eslint-disable-line
+  positions.forEach(position => {
     newPlacements.push({
       ...position,
       visible: shouldBeVisible(position, isOccupied, bbox, configuration, true),

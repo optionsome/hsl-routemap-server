@@ -123,7 +123,7 @@ const RouteMap = props => {
               y={terminus.y}
               distance={10}
               anchorWidth={1}
-              distancePriority={4}
+              distancePriority={terminus.lines.length > 5 ? 4 : 16}
               angle={45}>
               <TerminusLabel
                 lines={terminus.lines}
