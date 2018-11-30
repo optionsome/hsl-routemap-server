@@ -43,8 +43,10 @@ const TerminusLabel = ({ nameFi, nameSe, lines, configuration }) => {
         </div>
       )}
       {intersperse(
-        routes.map(item => (
-          <span className={item.type === 'tram' ? style.tram : style.bus}>{item.text}</span>
+        routes.map((item, index) => (
+          <span key={index} className={item.type === 'tram' ? style.tram : style.bus}>
+            {item.text}
+          </span>
         )),
         ', ',
       )}
@@ -52,10 +54,10 @@ const TerminusLabel = ({ nameFi, nameSe, lines, configuration }) => {
   );
 };
 
-const TerminusConfiguration = PropTypes.shape({
+const TerminusConfiguration = {
   terminusFontSize: PropTypes.number.isRequired,
   terminusWidth: PropTypes.number.isRequired,
-});
+};
 
 TerminusLabel.defaultProps = {
   nameFi: null,

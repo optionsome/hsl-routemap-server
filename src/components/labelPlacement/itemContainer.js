@@ -113,9 +113,8 @@ const MapOptions = {
 
 const ConfigurationOptionsProps = {
   date: PropTypes.string.isRequired,
-  showScale: PropTypes.bool.isRequired,
-  scaleLength: PropTypes.bool.isRequired,
-  maxAnchorLength: PropTypes.string.isRequired,
+  scaleLength: PropTypes.number.isRequired,
+  maxAnchorLength: PropTypes.number.isRequired,
 };
 
 ItemContainer.propTypes = {
@@ -123,7 +122,7 @@ ItemContainer.propTypes = {
   mapOptions: PropTypes.shape(MapOptions).isRequired,
   mapComponents: PropTypes.object.isRequired, // eslint-disable-line
   configuration: PropTypes.shape(ConfigurationOptionsProps).isRequired,
-  alphaChannel: PropTypes.string.isRequired,
+  alphaChannel: PropTypes.object.isRequired,
 };
 
 export default ItemContainer;

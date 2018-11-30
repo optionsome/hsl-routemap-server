@@ -21,8 +21,10 @@ const IntermediateLabel = ({ label, configuration }) => {
   return (
     <div className={style.label} style={intermediateStyle}>
       {intersperse(
-        label.map(item => (
-          <span className={item.type === 'tram' ? style.tram : style.bus}>{item.text}</span>
+        label.map((item, index) => (
+          <span key={index} className={item.type === 'tram' ? style.tram : style.bus}>
+            {item.text}
+          </span>
         )),
         ', ',
       )}
@@ -30,13 +32,18 @@ const IntermediateLabel = ({ label, configuration }) => {
   );
 };
 
-const IntermediateConfiguration = PropTypes.shape({
+const IntermediateConfiguration = {
   intermediatePointFontSize: PropTypes.number.isRequired,
   intermediatePointWidth: PropTypes.number.isRequired,
+};
+
+const IntermediateLabelType = PropTypes.shape({
+  type: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
 });
 
 IntermediateLabel.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.arrayOf(IntermediateLabelType).isRequired,
   configuration: PropTypes.shape(IntermediateConfiguration).isRequired,
 };
 

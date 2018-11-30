@@ -22,9 +22,9 @@ StationName.defaultProps = {
   nameSe: null,
 };
 
-const StationConfiguration = PropTypes.shape({
+const StationConfiguration = {
   stationFontSize: PropTypes.number.isRequired,
-});
+};
 
 StationName.propTypes = {
   nameFi: PropTypes.string,
