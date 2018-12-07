@@ -31,14 +31,35 @@ const diffsArray = factors.map(factor =>
   ),
 );
 
+function getDistance(position1, position2) {
+  const a = position1.left - position2.left;
+  const b = position1.top - position2.top;
+  return Math.sqrt(a * a + b * b);
+}
+
+function getCloseByPositions(positions, indexes, maxDistance) {
+  return positions
+    .map((pos, i) => ({ ...pos, index: i }))
+    .filter(pos => !pos.allowCollision)
+    .filter(pos => {
+      if (!pos.allowHidden) return true;
+      if (getDistance(pos, positions[indexes[0]]) < maxDistance * 3) {
+        return true;
+      }
+      return false;
+    });
+}
+
 function getCost(placement, bbox, alphaByteArray) {
   const { positions, indexes } = placement;
 
+  const closeByPositions = getCloseByPositions(positions, indexes, 40);
+
   const overflow = getOverflowCost(positions, indexes, bbox);
-  const overlap = getOverlapCost(positions, indexes);
+  const overlap = getOverlapCost(positions, indexes, closeByPositions);
   const distance = getDistanceCost(positions, indexes);
   const angle = getAngleCost(positions, indexes);
-  const intersection = getIntersectionCost(positions, indexes);
+  const intersection = getIntersectionCost(positions, indexes, closeByPositions);
   const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
   const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
   return (
