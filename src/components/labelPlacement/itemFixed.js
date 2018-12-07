@@ -59,13 +59,14 @@ class ItemFixed extends Component {
 ItemFixed.defaultProps = {
   fixedSize: null,
   allowCollision: false,
+  transform: 0,
 };
 
 ItemFixed.propTypes = {
   top: PropTypes.number.isRequired,
   left: PropTypes.number.isRequired,
   children: PropTypes.element.isRequired,
-  transform: PropTypes.number.isRequired,
+  transform: PropTypes.number,
   fixedSize: PropTypes.number,
   allowCollision: PropTypes.bool,
 };

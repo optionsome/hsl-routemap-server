@@ -78,13 +78,14 @@ function getOverlapArea(a, b) {
   return Math.max(0, width) * Math.max(0, height);
 }
 
-function getPositionOverlapCost(positions, indexes, i) {
+function getPositionOverlapCost(positions, indexes, position) {
   let overlap = 0;
   indexes.forEach(j => {
-    if (positions[j].allowCollision) return;
-    else if (j >= i && indexes.includes(i)) return;
-    const area = getOverlapArea(positions[i], positions[j]);
-    const isFixed = positions[i].isFixed || positions[j].isFixed;
+    if (positions[j].allowCollision || (!positions[j].shouldBeVisible && positions[j].allowHidden))
+      return;
+    else if (j >= position.index && indexes.includes(position.index)) return;
+    const area = getOverlapArea(position, positions[j]);
+    const isFixed = position.isFixed || positions[j].isFixed;
     overlap += area * (isFixed ? OVERLAP_COST_FIXED : OVERLAP_COST);
   });
   return overlap;
@@ -96,11 +97,11 @@ function getPositionOverlapCost(positions, indexes, i) {
  * @param {number[]} indexes - Indexes to check
  * @returns {number}
  */
-function getOverlapCost(positions, indexes) {
+function getOverlapCost(positions, indexes, closeByPositions) {
   let overlap = 0;
-  positions.forEach((position, i) => {
-    if ((position.shouldBeVisible || !positions[i].allowHidden) && !position.allowCollision) {
-      overlap += getPositionOverlapCost(positions, indexes, i);
+  closeByPositions.forEach(position => {
+    if ((position.shouldBeVisible || !position.allowHidden) && !position.allowCollision) {
+      overlap += getPositionOverlapCost(positions, indexes, position);
     }
   });
   return overlap;
@@ -122,13 +123,13 @@ function hasIntersectingLines(a, b) {
  * @param {number[]} indexes - Indexes to check
  * @returns {number}
  */
-function getIntersectionCost(positions, indexes) {
+function getIntersectionCost(positions, indexes, closeByPositions) {
   let sum = 0;
-  positions.forEach((position, i) => {
+  closeByPositions.forEach(position => {
     if (position.isFixed) return;
     indexes.forEach(j => {
       if (positions[j].isFixed) return;
-      if (j >= i && indexes.includes(i)) return;
+      if (j >= position.index && indexes.includes(position.index)) return;
       if (hasIntersectingLines(position, positions[j])) sum += 1;
     });
   });

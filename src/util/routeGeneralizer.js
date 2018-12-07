@@ -39,7 +39,6 @@ function splitRouteString(routeString) {
   if (parts.length === 3) {
     return { route: parts[1], version: parts[2] };
   }
-  console.log(JSON.stringify(parts)); // eslint-disable-line no-console
   return { route: routeString, version: null };
 }
 

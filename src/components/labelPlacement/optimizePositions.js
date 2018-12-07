@@ -12,8 +12,6 @@ import {
   getAngleCost,
   getAlphaOverflowCost,
   shouldBeVisible,
-  // getPositionOverlapCost,
-  // getPositionFixedIntersectionCost,
 } from './costFunctions';
 
 const timeout = 7 * 24 * 60 * 60 * 1000;
@@ -33,14 +31,37 @@ const diffsArray = factors.map(factor =>
   ),
 );
 
-function getCost(placement, bbox, alphaByteArray) {
+function getDistance(position1, position2) {
+  const a = position1.left - position2.left;
+  const b = position1.top - position2.top;
+  return Math.sqrt(a * a + b * b);
+}
+
+function getCloseByPositions(positions, index, maxDistance) {
+  return positions
+    .map((pos, i) => ({
+      ...pos,
+      index: i,
+    }))
+    .filter(pos => !pos.allowCollision)
+    .filter(pos => pos.shouldBeVisible || !pos.allowHidden)
+    .filter(pos => {
+      if (!pos.allowHidden) return true;
+      if (getDistance(pos, positions[index]) < maxDistance * 3) {
+        return true;
+      }
+      return false;
+    });
+}
+
+function getCost(placement, bbox, alphaByteArray, closeByPositions) {
   const { positions, indexes } = placement;
 
   const overflow = getOverflowCost(positions, indexes, bbox);
-  const overlap = getOverlapCost(positions, indexes);
+  const overlap = getOverlapCost(positions, indexes, closeByPositions);
   const distance = getDistanceCost(positions, indexes);
   const angle = getAngleCost(positions, indexes);
-  const intersection = getIntersectionCost(positions, indexes);
+  const intersection = getIntersectionCost(positions, indexes, closeByPositions);
   const intersectionWithFixed = getFixedIntersectionCost(positions, indexes);
   const alphaOverlap = getAlphaOverflowCost(positions, indexes, alphaByteArray);
   return (
@@ -76,12 +97,12 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
           alphaByteArray,
           bbox,
           configuration,
+          true,
         );
       }
       if (
         !updatedPosition ||
-        (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox)) ||
-        (positions[index].allowHidden && !updatedPosition.shouldBeVisible)
+        (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))
       ) {
         return null;
       }
@@ -91,14 +112,20 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
     .map(updatedPositions => ({ positions: updatedPositions, indexes: [...indexes, index] }));
 }
 
-function comparePlacements(placement, other, bbox, alphaByteArray) {
+function comparePlacements(placement, other, bbox, alphaByteArray, closeByPositions) {
   const indexes = [...new Set([...placement.indexes, ...other.indexes])];
-  const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray);
-  const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray);
+  const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray, closeByPositions);
+  const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray, closeByPositions);
   return costOther < cost ? other : placement;
 }
 
 function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, configuration) {
+  const closeByPositions = getCloseByPositions(
+    initialPlacement.positions,
+    index,
+    configuration.maxAnchorLength,
+  );
+
   // Get potential positions for item at index
   const placements = getPlacements(
     { ...initialPlacement, indexes: [] },
@@ -121,7 +148,7 @@ function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, 
   }, []);
 
   const nextPlacement = [initialPlacement, ...placements, ...placementsOverlapping].reduce(
-    (prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray),
+    (prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray, closeByPositions),
   );
 
   return nextPlacement;
@@ -165,8 +192,7 @@ function optimizePositions(initialPositions, bbox, alphaByteArray, mapOptions, c
   const positions = findMostSuitablePosition(placement, bbox, isOccupied, configuration);
 
   const newPlacements = [];
-  positions.forEach((position, index) => {
-    // eslint-disable-line
+  positions.forEach(position => {
     newPlacements.push({
       ...position,
       visible: shouldBeVisible(position, isOccupied, bbox, configuration, true),

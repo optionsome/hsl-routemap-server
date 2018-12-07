@@ -1,5 +1,4 @@
-HSL Routemap server
-====================
+# HSL Routemap server
 
 This project is a spin off from HSL Map publisher, most of the logic used in this project was originally made for the Publisher. This project has been drifting away from the Publisher project, so we decided to make this project in to a whole separate repository.
 
@@ -15,8 +14,8 @@ Install `pdftk`
 
 ### App
 
-
 Start development server:
+
 ```
 yarn start:hot
 ```
@@ -35,11 +34,13 @@ http://localhost:5000/?props={"mapOptions":{"zoom":12.774952540009707,"pitch":0,
 Server and REST API for printing components to PDF files and managing their metadata in a Postgres database.
 
 Start Postgres:
+
 ```
 docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres
 ```
 
 Start server:
+
 ```
 PG_CONNECTION_STRING=postgres://postgres:postgres@localhost:5432/postgres yarn server
 ```
@@ -47,14 +48,16 @@ PG_CONNECTION_STRING=postgres://postgres:postgres@localhost:5432/postgres yarn s
 ### Running in Docker
 
 Start a Postgres Docker container:
+
 ```
-docker run -d --name publisher-postgres -e POSTGRES_PASSWORD=postgres postgres
+docker run -d --name routemap-postgres -e POSTGRES_PASSWORD=postgres postgres
 ```
 
 Build and start the container:
+
 ```
 docker build -t hsl-routemap-server .
-docker run -d -p 4000:4000 -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --link publisher-postgres -e "PG_CONNECTION_STRING=postgres://postgres:postgres@publisher-postgres:5432/postgres" -e "PG_JORE_CONNECTION_STRING=asd"  -e "PG_JORE_CONNECTION_STRING_i2=asd" --shm-size=1G hsl-routemap-server
+docker run -d -p 4000:4000 -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --link routemap-postgres -e "PG_CONNECTION_STRING=postgres://postgres:postgres@routemap-postgres:5432/postgres" -e "PG_JORE_CONNECTION_STRING=placeholder"  -e "PG_JORE_CONNECTION_STRING_i2=placeholder" --shm-size=1G hsl-routemap-server
 ```
 
 where `fonts` is a directory containing `Gotham Rounded` and `Gotham XNarrow` OpenType fonts.

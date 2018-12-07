@@ -123,7 +123,7 @@ const RouteMap = props => {
               y={terminus.y}
               distance={10}
               anchorWidth={1}
-              distancePriority={4}
+              distancePriority={terminus.lines.length > 5 ? 4 : 16}
               angle={45}>
               <TerminusLabel
                 lines={terminus.lines}
@@ -159,7 +159,7 @@ const RouteMap = props => {
             <div style={scaleStyle}>
               <Scalebar
                 targetWidth={
-                  props.configuration.scalePxLength ? props.configuration.scalePxLength : 250
+                  props.configuration.scaleLength ? props.configuration.scaleLength : 250
                 }
                 pixelsPerMeter={props.pxPerMeterRatio}
               />
@@ -188,10 +188,15 @@ const StationType = PropTypes.shape({
   mode: PropTypes.string.isRequired,
 });
 
+const IntermediateLabelType = PropTypes.shape({
+  type: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+});
+
 const IntermediateType = PropTypes.shape({
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
-  label: PropTypes.string.isRequired,
+  label: PropTypes.arrayOf(IntermediateLabelType).isRequired,
 });
 
 const MapOptions = {
@@ -204,19 +209,24 @@ const MapOptions = {
 const StopType = PropTypes.shape({
   x: PropTypes.number.isRequired,
   y: PropTypes.number.isRequired,
-  routes: PropTypes.arrayOf(PropTypes.string).isRequired,
+  routes: PropTypes.arrayOf(
+    PropTypes.shape({
+      routeId: PropTypes.string.isRequired,
+      mode: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
 });
 
 const ConfigurationOptionsProps = {
   date: PropTypes.string.isRequired,
-  scaleFontSize: PropTypes.bool.isRequired,
-  maxAnchorLength: PropTypes.string.isRequired,
-  scalePxLength: PropTypes.number.isRequired,
+  scaleFontSize: PropTypes.number.isRequired,
+  maxAnchorLength: PropTypes.number.isRequired,
+  scaleLength: PropTypes.number,
 };
 
 RouteMap.propTypes = {
   date: PropTypes.string.isRequired,
-  alphaChannel: PropTypes.string.isRequired,
+  alphaChannel: PropTypes.object.isRequired,
   projectedStations: PropTypes.arrayOf(StationType).isRequired,
   projectedTerminuses: PropTypes.arrayOf(TerminusType).isRequired,
   projectedIntermediates: PropTypes.arrayOf(IntermediateType).isRequired,
