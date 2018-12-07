@@ -12,8 +12,6 @@ import {
   getAngleCost,
   getAlphaOverflowCost,
   shouldBeVisible,
-  // getPositionOverlapCost,
-  // getPositionFixedIntersectionCost,
 } from './costFunctions';
 
 const timeout = 7 * 24 * 60 * 60 * 1000;
@@ -76,6 +74,7 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
           alphaByteArray,
           bbox,
           configuration,
+          true,
         );
       }
       if (
