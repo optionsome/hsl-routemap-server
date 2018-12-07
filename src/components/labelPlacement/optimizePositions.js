@@ -37,23 +37,25 @@ function getDistance(position1, position2) {
   return Math.sqrt(a * a + b * b);
 }
 
-function getCloseByPositions(positions, indexes, maxDistance) {
+function getCloseByPositions(positions, index, maxDistance) {
   return positions
-    .map((pos, i) => ({ ...pos, index: i }))
+    .map((pos, i) => ({
+      ...pos,
+      index: i,
+    }))
     .filter(pos => !pos.allowCollision)
+    .filter(pos => pos.shouldBeVisible || !pos.allowHidden)
     .filter(pos => {
       if (!pos.allowHidden) return true;
-      if (getDistance(pos, positions[indexes[0]]) < maxDistance * 3) {
+      if (getDistance(pos, positions[index]) < maxDistance * 3) {
         return true;
       }
       return false;
     });
 }
 
-function getCost(placement, bbox, alphaByteArray) {
+function getCost(placement, bbox, alphaByteArray, closeByPositions) {
   const { positions, indexes } = placement;
-
-  const closeByPositions = getCloseByPositions(positions, indexes, 40);
 
   const overflow = getOverflowCost(positions, indexes, bbox);
   const overlap = getOverlapCost(positions, indexes, closeByPositions);
@@ -100,8 +102,7 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
       }
       if (
         !updatedPosition ||
-        (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox)) ||
-        (positions[index].allowHidden && !updatedPosition.shouldBeVisible)
+        (!positions[index].allowHidden && hasOverflow(updatedPosition, bbox))
       ) {
         return null;
       }
@@ -111,14 +112,20 @@ function getPlacements(placement, index, diffs, bbox, alphaByteArray, configurat
     .map(updatedPositions => ({ positions: updatedPositions, indexes: [...indexes, index] }));
 }
 
-function comparePlacements(placement, other, bbox, alphaByteArray) {
+function comparePlacements(placement, other, bbox, alphaByteArray, closeByPositions) {
   const indexes = [...new Set([...placement.indexes, ...other.indexes])];
-  const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray);
-  const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray);
+  const cost = getCost({ ...placement, indexes }, bbox, alphaByteArray, closeByPositions);
+  const costOther = getCost({ ...other, indexes }, bbox, alphaByteArray, closeByPositions);
   return costOther < cost ? other : placement;
 }
 
 function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, configuration) {
+  const closeByPositions = getCloseByPositions(
+    initialPlacement.positions,
+    index,
+    configuration.maxAnchorLength,
+  );
+
   // Get potential positions for item at index
   const placements = getPlacements(
     { ...initialPlacement, indexes: [] },
@@ -141,7 +148,7 @@ function getNextPlacement(initialPlacement, index, diffs, bbox, alphaByteArray, 
   }, []);
 
   const nextPlacement = [initialPlacement, ...placements, ...placementsOverlapping].reduce(
-    (prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray),
+    (prev, cur) => comparePlacements(prev, cur, bbox, alphaByteArray, closeByPositions),
   );
 
   return nextPlacement;
