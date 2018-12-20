@@ -23,7 +23,7 @@ class Matrix {
   initialize(callback) {
     const byteArray = new Int8Array(this.mapOptions.height * this.mapOptions.width);
     fetchMap(this.mapOptions, this.mapStyle, this.mapOptions.scale).then(res => {
-      console.warn('fetched bit array map');
+      console.info('fetched bit array map');
       const canvas = document.createElement('canvas');
       canvas.width = this.mapOptions.width;
       canvas.height = this.mapOptions.height;
@@ -32,7 +32,7 @@ class Matrix {
       img.src = res;
       let counter = 0;
       img.onload = () => {
-        console.warn('loading bit array map');
+        console.info('loading bit array map');
         ctx.drawImage(img, 0, 0);
         const imageData = ctx.getImageData(0, 0, this.mapOptions.width, this.mapOptions.height);
 
@@ -43,7 +43,7 @@ class Matrix {
             if (result) counter++;
           }
         }
-        console.warn(
+        console.info(
           `Loaded bit array: ${counter}/${this.mapOptions.width * this.mapOptions.height}`,
         );
         callback(byteArray);

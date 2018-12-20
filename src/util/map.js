@@ -23,7 +23,7 @@ export function fetchMap(mapOptions, mapStyle, scale = scaleDefault) {
           const reader = new window.FileReader();
           reader.readAsDataURL(blob);
           reader.onloadend = () => resolve(reader.result);
-          console.warn('Fetched map:');
+          console.info('Fetched map:');
         }),
     );
 }
