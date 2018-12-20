@@ -162,7 +162,7 @@ function findMostSuitablePosition(initialPlacement, bbox, isOccupied, configurat
   for (let factor = 0; factor < factors.length; factor++) {
     const diffs = diffsArray[factor];
     for (let iteration = 0; iteration < iterationsPerFactor; iteration++) {
-      console.warn(`${counter}/${iter}`); // eslint-disable-line
+      console.info(`${counter}/${iter}`); // eslint-disable-line
       counter++;
       const previous = placement;
       for (let index = 0; index < placement.positions.length; index++) {
