@@ -1,13 +1,13 @@
 import segseg from 'segseg';
 
-const OVERLAP_COST = 3000;
+const OVERLAP_COST = 10000;
 const OVERLAP_COST_FIXED = 6;
 const OVERFLOW_COST = 100;
-const INTERSECTION_COST = 500;
+const INTERSECTION_COST = 700;
 const INTERSECTION_WITH_FIXED_COST = 25;
 const DISTANCE_COST = 120;
 const ANGLE_COST = 1;
-const ALPHA_COST = 100;
+const ALPHA_COST = 25;
 
 const MAX_ALPHA_OVERLAPS = 10;
 const ALPHA_STEP = 5;
