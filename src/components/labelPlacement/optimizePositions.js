@@ -15,7 +15,7 @@ import {
 } from './costFunctions';
 
 const timeout = 7 * 24 * 60 * 60 * 1000;
-const iterationsPerFactor = 5;
+const iterationsPerFactor = 8;
 
 const angles = [-6, -3, -1, 0, 1, 3, 6];
 const distances = [-4, -2, -1, 0, 1, 2, 4];
