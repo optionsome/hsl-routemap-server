@@ -83,7 +83,7 @@ function getPositionOverlapCost(positions, indexes, position) {
   indexes.forEach(j => {
     if (positions[j].allowCollision || (!positions[j].shouldBeVisible && positions[j].allowHidden))
       return;
-    else if (j >= position.index && indexes.includes(position.index)) return;
+    else if (j === position.index) return;
     const area = getOverlapArea(position, positions[j]);
     const isFixed = position.isFixed || positions[j].isFixed;
     overlap += area * (isFixed ? OVERLAP_COST_FIXED : OVERLAP_COST);
