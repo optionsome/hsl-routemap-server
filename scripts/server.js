@@ -28,11 +28,13 @@ async function generatePoster(buildId, props) {
   const { id } = await addPoster({ buildId, props });
 
   const onInfo = message => {
-    console.log(`${id}: ${message}`); // eslint-disable-line no-console
+    const date = new Date().toUTCString();
+    console.log(`${date} ${id}: ${message}`); // eslint-disable-line no-console
     addEvent({ posterId: id, type: 'INFO', message });
   };
   const onError = error => {
-    console.error(`${id}: ${error.message} ${error.stack}`); // eslint-disable-line no-console
+    const date = new Date().toUTCString();
+    console.error(`${date} ${id}: ${error.message} ${error.stack}`); // eslint-disable-line no-console
     addEvent({ posterId: id, type: 'ERROR', message: error.message });
   };
 
