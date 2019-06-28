@@ -9,7 +9,7 @@ import RouteMap from 'components/routeMap/routeMapContainer';
 import renderQueue from 'util/renderQueue';
 
 const client = new ApolloClient({
-  link: createHttpLink({ uri: 'http://kartat.hsl.fi/jore/graphql' }),
+  link: createHttpLink({ uri: 'https://kartat.hsl.fi/jore/graphql' }),
   cache: new InMemoryCache(),
 });
 
