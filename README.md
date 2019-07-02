@@ -39,11 +39,21 @@ Start Postgres:
 docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres
 ```
 
+IMPORTANT:
+
+Manually add a default row to the `routepath_import_config` table:
+
+```
+INSERT INTO "public"."routepath_import_config" ("name", "target_date", "status", "created_at", "updated_at") VALUES ('default', '2019-07-02', 'READY', DEFAULT, DEFAULT)
+```
+
 Start server:
 
 ```
 PG_CONNECTION_STRING=postgres://postgres:postgres@localhost:5432/postgres yarn server
 ```
+
+As soon as it is started, run the "Päivitä" function of the linjakarttageneraattori poikkileikkauspäivä to generate an actual poikkileikkauspäivä.
 
 ### Running in Docker
 
@@ -53,11 +63,21 @@ Start a Postgres Docker container:
 docker run -d --name routemap-postgres -e POSTGRES_PASSWORD=postgres postgres
 ```
 
+IMPORTANT:
+
+Manually add a default row to the `routepath_import_config` table:
+
+```
+INSERT INTO "public"."routepath_import_config" ("name", "target_date", "status", "created_at", "updated_at") VALUES ('default', '2019-07-02', 'READY', DEFAULT, DEFAULT)
+```
+
 Build and start the container:
 
 ```
 docker build -t hsl-routemap-server .
 docker run -d -p 4000:4000 -v $(pwd)/output:/output -v $(pwd)/fonts:/fonts --link routemap-postgres -e "PG_CONNECTION_STRING=postgres://postgres:postgres@routemap-postgres:5432/postgres" -e "PG_JORE_CONNECTION_STRING=placeholder"  -e "PG_JORE_CONNECTION_STRING_i2=placeholder" --shm-size=1G hsl-routemap-server
 ```
+
+As soon as it is started, run the "Päivitä" function of the linjakarttageneraattori poikkileikkauspäivä to generate an actual poikkileikkauspäivä.
 
 where `fonts` is a directory containing `Gotham Rounded` and `Gotham XNarrow` OpenType fonts.

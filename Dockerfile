@@ -47,6 +47,7 @@ CMD \
   cp /fonts/* ~/.local/share/fonts/opentype && \
   fc-cache -f -v && \
   ln -s /output . && \
-  node_modules/.bin/forever start -c "yarn serve" ./ && \
-  node_modules/.bin/forever start -c "yarn server" ./ && \
-  node_modules/.bin/forever -f logs 1
+  yarn run forever start -c "yarn serve" ./ && \
+  yarn run forever start -c "yarn server" ./ && \
+  sleep 3 && \
+  yarn run forever -f logs 1

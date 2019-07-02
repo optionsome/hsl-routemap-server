@@ -5,6 +5,14 @@ exports.up = async knex => {
     table.enu('status', ['READY', 'PENDING', 'ERROR', 'EMPTY']);
     table.timestamps(true, true);
   });
+
+  /* await knex('routepath_import_config').insert({
+    name: 'default',
+    target_date: knex.raw('NOW()'),
+    status: 'READY',
+    created_at: 'DEFAULT',
+    updated_at: 'DEFAULT',
+  }); */
 };
 
 exports.down = async knex => {
