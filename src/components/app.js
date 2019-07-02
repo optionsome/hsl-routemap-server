@@ -8,25 +8,40 @@ import { ApolloProvider } from 'react-apollo';
 import RouteMap from 'components/routeMap/routeMapContainer';
 import renderQueue from 'util/renderQueue';
 
+function handleError(error) {
+  if (window.callPhantom) {
+    window.callPhantom({ error: error.message });
+    return;
+  }
+  console.error(error); // eslint-disable-line no-console
+}
+
+let props = false;
+
+try {
+  const params = new URLSearchParams(window.location.search.substring(1));
+  props = JSON.parse(params.get('props'));
+} catch (error) {
+  handleError(new Error('Failed to parse url fragment'));
+}
+
+if (!props) {
+  handleError(new Error('Invalid props'));
+}
+
+console.log(JSON.stringify(props));
+
 const client = new ApolloClient({
-  link: createHttpLink({ uri: 'https://kartat.hsl.fi/jore/graphql' }),
+  link: createHttpLink({ uri: props.joreUrl || 'https://kartat.hsl.fi/jore/graphql' }),
   cache: new InMemoryCache(),
 });
 
 class App extends Component {
-  static handleError(error) {
-    if (window.callPhantom) {
-      window.callPhantom({ error: error.message });
-      return;
-    }
-    console.error(error); // eslint-disable-line no-console
-  }
-
   componentDidMount() {
     if (this.root) {
       renderQueue.onEmpty(error => {
         if (error) {
-          App.handleError(error);
+          handleError(error);
           return;
         }
         if (window.callPhantom) {
@@ -41,25 +56,11 @@ class App extends Component {
 
   // eslint-disable-next-line class-methods-use-this
   componentDidCatch(error, info) {
-    // eslint-disable-next-line no-console
-    console.log(info);
-    App.handleError(error);
+    handleError(error);
   }
 
   render() {
-    let props;
-
-    try {
-      const params = new URLSearchParams(window.location.search.substring(1));
-
-      props = JSON.parse(params.get('props'));
-    } catch (error) {
-      App.handleError(new Error('Failed to parse url fragment'));
-      return null;
-    }
-
     if (!props) {
-      App.handleError(new Error('Invalid props'));
       return null;
     }
 

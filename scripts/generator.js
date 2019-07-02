@@ -10,6 +10,7 @@ const CLIENT_URL = 'http://localhost:5000';
 const RENDER_TIMEOUT = 24 * 60 * 60 * 1000;
 const MAX_RENDER_ATTEMPTS = 3;
 const SCALE = 96 / 72;
+const { JORE_GRAPHQL_URL } = process.env;
 
 let browser = null;
 let previous = Promise.resolve();
@@ -119,6 +120,10 @@ async function renderComponentRetry(options) {
  * @returns {Promise} - Always resolves with { success }
  */
 function generate(options) {
+  const props = { ...options.props, joreUrl: JORE_GRAPHQL_URL };
+  // eslint-disable-next-line no-param-reassign
+  options.props = props;
+
   previous = previous.then(() => renderComponentRetry(options));
   return previous;
 }
