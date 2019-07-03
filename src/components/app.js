@@ -29,8 +29,6 @@ if (!props) {
   handleError(new Error('Invalid props'));
 }
 
-console.log(JSON.stringify(props));
-
 const client = new ApolloClient({
   link: createHttpLink({ uri: props.joreUrl || 'https://kartat.hsl.fi/jore/graphql' }),
   cache: new InMemoryCache(),
@@ -56,6 +54,7 @@ class App extends Component {
 
   // eslint-disable-next-line class-methods-use-this
   componentDidCatch(error, info) {
+    console.log(JSON.stringify({ error, info }));
     handleError(error);
   }
 

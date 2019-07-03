@@ -14,22 +14,42 @@ const propsMapper = mapProps(({ options, components, date, extraLayers }) => {
   });
 
   // Set date for which to show stops and routes
-  if (components.routes && components.routes.enabled && date) {
+  if (components.routes && components.routes.enabled && date && mapStyle.sources.routes) {
     mapStyle.sources.routes.url += `?date=${date}`;
   }
-  if (components.stops && components.stops.enabled && date) {
+  if (components.stops && components.stops.enabled && date && mapStyle.sources.stops) {
     mapStyle.sources.stops.url += `?date=${date}`;
   }
-  if (components.regular_stops && components.regular_stops.enabled && date) {
+  if (
+    components.regular_stops &&
+    components.regular_stops.enabled &&
+    date &&
+    mapStyle.sources.stops
+  ) {
     mapStyle.sources.stops.url += `?date=${date}`;
   }
-  if (components.regular_routes && components.regular_routes.enabled && date) {
+  if (
+    components.regular_routes &&
+    components.regular_routes.enabled &&
+    date &&
+    mapStyle.sources.routes
+  ) {
     mapStyle.sources.routes.url += `?date=${date}`;
   }
-  if (components.near_bus_stops && components.near_bus_stops.enabled && date) {
+  if (
+    components.near_bus_stops &&
+    components.near_bus_stops.enabled &&
+    date &&
+    mapStyle.sources.stops
+  ) {
     mapStyle.sources.stops.url += `?date=${date}`;
   }
-  if (components.near_bus_routes && components.near_bus_routes.enabled && date) {
+  if (
+    components.near_bus_routes &&
+    components.near_bus_routes.enabled &&
+    date &&
+    mapStyle.sources.routes
+  ) {
     mapStyle.sources.routes.url += `?date=${date}`;
   }
 

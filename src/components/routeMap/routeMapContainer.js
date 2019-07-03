@@ -169,7 +169,7 @@ const terminalMapper = mapProps(props => {
   });
 
   const projectedStations = stations.map(stop => {
-    const [x, y] = viewport.project([stop.lon, stop.lat]);
+    const [x, y] = viewport.project([parseFloat(stop.lon), parseFloat(stop.lat)]);
 
     return {
       nameFi: stop.nameFi,
@@ -182,7 +182,7 @@ const terminalMapper = mapProps(props => {
 
   const projectedStops = stops
     .map(stop => {
-      const [x, y] = viewport.project([stop.lon, stop.lat]);
+      const [x, y] = viewport.project([parseFloat(stop.lon), parseFloat(stop.lat)]);
 
       return {
         x,
@@ -227,7 +227,7 @@ const terminalMapper = mapProps(props => {
       oneDirectionalAngle: getOneDirectionalAngle(intermediate.angles),
     }))
     .map(intermediate => {
-      const [x, y] = viewport.project([intermediate.lon, intermediate.lat]);
+      const [x, y] = viewport.project([parseFloat(intermediate.lon), parseFloat(intermediate.lat)]);
       return {
         ...intermediate,
         x,
@@ -237,7 +237,7 @@ const terminalMapper = mapProps(props => {
 
   const projectedTerminuses = terminuses
     .map(terminus => {
-      const [x, y] = viewport.project([terminus.lon, terminus.lat]);
+      const [x, y] = viewport.project([parseFloat(terminus.lon), parseFloat(terminus.lat)]);
 
       return {
         ...terminus,
@@ -260,6 +260,7 @@ const terminalMapper = mapProps(props => {
     text_fisv: { enabled: true },
     municipal_borders: { enabled: true },
     ticket_zones: { enabled: true },
+    routes: { enabled: true },
   };
 
   if (props.configuration.nearBuses) {

@@ -3507,20 +3507,24 @@ getpass@^0.1.1:
     assert-plus "^1.0.0"
 
 gl-mat4@^1.1.4:
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/gl-mat4/-/gl-mat4-1.1.4.tgz#1e895b55892e56a896867abd837d38f37a178086"
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/gl-mat4/-/gl-mat4-1.2.0.tgz#49d8a7636b70aa00819216635f4a3fd3f4669b26"
+  integrity sha512-sT5C0pwB1/e9G9AvAoLsoaJtbMGjfd/jfxo8jMCKqYYEnjZuFvqV5rehqar0538EmssjdDeiEWnKyBSTw7quoA==
 
 gl-vec2@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/gl-vec2/-/gl-vec2-1.0.0.tgz#77fce6ae9612856d6c8b621cd261cd8281b9c637"
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/gl-vec2/-/gl-vec2-1.3.0.tgz#83d472ed46034de8e09cbc857123fb6c81c51199"
+  integrity sha512-YiqaAuNsheWmUV0Sa8k94kBB0D6RWjwZztyO+trEYS8KzJ6OQB/4686gdrf59wld4hHFIvaxynO3nRxpk1Ij/A==
 
 gl-vec3@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/gl-vec3/-/gl-vec3-1.0.3.tgz#110fd897d0729f6398307381567d0944941bf22b"
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/gl-vec3/-/gl-vec3-1.1.3.tgz#a47c62f918774a06cbed1b65bcd0288ecbb03826"
+  integrity sha512-jduKUqT0SGH02l8Yl+mV1yVsDfYgQAJyXGxkJQGyxPLHRiW25DwVIRPt6uvhrEMHftJfqhqKthRcyZqNEl9Xdw==
 
 gl-vec4@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/gl-vec4/-/gl-vec4-1.0.1.tgz#97d96878281b14b532cbce101785dfd1cb340964"
+  integrity sha1-l9loeCgbFLUyy84QF4Xf0cs0CWQ=
 
 glob-base@^0.3.0:
   version "0.3.0"
@@ -7959,6 +7963,7 @@ verror@1.10.0:
 viewport-mercator-project@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/viewport-mercator-project/-/viewport-mercator-project-4.1.1.tgz#92b0611fa0041041d2f3568da3529a8a846017d0"
+  integrity sha1-krBhH6AEEEHS81aNo1KaioRgF9A=
   dependencies:
     gl-mat4 "^1.1.4"
     gl-vec2 "^1.0.0"

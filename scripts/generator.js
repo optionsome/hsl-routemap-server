@@ -46,7 +46,9 @@ async function renderComponent(options) {
   });
 
   const encodedProps = encodeURIComponent(JSON.stringify(props));
-  await page.goto(`${CLIENT_URL}/?props=${encodedProps}`);
+  const renderUrl = `${CLIENT_URL}/?props=${encodedProps}`;
+  console.log(renderUrl);
+  await page.goto(renderUrl);
 
   const { error, width, height } = await page.evaluate(
     () =>
