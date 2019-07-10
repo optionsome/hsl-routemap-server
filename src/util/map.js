@@ -1,4 +1,4 @@
-const API_URL = 'https://kartat.hsldev.com';
+const API_URL = 'https://kartat.hsl.fi';
 
 const scaleDefault = 5;
 
