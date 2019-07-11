@@ -109,6 +109,8 @@ async function main() {
 
   router.post('/posters', async ctx => {
     const { buildId, props } = ctx.request.body;
+    console.log(props);
+
     const posters = [];
     for (let i = 0; i < props.length; i++) {
       // eslint-disable-next-line no-await-in-loop
@@ -134,6 +136,7 @@ async function main() {
 
   router.get('/downloadPoster/:id', async ctx => {
     const { id } = ctx.params;
+    console.log(id);
     ctx.type = 'application/pdf';
     ctx.set('Content-Disposition', `attachment; filename="Linjakartta-${id}.pdf"`);
     ctx.body = generator.concatenate([id]);

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import compose from 'recompose/compose';
 import mapProps from 'recompose/mapProps';
 import hslMapStyle from 'hsl-map-style';
+import mapValues from 'lodash/mapValues';
 
 import { fetchMap } from 'util/map';
 import promiseWrapper from 'util/promiseWrapper';
@@ -13,45 +14,16 @@ const propsMapper = mapProps(({ options, components, date, extraLayers }) => {
     glyphsUrl: 'https://kartat.hsl.fi/',
   });
 
-  // Set date for which to show stops and routes
-  if (components.routes && components.routes.enabled && date && mapStyle.sources.routes) {
-    mapStyle.sources.routes.url += `?date=${date}`;
-  }
-  if (components.stops && components.stops.enabled && date && mapStyle.sources.stops) {
-    mapStyle.sources.stops.url += `?date=${date}`;
-  }
-  if (
-    components.regular_stops &&
-    components.regular_stops.enabled &&
-    date &&
-    mapStyle.sources.stops
-  ) {
-    mapStyle.sources.stops.url += `?date=${date}`;
-  }
-  if (
-    components.regular_routes &&
-    components.regular_routes.enabled &&
-    date &&
-    mapStyle.sources.routes
-  ) {
-    mapStyle.sources.routes.url += `?date=${date}`;
-  }
-  if (
-    components.near_bus_stops &&
-    components.near_bus_stops.enabled &&
-    date &&
-    mapStyle.sources.stops
-  ) {
-    mapStyle.sources.stops.url += `?date=${date}`;
-  }
-  if (
-    components.near_bus_routes &&
-    components.near_bus_routes.enabled &&
-    date &&
-    mapStyle.sources.routes
-  ) {
-    mapStyle.sources.routes.url += `?date=${date}`;
-  }
+  const sources = mapValues(mapStyle.sources, (value, key) => {
+    if (value.url && value.url.includes('kartat.hsl.fi')) {
+      // eslint-disable-next-line no-param-reassign
+      value.url += `?date=${date}`;
+    }
+
+    return value;
+  });
+
+  mapStyle.sources = sources;
 
   // Remove source containing bus routes (rail and subway routes have separate sources)
   if (components.routes && components.routes.enabled && components.routes.hideBusRoutes) {
