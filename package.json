@@ -11,7 +11,8 @@
     "start": "node --max-old-space-size=10000 server",
     "start:hot": "cross-env HMR=true node server",
     "server": "node --max-old-space-size=10000 -r dotenv/config scripts/server",
-    "server:hot": "nodemon -r dotenv/config scripts/server"
+    "server:hot": "nodemon -r dotenv/config scripts/server",
+    "codestyle": "prettier \"./**/*.{css,js}\" --write"
   },
   "lint-staged": {
     "*.js": [
