@@ -109,8 +109,6 @@ async function main() {
 
   router.post('/posters', async ctx => {
     const { buildId, props } = ctx.request.body;
-    console.log(props);
-
     const posters = [];
     for (let i = 0; i < props.length; i++) {
       // eslint-disable-next-line no-await-in-loop

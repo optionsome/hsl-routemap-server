@@ -139,15 +139,9 @@ function generate(options) {
 function concatenate(ids) {
   const filenames = ids.map(id => pdfPath(id));
   const pdftk = spawn('pdftk', [...filenames, 'cat', 'output', '-']);
-
-  try {
-    pdftk.stderr.on('data', data => {
-      throw new Error(data.toString());
-    });
-  } catch (err) {
-    console.log(err);
-  }
-
+  pdftk.stderr.on('data', data => {
+    pdftk.stdout.emit('error', new Error(data.toString()));
+  });
   return pdftk.stdout;
 }
 
