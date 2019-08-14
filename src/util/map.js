@@ -15,7 +15,7 @@ export function fetchMap(mapOptions, mapStyle, scale = scaleDefault) {
     body: JSON.stringify({ options: { ...mapOptions, scale }, style: mapStyle }),
   };
 
-  return fetch(`${API_URL}/generate`, options)
+  return fetch(`${API_URL}/generateImage`, options)
     .then(response => response.blob())
     .then(
       blob =>
