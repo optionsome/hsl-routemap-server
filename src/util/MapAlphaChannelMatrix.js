@@ -16,7 +16,7 @@ class Matrix {
         ...mapComponents,
         base: { enabled: false },
       },
-      glyphsUrl: 'https://kartat.hsl.fi/',
+      glyphsUrl: process.env.GLYPHS_URL || 'https://kartat.hsl.fi/',
     });
   }
 

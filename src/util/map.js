@@ -1,4 +1,4 @@
-const API_URL = 'https://kartat.hsl.fi';
+const API_URL = process.env.GENERATE_API_URL || 'https://kartat.hsl.fi';
 
 const scaleDefault = 5;
 
@@ -15,7 +15,7 @@ export function fetchMap(mapOptions, mapStyle, scale = scaleDefault) {
     body: JSON.stringify({ options: { ...mapOptions, scale }, style: mapStyle }),
   };
 
-  return fetch(`${API_URL}/generateImage`, options)
+  return fetch(`${API_URL}/generate`, options)
     .then(response => response.blob())
     .then(
       blob =>
