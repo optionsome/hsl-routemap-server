@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const puppeteer = require('puppeteer');
 const { promisify } = require('util');
@@ -15,9 +15,12 @@ const { JORE_GRAPHQL_URL } = process.env;
 let browser = null;
 let previous = Promise.resolve();
 
-const pdfPath = id => path.join(__dirname, '..', 'output', `${id}.pdf`);
+const outputPath = path.join(__dirname, '..', 'output');
+const pdfPath = id => path.join(outputPath, `${id}.pdf`);
 
 async function initialize() {
+  await fs.ensureDir(outputPath);
+
   browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   browser.on('disconnected', () => {
     browser = null;
