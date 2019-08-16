@@ -1,10 +1,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const puppeteer = require('puppeteer');
-const { promisify } = require('util');
 const { spawn } = require('child_process');
-
-const writeFileAsync = promisify(fs.writeFile);
 
 const CLIENT_URL = 'http://localhost:5000';
 const RENDER_TIMEOUT = 24 * 60 * 60 * 1000;
@@ -19,8 +16,6 @@ const outputPath = path.join(__dirname, '..', 'output');
 const pdfPath = id => path.join(outputPath, `${id}.pdf`);
 
 async function initialize() {
-  await fs.ensureDir(outputPath);
-
   browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   browser.on('disconnected', () => {
     browser = null;
@@ -85,7 +80,7 @@ async function renderComponent(options) {
 
   const contents = await page.pdf(printOptions);
 
-  await writeFileAsync(pdfPath(id), contents);
+  await fs.outputFile(pdfPath(id), contents);
   await page.close();
 }
 
