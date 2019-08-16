@@ -46,6 +46,7 @@ async function renderComponent(options) {
   const encodedProps = encodeURIComponent(JSON.stringify(props));
   const renderUrl = `${CLIENT_URL}/?props=${encodedProps}`;
   console.log(renderUrl);
+
   await page.goto(renderUrl);
 
   const { error, width, height } = await page.evaluate(
@@ -91,20 +92,22 @@ async function renderComponentRetry(options) {
     /* eslint-disable no-await-in-loop */
     try {
       onInfo(i > 0 ? 'Retrying' : 'Rendering');
+
       if (!browser) {
         onInfo('Creating new browser instance');
         await initialize();
       }
+
       const timeout = new Promise((resolve, reject) =>
         setTimeout(reject, RENDER_TIMEOUT, new Error('Render timeout')),
       );
+
       await Promise.race([renderComponent(options), timeout]);
       onInfo('Rendered successfully');
       return { success: true };
     } catch (error) {
       onError(error);
     }
-    /* eslint-enable no-await-in-loop */
   }
 
   return { success: false };
