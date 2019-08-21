@@ -28,8 +28,6 @@ RUN groupadd -r pptruser && useradd -r -g pptruser -G audio,video pptruser \
 # Run user as non privileged.
 USER pptruser
 
-ARG BUILD_ENV=production
-
 # Install app dependencies
 COPY yarn.lock ${WORK}
 COPY package.json ${WORK}
@@ -37,6 +35,8 @@ RUN yarn
 
 # Bundle app source
 COPY . ${WORK}
+
+ARG BUILD_ENV=production
 COPY .env.${BUILD_ENV} ${WORK}/.env
 
 RUN yarn build
