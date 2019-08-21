@@ -11,7 +11,6 @@ import MapImage from './mapImage';
 const propsMapper = mapProps(({ options, components, date, extraLayers }) => {
   const mapStyle = hslMapStyle.generateStyle({
     components,
-    glyphsUrl: process.env.GLYPHS_URL || 'https://kartat.hsl.fi/',
   });
 
   const sources = mapValues(mapStyle.sources, (value, key) => {

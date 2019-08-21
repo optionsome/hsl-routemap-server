@@ -123,10 +123,6 @@ async function renderComponentRetry(options) {
  * @returns {Promise} - Always resolves with { success }
  */
 function generate(options) {
-  const props = { ...options.props, joreUrl: JORE_GRAPHQL_URL };
-  // eslint-disable-next-line no-param-reassign
-  options.props = props;
-
   previous = previous.then(() => renderComponentRetry(options));
   return previous;
 }
