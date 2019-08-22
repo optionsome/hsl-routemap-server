@@ -3,6 +3,7 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 const { promisify } = require('util');
 const { spawn } = require('child_process');
+const { uploadPosterToCloud } = require('./cloudService');
 
 const writeFileAsync = promisify(fs.writeFile);
 
@@ -84,6 +85,7 @@ async function renderComponent(options) {
 
   await writeFileAsync(pdfPath(id), contents);
   await page.close();
+  await uploadPosterToCloud(pdfPath(id));
 }
 
 async function renderComponentRetry(options) {

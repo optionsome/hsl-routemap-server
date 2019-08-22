@@ -21,6 +21,7 @@ const {
   setStatusConfig,
 } = require('./store');
 const { generatePoints } = require('./joreStore');
+const { downloadPostersFromCloud } = require('./cloudService');
 
 const PORT = 4000;
 
@@ -127,6 +128,7 @@ async function main() {
     const { id } = ctx.params;
     const { title, posters } = await getBuild({ id });
     const posterIds = posters.filter(poster => poster.status === 'READY').map(poster => poster.id);
+    await downloadPostersFromCloud([posterIds]);
     ctx.type = 'application/pdf';
     ctx.set('Content-Disposition', `attachment; filename="${title}-${id}.pdf"`);
     ctx.body = generator.concatenate(posterIds);
@@ -134,7 +136,7 @@ async function main() {
 
   router.get('/downloadPoster/:id', async ctx => {
     const { id } = ctx.params;
-    console.log(id);
+    await downloadPostersFromCloud([id]);
     ctx.type = 'application/pdf';
     ctx.set('Content-Disposition', `attachment; filename="Linjakartta-${id}.pdf"`);
     ctx.body = generator.concatenate([id]);
