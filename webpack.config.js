@@ -1,10 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   devtool: 'source-map',
   entry: ['./src/index.js'],
-  plugins: [new HtmlWebpackPlugin({ template: 'index.ejs' })],
+  plugins: [new HtmlWebpackPlugin({ template: 'index.ejs' }), new Dotenv()],
   resolve: {
     modules: ['node_modules', 'src'],
   },

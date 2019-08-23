@@ -3,7 +3,7 @@ const iconv = require('iconv-lite');
 const csv = require('csv');
 const fetch = require('node-fetch');
 
-const API_URL = 'https://kartat.hsl.fi/jore/graphql';
+const API_URL = process.env.JORE_GRAPHQL_URL || 'https://kartat.hsl.fi/jore/graphql';
 
 async function fetchStopIds() {
   const options = {

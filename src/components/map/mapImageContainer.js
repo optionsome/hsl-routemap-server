@@ -11,15 +11,11 @@ import MapImage from './mapImage';
 const propsMapper = mapProps(({ options, components, date, extraLayers }) => {
   const mapStyle = hslMapStyle.generateStyle({
     components,
-    glyphsUrl: 'https://kartat.hsl.fi/',
   });
 
   const sources = mapValues(mapStyle.sources, (value, key) => {
-    if (value.url && value.url.includes('kartat.hsl.fi')) {
-      // eslint-disable-next-line no-param-reassign
-      value.url += `?date=${date}`;
-    }
-
+    // eslint-disable-next-line no-param-reassign
+    value.url += `?date=${date}`;
     return value;
   });
 
