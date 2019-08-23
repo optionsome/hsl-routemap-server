@@ -2,6 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const puppeteer = require('puppeteer');
 const { spawn } = require('child_process');
+const { uploadPosterToCloud } = require('./cloudService');
 
 const CLIENT_URL = 'http://localhost:5000';
 const RENDER_TIMEOUT = 24 * 60 * 60 * 1000;
@@ -83,6 +84,7 @@ async function renderComponent(options) {
 
   await fs.outputFile(pdfPath(id), contents);
   await page.close();
+  await uploadPosterToCloud(pdfPath(id));
 }
 
 async function renderComponentRetry(options) {
