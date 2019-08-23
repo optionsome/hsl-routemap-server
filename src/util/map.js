@@ -1,4 +1,4 @@
-const API_URL = 'https://kartat.hsl.fi';
+const API_URL = process.env.GENERATE_API_URL || 'https://kartat.hsl.fi';
 
 const scaleDefault = 5;
 

@@ -1,11 +1,8 @@
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
 const puppeteer = require('puppeteer');
-const { promisify } = require('util');
 const { spawn } = require('child_process');
 const { uploadPosterToCloud } = require('./cloudService');
-
-const writeFileAsync = promisify(fs.writeFile);
 
 const CLIENT_URL = 'http://localhost:5000';
 const RENDER_TIMEOUT = 24 * 60 * 60 * 1000;
@@ -16,7 +13,8 @@ const { JORE_GRAPHQL_URL } = process.env;
 let browser = null;
 let previous = Promise.resolve();
 
-const pdfPath = id => path.join(__dirname, '..', 'output', `${id}.pdf`);
+const outputPath = path.join(__dirname, '..', 'output');
+const pdfPath = id => path.join(outputPath, `${id}.pdf`);
 
 async function initialize() {
   browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
@@ -49,6 +47,7 @@ async function renderComponent(options) {
   const encodedProps = encodeURIComponent(JSON.stringify(props));
   const renderUrl = `${CLIENT_URL}/?props=${encodedProps}`;
   console.log(renderUrl);
+
   await page.goto(renderUrl);
 
   const { error, width, height } = await page.evaluate(
@@ -83,7 +82,7 @@ async function renderComponent(options) {
 
   const contents = await page.pdf(printOptions);
 
-  await writeFileAsync(pdfPath(id), contents);
+  await fs.outputFile(pdfPath(id), contents);
   await page.close();
   await uploadPosterToCloud(pdfPath(id));
 }
@@ -95,20 +94,22 @@ async function renderComponentRetry(options) {
     /* eslint-disable no-await-in-loop */
     try {
       onInfo(i > 0 ? 'Retrying' : 'Rendering');
+
       if (!browser) {
         onInfo('Creating new browser instance');
         await initialize();
       }
+
       const timeout = new Promise((resolve, reject) =>
         setTimeout(reject, RENDER_TIMEOUT, new Error('Render timeout')),
       );
+
       await Promise.race([renderComponent(options), timeout]);
       onInfo('Rendered successfully');
       return { success: true };
     } catch (error) {
       onError(error);
     }
-    /* eslint-enable no-await-in-loop */
   }
 
   return { success: false };
@@ -124,10 +125,6 @@ async function renderComponentRetry(options) {
  * @returns {Promise} - Always resolves with { success }
  */
 function generate(options) {
-  const props = { ...options.props, joreUrl: JORE_GRAPHQL_URL };
-  // eslint-disable-next-line no-param-reassign
-  options.props = props;
-
   previous = previous.then(() => renderComponentRetry(options));
   return previous;
 }

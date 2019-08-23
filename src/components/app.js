@@ -30,7 +30,9 @@ if (!props) {
 }
 
 const client = new ApolloClient({
-  link: createHttpLink({ uri: props.joreUrl || 'https://kartat.hsl.fi/jore/graphql' }),
+  link: createHttpLink({
+    uri: process.env.JORE_GRAPHQL_URL || 'https://kartat.hsl.fi/jore/graphql',
+  }),
   cache: new InMemoryCache(),
 });
 
