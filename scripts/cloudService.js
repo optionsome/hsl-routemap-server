@@ -76,6 +76,13 @@ async function uploadPosterToCloud(filePath) {
     return false;
   }
 
+  try {
+    await fs.remove(filePath);
+  } catch (err) {
+    console.log(`Pdf ${filePath} removal unsuccessful.`);
+    console.error(err);
+  }
+
   console.log('Pdf upload successful.');
   return true;
 }

@@ -128,18 +128,30 @@ async function main() {
     const { id } = ctx.params;
     const { title, posters } = await getBuild({ id });
     const posterIds = posters.filter(poster => poster.status === 'READY').map(poster => poster.id);
-    await downloadPostersFromCloud([posterIds]);
+    await downloadPostersFromCloud(posterIds);
+    const content = await generator.concatenate(posterIds);
+
     ctx.type = 'application/pdf';
     ctx.set('Content-Disposition', `attachment; filename="${title}-${id}.pdf"`);
-    ctx.body = generator.concatenate(posterIds);
+    ctx.body = content;
+
+    content.on('close', () => {
+      generator.removeFiles([id]);
+    });
   });
 
   router.get('/downloadPoster/:id', async ctx => {
     const { id } = ctx.params;
     await downloadPostersFromCloud([id]);
+    const content = await generator.concatenate([id]);
+
     ctx.type = 'application/pdf';
     ctx.set('Content-Disposition', `attachment; filename="Linjakartta-${id}.pdf"`);
-    ctx.body = generator.concatenate([id]);
+    ctx.body = content;
+
+    content.on('close', () => {
+      generator.removeFiles([id]);
+    });
   });
 
   router.post('/import', async ctx => {
