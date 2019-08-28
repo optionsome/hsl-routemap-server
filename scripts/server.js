@@ -16,11 +16,8 @@ const {
   addPoster,
   updatePoster,
   removePoster,
-  getConfig,
-  setDateConfig,
-  setStatusConfig,
 } = require('./store');
-const { generatePoints } = require('./joreStore');
+const { generatePoints, getConfig, setDateConfig, setStatusConfig } = require('./joreStore');
 const { downloadPostersFromCloud } = require('./cloudService');
 
 const PORT = 4000;
