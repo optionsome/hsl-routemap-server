@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.1.0",
+    "@types/knex": "^0.16.1",
     "babel-core": "^6.26.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^7.1.2",

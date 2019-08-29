@@ -17,7 +17,7 @@ const {
   updatePoster,
   removePoster,
 } = require('./store');
-const { generatePoints, getConfig, setDateConfig, setStatusConfig } = require('./joreStore');
+const { generatePoints, getConfig } = require('./joreStore');
 const { downloadPostersFromCloud } = require('./cloudService');
 
 const PORT = 4000;
@@ -153,20 +153,14 @@ async function main() {
 
   router.post('/import', async ctx => {
     const { targetDate } = ctx.query;
-    let config = await getConfig();
+    const config = await getConfig();
     if (config && config.status === 'PENDING') {
       ctx.throw(503, `Already running for date: ${config.target_date}`);
     } else if (!targetDate) {
       ctx.throw(400, 'Missing targetDate query parameter');
     } else {
-      config = await setDateConfig(targetDate);
-      generatePoints(config.target_date)
-        .then(async () => {
-          await setStatusConfig('READY');
-        })
-        .catch(async () => {
-          await setStatusConfig('ERROR');
-        });
+      // noinspection ES6MissingAwait
+      generatePoints(config.target_date);
       ctx.body = config;
     }
   });

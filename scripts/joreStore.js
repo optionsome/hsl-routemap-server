@@ -13,49 +13,20 @@ async function migrate() {
 }
 
 async function generatePoints(date) {
-  return knex.raw('select * from jore.create_intermediate_points(?,?)', [date, date]);
+  return knex.raw('select * from jore.create_intermediate_points(?)', [date]);
 }
 
 async function getConfig() {
-  const config = await knex.raw('select * from jore.create_intermediate_points(?,?)', []);
+  const config = await knex
+    .withSchema('jorestatic')
+    .first('*')
+    .from('users');
+
   return config || null;
-}
-
-async function setDateConfig(date) {
-  const oldConfig = await getConfig();
-  if (oldConfig) {
-    await knex('routepath_import_config')
-      .where({ name: 'default' })
-      .update({
-        target_date: date,
-        status: 'PENDING',
-      });
-  } else {
-    await knex('routepath_import_config').insert({
-      name: 'default',
-      status: 'PENDING',
-      target_date: date,
-    });
-  }
-  return getConfig();
-}
-
-async function setStatusConfig(status) {
-  const oldConfig = await getConfig();
-  if (oldConfig) {
-    await knex('routepath_import_config')
-      .where({ name: 'default' })
-      .update({ status });
-  } else {
-    await knex('routepath_import_config').insert({ status, name: 'default' });
-  }
-  return getConfig();
 }
 
 module.exports = {
   generatePoints,
   migrate,
-  setDateConfig,
-  setStatusConfig,
   getConfig,
 };
