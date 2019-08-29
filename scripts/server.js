@@ -160,7 +160,7 @@ async function main() {
       ctx.throw(400, 'Missing targetDate query parameter');
     } else {
       // noinspection ES6MissingAwait
-      generatePoints(config.target_date);
+      generatePoints(targetDate);
       ctx.body = config;
     }
   });

@@ -13,14 +13,14 @@ async function migrate() {
 }
 
 async function generatePoints(date) {
-  return knex.raw('select * from jore.create_intermediate_points(?)', [date]);
+  return knex.raw('select * from jorestatic.run_intermediate_points(?)', [date]);
 }
 
 async function getConfig() {
   const config = await knex
     .withSchema('jorestatic')
     .first('*')
-    .from('users');
+    .from('status');
 
   return config || null;
 }
