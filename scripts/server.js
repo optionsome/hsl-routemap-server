@@ -153,14 +153,16 @@ async function main() {
 
   router.post('/import', async ctx => {
     const { targetDate } = ctx.query;
-    const config = await getConfig();
+    let config = await getConfig();
     if (config && config.status === 'PENDING') {
       ctx.throw(503, `Already running for date: ${config.target_date}`);
     } else if (!targetDate) {
       ctx.throw(400, 'Missing targetDate query parameter');
     } else {
-      // noinspection ES6MissingAwait
-      generatePoints(targetDate);
+      await generatePoints(targetDate);
+      console.log('Intermediate points generation started.');
+
+      config = await getConfig();
       ctx.body = config;
     }
   });
