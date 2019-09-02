@@ -8,15 +8,10 @@ cleanup(() => {
   knex.destroy();
 });
 
-async function migrate() {
-  return knex.migrate.latest();
-}
-
 async function generatePoints(date) {
-  return knex.raw('select * from jore.create_intermediate_points(?,?)', [date, date]);
+  return knex.raw('select * from jorestatic.create_intermediate_points(?,?)', [date, date]);
 }
 
 module.exports = {
   generatePoints,
-  migrate,
 };
