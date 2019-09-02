@@ -152,6 +152,42 @@ async function addEvent({ posterId = null, buildId = null, type, message }) {
   );
 }
 
+async function getRoutePathStatus() {
+  const result = await knex('routepath_status').first('status');
+
+  if (!result) {
+    return null;
+  }
+
+  return result.status;
+}
+
+async function setRoutePathStatus(setStatus) {
+  if (!setStatus) {
+    return null;
+  }
+
+  const [status = null] = await knex('routepath_status')
+    .update({ status: setStatus })
+    .returning('status');
+
+  return status;
+}
+
+async function initRoutePathStatus(initValue = 'EMPTY') {
+  const currentStatus = await getRoutePathStatus();
+
+  if (!currentStatus) {
+    const [status = null] = await knex('routepath_status')
+      .insert({ status: initValue })
+      .returning('status');
+
+    return status;
+  }
+
+  return currentStatus;
+}
+
 module.exports = {
   migrate,
   getBuilds,
@@ -164,4 +200,7 @@ module.exports = {
   updatePoster,
   removePoster,
   addEvent,
+  getRoutePathStatus,
+  setRoutePathStatus,
+  initRoutePathStatus,
 };

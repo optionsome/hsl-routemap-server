@@ -7,4 +7,8 @@ if (!PG_JORE_CONNECTION_STRING) {
 module.exports = {
   client: 'pg',
   connection: PG_JORE_CONNECTION_STRING,
+  pool: {
+    min: 2,
+    max: 20,
+  },
 };
