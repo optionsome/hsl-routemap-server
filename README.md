@@ -41,11 +41,27 @@ docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres
 
 IMPORTANT:
 
-Manually add a default row to the `routepath_import_config` table:
+Manually create and add a default row to the `routepath_import_config` table.
+
+`docker exec -it <postgrescontainerid> bash`
+
+Inside container:
+
+`psql postgres postgres`
 
 ```
+CREATE TYPE status AS ENUM ('READY', 'PENDING', 'ERROR', 'EMPTY')
+	
+create table public.routepath_import_config(
+name varchar primary key,
+target_date date not null,
+status status,
+created_at date not null DEFAULT Now(),
+updated_at date not null DEFAULT Now()
+
 INSERT INTO "public"."routepath_import_config" ("name", "target_date", "status", "created_at", "updated_at") VALUES ('default', '2019-07-02', 'READY', DEFAULT, DEFAULT)
 ```
+Exit psql and container: `\q` and `exit`
 
 Start server:
 
